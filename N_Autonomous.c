@@ -1,5 +1,13 @@
+//Constants
+static const int NO_TIME_RECORDS = 100;
+static const int PID_WAIT_MS = 200;
+static const int SENSOR_HIT = 0;
+static const int MIN_TIMEOUT = 1;
+static const int MAX_TIMEOUT = 2;
+static const int PID_ZONE = 20;
+
 //Autonomous
-static int  autoHitTarget;
+static T_SENSOR_STATUS autoHitTarget;
 //static int autoNextCondition;
 static bool autoFoundLeft;
 static bool autoFoundRight;
@@ -7,9 +15,9 @@ static bool autoDriveReady;
 static bool autoLiftReady;
 static bool autoIntkReady;
 static bool autoStrafeReady;
-static int  autoStep;
-static int  autoStepCheck;
-static int  autoStepStatus;
+static int autoStep;
+static int autoStepCheck;
+static int autoStepStatus;
 
 //PID
 static T_PID PIDLiftL;
@@ -69,15 +77,8 @@ void initializeAutonomous(void)
 	PIDGyro.kp = 2;
 	PIDGyro.ki = 0.00;
 	PIDGyro.kd = 0.00;
-	
+
 	autoRoutine.curr = 0;
-	}
-
-
-void inputAutonomous()
-	{
-	if (sysState.curr != AUTONOMOUS)	//if not in autonomous
-		autoRoutine.curr = potPosition(NO_AUTO_ROUTINES)+1;
 	}
 
 
@@ -120,8 +121,8 @@ void autoNextStep(void)
 	autoStepStatus = SENSOR_HIT;
 	autoStep++;
 	//autoStepCheck = 0;
-	setToZero(senLeftQSE);
-	setToZero(senRightQSE);
+	setToZeroInt(senLeftQSE);
+	setToZeroInt(senRightQSE);
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
 	setAutoStepsStarts();
@@ -130,8 +131,8 @@ void autoNextStep(void)
 	}
 
 
-//void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType = (0), bool INscriptDrive = (0), bool INscriptLift = (0), bool INscriptIntake = (0))
-void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bool INscriptDrive, bool INscriptLift, bool INscriptIntake)
+void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType, T_SCRIPT_TAKEOVER INstoType,
+					bool INscriptDrive, bool INscriptLift, bool INscriptIntake)
 	{
 	if (autoStepCheck==autoStep)
 		{
@@ -143,11 +144,11 @@ void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bo
 #endif
 		if (autoClockRunning==true || autoStep==0)
 			{
-			if (INautoType==SCRIPT)
+			if (INasType==SCRIPT)
 				{
-				autoScriptTakeover[DRIVE] = (bool)(INscriptTakeoverType * INscriptDrive);
-				autoScriptTakeover[LIFT]  = (bool)(INscriptTakeoverType * INscriptLift);
-				autoScriptTakeover[INTK]  = (bool)(INscriptTakeoverType * INscriptIntake);
+				autoScriptTakeover[DRIVE] = (bool)(INstoType * INscriptDrive);
+				autoScriptTakeover[LIFT]  = (bool)(INstoType * INscriptLift);
+				autoScriptTakeover[INTK]  = (bool)(INstoType * INscriptIntake);
 				}
 			else
 				for (int i=0; i<3; i++)
@@ -160,8 +161,8 @@ void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bo
 			writeDebugStreamLine("Skip to\t|%d\t|",INgoToStep);
 			}
 		zeroMotors();
-		setToZero(senLeftQSE);
-		setToZero(senRightQSE);
+		setToZeroInt(senLeftQSE);
+		setToZeroInt(senRightQSE);
 		timerAuto = 0;
 		}
 	autoStepCheck++;
@@ -173,8 +174,8 @@ void autoResetEnd(void)
 	if (autoStepCheck==autoStep /*|| !sysVirtualAuto*/)
 		{
 		zeroMotors();
-		setToZero(senLeftQSE);
-		setToZero(senRightQSE);
+		setToZeroInt(senLeftQSE);
+		setToZeroInt(senRightQSE);
 
 		writeDebugStreamLine("+-----------+---+");
 		writeDebugStreamLine("|Time: %.1f\t\t|",((float)timerAuto/1000));
@@ -190,9 +191,9 @@ void autoResetEnd(void)
 	}
 
 
-void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
-		int INstrfType, int INstrfSpeed, int INstrfTarget,
-		int INlift, int INintk, int INendType, int INminTime, int INmaxTime, int INdelayPID)
+void auto(T_DRIVE INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
+		T_STRAFE INstrfType, int INstrfSpeed, int INstrfTarget,
+		int INlift, int INintk, T_END INendType, int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID)
 	{
 	if (autoStepCheck==autoStep)
 		{
@@ -223,12 +224,12 @@ void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
 				autoDriveReady = true;
 				break;
 			case DT_IN_ENC:
-				updatePIDController(PIDDriveL,INdrvLft - diffStep(senLeftQSE));
-				updatePIDController(PIDDriveL,INdrvRht - diffStep(senRightQSE));
+				updatePIDController(PIDDriveL,INdrvLft - diffStepInt(senLeftQSE));
+				updatePIDController(PIDDriveL,INdrvRht - diffStepInt(senRightQSE));
 				outDrvL = PIDDriveL.output;
 				outDrvR = PIDDriveR.output;
-				capValue(-abs(INdrvTarget),outDrvL,abs(INdrvTarget));
-				capValue(-abs(INdrvTarget),outDrvR,abs(INdrvTarget));
+				capIntValue(-abs(INdrvTarget), outDrvL, abs(INdrvTarget));
+				capIntValue(-abs(INdrvTarget), outDrvR, abs(INdrvTarget));
 				if (abs(PIDDriveL.error)<PID_ZONE && abs(PIDDriveR.error)<PID_ZONE) autoDriveReady = true;
 				break;
 			case DT_C_LINE:											//Follow Line
@@ -237,11 +238,11 @@ void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
 				outDrvR = INdrvRht + PIDLineFollow.output;
 				break;
 			case DT_G_TURN:											//Gyro turn
-				updatePIDController(PIDGyro, INdrvTarget-diffStep(senGyro));
+				updatePIDController(PIDGyro, INdrvTarget-diffStepInt(senGyro));
 				outDrvL = -PIDGyro.output;
 				outDrvR =  PIDGyro.output;
-				capValue(-abs(INdrvLft),outDrvL,abs(INdrvLft));
-				capValue(-abs(INdrvRht),outDrvR,abs(INdrvRht));
+				capIntValue(-abs(INdrvLft), outDrvL, abs(INdrvLft));
+				capIntValue(-abs(INdrvRht), outDrvR, abs(INdrvRht));
 				if (abs(PIDGyro.error) < PID_ZONE) autoDriveReady = true;
 				break;
 			case DT_LEFT_W:											//Follow Left Wall
@@ -263,25 +264,25 @@ void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
 				autoStrafeReady = true;
 				break;
 			case ST_IN_ENC:											//Encoder distance
-				outDrvS = updatePIDController(PIDStrafeEncod, INstrfTarget - diffStep(senLeftQSE));
-				capValue((-abs(INstrfSpeed)),outDrvS,abs(INstrfSpeed));
+				outDrvS = updatePIDController(PIDStrafeEncod, INstrfTarget - diffStepInt(senLeftQSE));
+				capIntValue((-abs(INstrfSpeed)), outDrvS, abs(INstrfSpeed));
 				if (abs(PIDStrafeEncod.error)<PID_ZONE) autoStrafeReady = true;
 				break;
 			case ST_U_LEFT:											//L Ultra distance
 				outDrvS = updatePIDController(PIDStrafeUltra, INstrfTarget - senLeftUS.curr);
-				capValue((-abs(INstrfSpeed)),outDrvS,abs(INstrfSpeed));
+				capIntValue((-abs(INstrfSpeed)), outDrvS, abs(INstrfSpeed));
 				if (abs(PIDStrafeUltra.error)<PID_ZONE) autoStrafeReady = true;
 				break;
 			case ST_U_RIHT:											//R Ultra distance
 				outDrvS = updatePIDController(PIDStrafeUltra, INstrfTarget - senRightUS.curr);
-				capValue((-abs(INstrfSpeed)),outDrvS,abs(INstrfSpeed));
+				capIntValue((-abs(INstrfSpeed)), outDrvS, abs(INstrfSpeed));
 				if (abs(PIDStrafeUltra.error)<PID_ZONE) autoStrafeReady = true;
 				break;
 			}
 
 		if (outDrvS != 0)
 			{
-			updatePIDController(PIDGyro, diffStep(senGyro));
+			updatePIDController(PIDGyro, diffStepInt(senGyro));
 			outDrvL -= PIDGyro.output;
 			outDrvR += PIDGyro.output;
 			}

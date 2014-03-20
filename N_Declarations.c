@@ -52,13 +52,11 @@ T_LC_INT senRightQSE;
 //System
 bool sysAutoMode = false;
 bool sysDisabledMode = false;
-int  sysError = ERR_NONE;
+T_ERROR sysError = ERR_NONE;
 int  sysLCDBacklight=LCD_ALWAYS_ON;
 //bool sysVirtualAuto = false;
 bool sysMotorTest = false;
 bool sysMotorsEnabled = true;
-char sysInvertDrive = false;
-char sysInvertDriveOffset=DRV_FWD;
 T_LC_INT sysState;
 int  sysLooptime;
 
@@ -70,4 +68,3 @@ char slewConstants[3][10];
 
 string batteryLevel[3];
 string motorName[10];
-

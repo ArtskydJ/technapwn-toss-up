@@ -18,7 +18,7 @@ void inputState()
 
 void processState(void)
 	{
-	if (changed(sysState))
+	if (changedInt(sysState))
 		{
 		//--Execute whenever the state changes--//
 		stateChangeLCD();

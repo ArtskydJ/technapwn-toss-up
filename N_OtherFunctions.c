@@ -1,3 +1,7 @@
+//Constants
+static const int MIN_LOOP_MS = 5;
+static const int JOYSTICK_DEAD_ZONE = 10;
+
 /* The following function is run every time the
 autonomous step advances. It sets the starting
 values of each sensor for that step, for checking
@@ -10,11 +14,11 @@ value, so it knows how far it has turned.
 void setAutoStepsStarts()
 	{
 	//--Sensors--//
-	setStep(senGyro);
-	setStep(senLeftQSE);
-	setStep(senRightQSE);
-	setStep(senLeftUS);
-	setStep(senRightUS);
+	setStepInt(&senGyro);
+	setStepInt(&senLeftQSE);
+	setStepInt(&senRightQSE);
+	setStepInt(&senLeftUS);
+	setStepInt(&senRightUS);
 	}
 
 /* This function sets the last-step values to the
@@ -27,15 +31,15 @@ void setAllLasts()
 	setOperatorLasts();
 
 	//--Sensors--//
-	setLast(senGyro);
-	setLast(senLeftQSE);
-	setLast(senRightQSE);
-	setLast(senLeftUS);
-	setLast(senRightUS);
+	setLastInt(&senGyro);
+	setLastInt(&senLeftQSE);
+	setLastInt(&senRightQSE);
+	setLastInt(&senLeftUS);
+	setLastInt(&senRightUS);
 
 	//--System--//
-	setLast(sysState);
-	setLast(autoRoutine);
+	setLastInt(&sysState);
+	setLastInt(&autoRoutine);
 	}
 
 /* This function keeps the loop time of the code
@@ -54,6 +58,20 @@ void constantLoopTime()
 	while (time1[T4] < MIN_LOOP_MS)
 		{}
 	ClearTimer(T4);
+	}
+
+
+/* This function takes a min, and max value, and
+a pointer to a variable. The variable is changed
+so that it is no smaller than the min value, and
+no larger than the max value.
+*/
+void capIntValue(int min,int &value,int max)
+	{
+	int temp = value;
+	temp = (temp<min) ? (min):(temp);
+	temp = (temp>max) ? (max):(temp);
+	value = temp; //not sure if this is ok
 	}
 
 /* This function gets the target motor value, the
@@ -77,7 +95,7 @@ depending on how far the potentiometer is turned.
 int potPosition(int INMaxVal)
 	{
 	int n=(float)INMaxVal*senSelectorPot/4096;
-	capValue(0,n,INMaxVal-1);
+	capIntValue(0, n, INMaxVal-1);
 	return n;
 	}
 
@@ -119,7 +137,7 @@ int joystickFilter(int INraw)
 	if (abs(INraw) < JOYSTICK_DEAD_ZONE)	//Dead Zone
 		INraw=0;
 	INraw = (float)INraw*abs(INraw)/127;	//Exponential function
-	capValue(-127,INraw,127);				//Make sure the numbers are within desired range
+	capIntValue(-127, INraw, 127);				//Make sure the numbers are within desired range
 	return (INraw);
 	}
 
@@ -167,4 +185,75 @@ if the gearing is 1:7, etc.
 int emulateLiftPot(int INspeed, int INgearing)
 	{
 	return ( (float) INspeed * timerEmulateSpeed / (25*INgearing) );
+	}
+
+
+/* These functions are for the LC types.
+(Last-Current types.)
+*/
+bool changedBool(T_LC_BOOL INLC)
+	{ //Returns true if the boolean changed
+	return (INLC.last != INLC.curr);
+	}
+
+bool changedInt(T_LC_INT INLC)
+	{ //Returns true if the integer changed
+	return (INLC.last != INLC.curr);
+	}
+
+bool pressed(T_LC_BOOL INLC)
+	{ //Returns true if it was just pressed
+	return (!INLC.last && INLC.curr);
+	}
+
+int diffLastInt(T_LC_BOOL INLC)
+	{ //Returns the difference of last and current value
+	return (INLC.curr - INLC.last);
+	}
+
+int diffStepInt(T_LC_INT INLC)
+	{ //Returns the difference of step starting and current value
+	return (INLC.stepStart - INLC.last);
+	}
+
+void setLastBool(T_LC_BOOL *INLC)
+	{ //Sets the last value to the current value
+	INLC->last = INLC->curr;
+	}
+
+void setLastInt(T_LC_INT *INLC)
+	{ //Sets the last value to the current value
+	INLC->last = INLC->curr;
+	}
+
+void setLastString(T_LC_STRING *INLC)
+	{ //Sets the last value to the current value
+	INLC->last = INLC->curr;
+	}
+
+void setStepInt(T_LC_INT *INLC)
+	{ //Sets the step start value to the current value
+	INLC->stepStart = INLC->curr;
+	}
+
+/*void setToZeroBool(T_LC_BOOL *INLC)
+	{ //Sets the step start value to the current value
+	INLC->last = false;
+	INLC->curr = false;
+	}*/
+
+void setToZeroInt(T_LC_INT *INLC)
+	{ //Sets the step start value to the current value
+	INLC->last = 0;
+	INLC->curr = 0;
+	}
+
+void fixIrregularityInt(T_LC_INT *INLC, int INnum)
+	{
+	INLC->curr += slew(INLC->curr, INLC->last, INnum);
+	}
+
+int InchesToTicks(int n)
+	{
+	return ((float)n*360/(3.14*4));
 	}

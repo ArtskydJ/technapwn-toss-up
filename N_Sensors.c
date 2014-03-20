@@ -1,3 +1,7 @@
+//Constants
+static const int L_OFFSET = -300;
+
+
 void inputSensors(void)
 	{
 #if (_TARGET=="Robot")

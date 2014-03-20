@@ -1,3 +1,11 @@
+//Constants
+static const int DRV_FWD = 0;
+static const int DRV_LFT = 1;
+static const int DRV_REV = 2;
+static const int DRV_RHT = 3;
+
+
+//Variables
 static int stkMtrTest;
 static int stkDrvX;
 static int stkDrvY;
@@ -17,6 +25,8 @@ static bool btnSubroutine1;
 static bool btnSubroutine2;
 static bool btnSubroutine3;
 static bool btnSubroutine4;
+static char sysInvertDrive = 0;
+static char sysInvertDriveOffset = 0;
 
 
 void inputOperator()
@@ -54,10 +64,10 @@ void inputOperator()
 
 void setOperatorLasts(void)
 	{
-	setLast(btnLiftUp);
-	setLast(btnLiftDown);
-	setLast(btnIntkUp);
-	setLast(btnIntkDown);
+	setLastBool(btnLiftUp);
+	setLastBool(btnLiftDown);
+	setLastBool(btnIntkUp);
+	setLastBool(btnIntkDown);
 	}
 
 

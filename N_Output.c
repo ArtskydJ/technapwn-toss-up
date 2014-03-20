@@ -52,8 +52,8 @@ void outputMotion(void)
 			{
 			tLLift = updatePIDController(PIDLiftL, outLift - senLiftLPot.curr);
 			tRLift = updatePIDController(PIDLiftR, outLift - senLiftRPot.curr);
-			capValue(REV,tLLift,FWD);
-			capValue(REV,tRLift,FWD);
+			capIntValue(REV, tLLift, FWD);
+			capIntValue(REV, tRLift, FWD);
 			tTarget = outLift;
 			}
 		else
@@ -66,8 +66,8 @@ void outputMotion(void)
 			{
 			tLLiftAdd = senLiftRPot.curr-senLiftLPot.curr;
 			tRLiftAdd = senLiftLPot.curr-senLiftRPot.curr;
-			capValue(REV*2, tLLiftAdd, FWD*2);
-			capValue(REV*2, tRLiftAdd, FWD*2);
+			capIntValue(REV*2, tLLiftAdd, FWD*2);
+			capIntValue(REV*2, tRLiftAdd, FWD*2);
 			}
 		else
 			{
@@ -86,7 +86,7 @@ void outputMotion(void)
 	for (int j=0; j<10; j++)
 		{
 		mtrSlewed[j] += slew(mtrTarget[j], mtrSlewed[j], slewConstants[sysState.curr][j]); //SLEW CONTROLLERS
-		capValue(-127, mtrSlewed[j], 127); //CAP ALL MOTORS
+		capIntValue(-127, mtrSlewed[j], 127); //CAP ALL MOTORS
 		motor[j] = mtrSlewed[j]*sysMotorsEnabled; //ASSIGN MOTORS
 		}
 	}
