@@ -1,10 +1,4 @@
 //Constants
-static const int AUTO_DRV_SLEW = 3;
-static const int OPER_DRV_SLEW = 3;
-static const int AUTO_LIFT_SLEW = 8;
-static const int OPER_LIFT_SLEW = 8;
-static const int AUTO_INTK_SLEW = 10;
-static const int OPER_INTK_SLEW = 10;
 
 //Functions
 void initializeOther()

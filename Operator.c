@@ -123,23 +123,28 @@ void processOperator()
 		switch(sysInvertDrive)
 			{
 			case DRV_RHT: //Rotated 0°   (Robot faces driver's right)
-				outDrvFwd = stkDrvStf;
-				outDrvStf = stkDrvFwd;
+				outDrvL = stkDrvStf;
+				outDrvR = stkDrvStf;
+				outDrvS = stkDrvFwd;
 				break;
 			case DRV_FWD: //Rotated 90°  (Robot faces away from driver)
-				outDrvFwd = stkDrvFwd;
-				outDrvStf = stkDrvStf;
+				outDrvL = stkDrvFwd;
+				outDrvR = stkDrvFwd;
+				outDrvS = stkDrvStf;
 				break;
 			case DRV_LFT: //Rotated 180° (Robot faces driver's left)
-				outDrvFwd = -stkDrvStf;
-				outDrvStf = -stkDrvFwd;
+				outDrvL = -stkDrvStf;
+				outDrvR = -stkDrvStf;
+				outDrvS = -stkDrvFwd;
 				break;
 			case DRV_REV: //Rotated 270° (Robot faces driver)
-				outDrvFwd = -stkDrvFwd;
-				outDrvStf = -stkDrvStf;
+				outDrvL = -stkDrvFwd;
+				outDrvR = -stkDrvFwd;
+				outDrvS = -stkDrvStf;
 				break;
 			}
-		outDrvTrn = stkDrvTrn;
+		outDrvL += stkDrvTrn;
+		outDrvR -= stkDrvTrn;
 		//--Drive--//
 		if (joystickIsMoved(0))
 			if (autoScriptTakeover[DRIVE] == STO_TAKEOVER)

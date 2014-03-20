@@ -9,24 +9,23 @@ toggles that are easily turned off and on.
 //#define SOUND_EFFECTS
 //#define LIFT_SYNC
 
-//*
+/*
 #undef _TARGET			//This statement and the next go together. Uncomment both
 #define _TARGET "Robot"	//If you want the emulator to act like a real robot.
 // */
 
-/*Preset Heights
- Heights for lift, etc.
-*/
+//Operator, Autonomous - Lift Presets
 #define L_GRND			0 //Make sure not to re-define LIFT_L or LIFT_R anywhere.
 #define L_DRIV			1
 #define L_STSH			2
 #define NO_LIFT_PRESETS	3
 
-
+//State
 #define DISABLED	0
 #define OPERATOR	1
 #define AUTONOMOUS	2
 
+//Autonomous - Presets
 #define UP      127
 #define DOWN   -127
 #define FWD     127
@@ -40,7 +39,26 @@ toggles that are easily turned off and on.
 #define FOLLOW  100
 #define BRAKE   5
 
-#define NO_AUTO_ROUTINES 12
+#define NO_AUTO_ROUTINES  12
+#define MIN_LOOP_MS       5
+
+//Output - Slew
+#define AUTO_DRV_SLEW     3
+#define OPER_DRV_SLEW     3
+#define AUTO_LIFT_SLEW    8
+#define OPER_LIFT_SLEW    8
+#define AUTO_INTK_SLEW    10
+#define OPER_INTK_SLEW    10
+
+//Autonomous
+#define NO_TIME_RECORDS   100
+#define PID_WAIT_MS       200
+#define SENSOR_HIT        0
+#define MIN_TIMEOUT       1
+#define MAX_TIMEOUT       2
+#define PID_ZONE          20
+
+
 
 //--Typedefs--//
 /*Structs
@@ -84,15 +102,13 @@ typedef struct
 /*Sensor Statuses
  If sensor is hit.
 */
-typedef enum
-	{
+typedef enum {
 	NOT_HIT = -1,
 	NEXT = 0,
 	PID = 1
 	} T_SENSOR_STATUS;
 
-typedef enum
-	{
+typedef enum {
 	SPEED = 0,   //Drive/Strafe with input Speeds
 	ENCODER,    //Drive/Strafe with input Encoder
 	LEFT_WALL,  //Drive following/Strafe to the Left  Wall
@@ -101,8 +117,7 @@ typedef enum
 	GYRO_TURN   //Drive with a PID gyroscope turn
 	} T_DRIVE;
 
-typedef enum
-	{
+typedef enum {
 	TIME_LIMIT = 0,	//Time Limit
 	DRIV_READY,	//Finished using Drive (including strafing)
 	LIFT_READY,	//Finished using Lift
@@ -112,30 +127,26 @@ typedef enum
 	SCREEN_BTN	//Screen Button
 	} T_END;
 
-typedef enum
-	{
+typedef enum {
 	STO_NONE = 0,
 	STO_TAKEOVER,
 	STO_ADD
 	} T_SCRIPT_TAKEOVER;
 
-typedef enum
-	{
+typedef enum {
 	DRIVE = 0,
 	LIFT,
 	INTK
 	} T_COMPONENT;
 
-typedef enum
-	{
+typedef enum {
 	ERR_NONE = 0,
 	ERR_LOW_CORTEX,
 	ERR_LOW_POW_EX,
 	ERR_ROBOT_IDLE
 	} T_ERROR;
 
-typedef enum
-	{
+typedef enum {
 	M_AUTON = 0,
 	M_CHECKLIST,
 	M_DIS_ENABLE_MTRS,
@@ -146,8 +157,7 @@ typedef enum
 	NO_MENU_ITEMS
 	} T_MENU_ITEMS;
 
-typedef enum
-	{
+typedef enum {
 	LCD_ALWAYS_OFF = 0,
 	LCD_ALWAYS_ON,
 	LCD_BLINK_SLOW,
@@ -155,8 +165,7 @@ typedef enum
 	LCD_TIMEOUT
 	} T_BACKLIGHT;
 
-typedef enum
-	{
+typedef enum {
 	SCRIPT,
 	AUTON
 	} T_AUTO_SCRIPT;
@@ -196,6 +205,7 @@ int slew(int INtargetValue, int INlastValue, int INslew);
 int potPosition(int INMaxVal);
 int emulateLiftPot(int INspeed, int INgearing);
 int emulateWheelQSE(int INspeed);
+void emulateSensors(void);
 
 
 /* Declarations
@@ -241,6 +251,13 @@ T_LC_INT senLeftUS;
 T_LC_INT senRightUS;
 T_LC_INT senLeftQSE;
 T_LC_INT senRightQSE;
+
+//Timer Variables
+unsigned int timerLCDScroll		= 0;
+unsigned int timerLCDBacklight	= 0;
+unsigned int timerAuto			= 0;
+unsigned int timerRobotIdle		= 0;
+unsigned int timerEmulateSpeed	= 0;
 
 //Other
 bool autoScriptTakeover[3]={0,0,0};

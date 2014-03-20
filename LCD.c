@@ -62,7 +62,7 @@ void initializeLCD(void)
 
 	menuItemName[M_AUTON] = "Time:";
 	menuItemName[M_CHECKLIST] = "Checklist:";
-	menuItemName[M_DIS_ENABLE_MTRS] = "Disable Outputs";
+	menuItemName[M_DIS_ENABLE_MTRS] = "Outputs are:";
 	menuItemName[M_BATT_LEVELS] = "Battery Levels:";
 	menuItemName[M_MTR_TEST] = "Motor Test:";
 	menuItemName[M_ANALOG_LEVELS] = "Analog Value:";

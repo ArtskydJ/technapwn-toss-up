@@ -40,9 +40,9 @@ void initializeOutput()
 */
 void zeroMotors(void)
 	{
-	outDrvFwd = 0;
-	outDrvTrn = 0;
-	outDrvStf = 0;
+	outDrvL = 0;
+	outDrvR = 0;
+	outDrvS = 0;
 	outLift = 0;
 	outIntk = 0;
 	for (int j=0; j<10; j++)
@@ -62,24 +62,12 @@ void outputMotion(void)
 			mtrTarget[j] = (mtrTestEnabled[j]*stkMtrTest);
 	else
 		{
-		//if (sysState.curr == OPERATOR)
-		//	{					 // Y=FWD  Z=TURN  X=STRAFE
-			mtrTarget[DRIVE_FL]  = outDrvFwd + outDrvTrn + outDrvStf;
-			mtrTarget[DRIVE_BL1] = outDrvFwd + outDrvTrn - outDrvStf;
-			mtrTarget[DRIVE_BL2] = outDrvFwd + outDrvTrn - outDrvStf;
-			mtrTarget[DRIVE_FR]  = outDrvFwd - outDrvTrn - outDrvStf;
-			mtrTarget[DRIVE_BR1] = outDrvFwd - outDrvTrn + outDrvStf;
-			mtrTarget[DRIVE_BR2] = outDrvFwd - outDrvTrn + outDrvStf;
-		/*	}
-		else if (sysState.curr == AUTONOMOUS)
-			{			 // L=LEFT R=RIGHT S=STRAFE
-			mtrTarget[DRIVE_FL]  = outDrvL + outDrvS;
-			mtrTarget[DRIVE_BL1] = outDrvL - outDrvS;
-			mtrTarget[DRIVE_BL2] = outDrvL - outDrvS;
-			mtrTarget[DRIVE_FR]  = outDrvR - outDrvS;
-			mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
-			mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
-			}*/
+		mtrTarget[DRIVE_FL] =  outDrvL + outDrvS;
+		mtrTarget[DRIVE_BL1] = outDrvL - outDrvS;
+		mtrTarget[DRIVE_BL2] = outDrvL - outDrvS;
+		mtrTarget[DRIVE_FR] =  outDrvR - outDrvS;
+		mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
+		mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
 
 		int tLLift, tRLift, tLLiftAdd, tRLiftAdd, tTarget;
 		bool tDisableLift=false;
@@ -164,6 +152,7 @@ speed of a wheel.
 */
 int emulateWheelQSE(int INspeed)
 	{
+	//127 * 5 /
 	return ( (float) INspeed * timerEmulateSpeed / (127 * 2) );
 	}
 
@@ -176,5 +165,15 @@ if the gearing is 1:7, etc.
 */
 int emulateLiftPot(int INspeed, int INgearing)
 	{
+	//127 * 5 / 10
+	//50rpm*elapsedMS/gearing
 	return ( (float) INspeed * timerEmulateSpeed / (25*INgearing) );
+	}
+
+void emulateSensors(void)
+	{
+	senLeftQSE.curr  +=	emulateWheelQSE(mtrSlewed[DRIVE_BL1]);
+	senRightQSE.curr +=	emulateWheelQSE(mtrSlewed[DRIVE_BR1]);
+	senLiftLPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_L], 10);
+	senLiftRPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_R], 10);
 	}

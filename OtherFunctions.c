@@ -1,26 +1,4 @@
-//Constants
-static const int MIN_LOOP_MS = 5;
-
 //Functions
-/* The following function is run every time the
-autonomous step advances. It sets the starting
-values of each sensor for that step, for checking
-the difference between them.
- For example, the starting gyro value is stored.
-When the robot turns, it calculates the differ-
-ence between the current value and the step-start
-value, so it knows how far it has turned.
-*/
-
-/* This function sets the last-step values to the
-current-step values and saves them for when the
-current-step values are overwritten.
-*/
-void setAllLasts()
-	{
-	//--System--//
-	}
-
 /* This function keeps the loop time of the code
 constant. The value MIN_LOOP_MS is the minimum
 time the loop will take to iterate with it being
@@ -67,4 +45,53 @@ int updatePIDController(T_PID &INPID, int INerror)
 						+ (INPID.integral	* INPID.ki)
 						+ (INPID.derivative	* INPID.kd);
 	return (INPID.output);
+	}
+
+
+/* These functions are for the LC types.
+(Last-Current types.)
+*/
+bool changedBool(T_LC_BOOL INLC) //{returns true if the boolean changed
+	{return (INLC.last != INLC.curr);}
+
+bool changedInt(T_LC_INT INLC) //{returns true if the integer changed
+	{return (INLC.last != INLC.curr);}
+
+bool pressed(T_LC_BOOL INLC) //{returns true if it was just pressed
+	{return (!INLC.last && INLC.curr);}
+
+int diffLastInt(T_LC_BOOL INLC) //{returns the difference of last and current value
+	{return (INLC.curr - INLC.last);}
+
+int diffStepInt(T_LC_INT INLC) //{returns the difference of step starting and current value
+	{return (INLC.stepStart - INLC.last);}
+
+void setLastBool(T_LC_BOOL *INLC) //Sets the last value to the current value
+	{INLC->last = INLC->curr;}
+
+void setLastInt(T_LC_INT *INLC) //Sets the last value to the current value
+	{INLC->last = INLC->curr;}
+
+void setLastString(T_LC_STRING *INLC) //Sets the last value to the current value
+	{INLC->last = INLC->curr;}
+
+void setStepInt(T_LC_INT *INLC) //Sets the step start value to the current value
+	{INLC->stepStart = INLC->curr;}
+
+/*void setToZeroBool(T_LC_BOOL *INLC) //Sets the step start value to the current value
+	{INLC->last = false;
+	INLC->curr = false;}*/
+
+void setToZeroInt(T_LC_INT *INLC)
+	//Sets the step start value to the current value
+	{INLC->last = 0;
+	INLC->curr = 0;}
+
+void slewLCInt(T_LC_INT *INLC, int INnum)
+	{
+	int diff = INLC->curr - INLC->last;
+	if		(diff > INnum) diff = INnum;
+	else if (diff < -INnum) diff = -INnum;
+	
+	INLC->curr += diff;
 	}

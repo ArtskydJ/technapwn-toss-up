@@ -1,12 +1,3 @@
-//Constants
-static const int NO_TIME_RECORDS = 100;
-static const int PID_WAIT_MS = 200;
-static const int SENSOR_HIT = 0;
-static const int MIN_TIMEOUT = 1;
-static const int MAX_TIMEOUT = 2;
-static const int PID_ZONE = 20;
-
-
 //Variables
 static T_SENSOR_STATUS autoHitTarget;
 //static int autoNextCondition;
@@ -29,8 +20,8 @@ static int LINE_TARGET = 0; 		//Auto calculation in inputAutonomous()
 static T_PID PIDLift;
 static T_PID PIDLineFollow;
 static T_PID PIDWallFollow;
-static T_PID PIDDriveFwd;
-static T_PID PIDDriveTrn;
+static T_PID PIDDriveL;
+static T_PID PIDDriveR;
 static T_PID PIDStrafeEncod;
 static T_PID PIDStrafeUltra;
 static T_PID PIDGyro;
@@ -42,8 +33,8 @@ void initializeAutonomous(void)
 	PIDLift.kp			= 1.30;		PIDLift.ki			= 0.00;		PIDLift.kd			= 0.00;
 	PIDLineFollow.kp	= 0.10;		PIDLineFollow.ki	= 0.00;		PIDLineFollow.kd	= 0.00;
 	PIDWallFollow.kp	= 0.10;		PIDWallFollow.ki	= 0.00;		PIDWallFollow.kd	= 0.00;
-	PIDDriveFwd.kp		= 0.60;		PIDDriveFwd.ki		= 0.00;		PIDDriveFwd.kd		= 0.00;
-	PIDDriveTrn.kp		= 0.60;		PIDDriveTrn.ki		= 0.00;		PIDDriveTrn.kd		= 0.00;
+	PIDDriveL.kp		= 0.60;		PIDDriveL.ki		= 0.00;		PIDDriveL.kd		= 0.00;
+	PIDDriveR.kp		= 0.60;		PIDDriveR.ki		= 0.00;		PIDDriveR.kd		= 0.00;
 	PIDStrafeEncod.kp	= 0.60;		PIDStrafeEncod.ki	= 0.00;		PIDStrafeEncod.kd	= 0.00;
 	PIDStrafeUltra.kp	= 0.60;		PIDStrafeUltra.ki	= 0.00;		PIDStrafeUltra.kd	= 0.00;
 	PIDGyro.kp			= 2.00;		PIDGyro.ki			= 0.00;		PIDGyro.kd			= 0.00;
@@ -100,7 +91,6 @@ void autoNextStep(void)
 	autoHitTarget = NOT_HIT;
 	autoStepStatus = SENSOR_HIT;
 	autoStep++;
-	//autoStepCheck = 0;
 	setToZeroInt(senLeftQSE);
 	setToZeroInt(senRightQSE);
 	SensorValue[QUAD_LEFT] = 0;
@@ -173,12 +163,14 @@ void auto(T_DRIVE INdrvType, int INdrvSpd, int INdrvTarget,
           int INlift, int INintk, T_END INendType,
           int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID)
 	{
+	//static bool tFirst=true;
 	if (autoStepCheck==autoStep)
 		{
 #ifdef FULL_DEBUG_STREAM
+		//tFirst
 		writeDebugStreamLine("1 dtp=%d df=%d dt=%d dtg=%d\n2 stp=%d ss=%d stg=%d3 \nl=%d i=%d et=%d min=%d max=%d pid=%d",
 			INdrvType, INdrvFwd, INdrvTrn, INdrvTarget,
-			INstfType, INstfSpeed, INstfTarget,
+			INstfType, INstfSpd, INstfTarget,
 			INlift, INintk, INendType, INminTime, INmaxTime, INdelayPID);
 #endif
 		//--Initialize--//
@@ -202,9 +194,9 @@ void auto(T_DRIVE INdrvType, int INdrvSpd, int INdrvTarget,
 				outDrvR = INdrvTarget;
 				autoDriveReady = true;
 				break;
-			case ENCOD_FWD:										//Encoder distance
-				updatePIDController(PIDDriveFwd, INdrvTarget*2 - diffStepInt(senLeftQSE) - diffStepInt(senRightQSE));
-				updatePIDController(PIDDriveTrn, INdrvTarget*2 - diffStepInt(senLeftQSE) + diffStepInt(senRightQSE));
+			case ENCODER:										//Encoder distance
+				updatePIDController(PIDDriveL, INdrvTarget - diffStepInt(senLeftQSE));
+				updatePIDController(PIDDriveR, INdrvTarget - diffStepInt(senRightQSE));
 				outDrvL = capIntValue(-abs(INdrvSpd), PIDDriveL.output, abs(INdrvSpd));
 				outDrvR = capIntValue(-abs(INdrvSpd), PIDDriveR.output, abs(INdrvSpd));
 				if (abs(PIDDriveL.error.curr)<PID_ZONE &&
@@ -223,43 +215,45 @@ void auto(T_DRIVE INdrvType, int INdrvSpd, int INdrvTarget,
 				if (abs(PIDGyro.error.curr) < PID_ZONE) autoDriveReady = true;
 				break;
 			case LEFT_WALL:										//Follow Left Wall
-				int temp = updatePIDController(PIDWallFollow, INdrvTarget-senLeftUS.curr);
-				outDrvL = capIntValue(-abs(INdrvSpd), PIDWallFollow, abs(INdrvSpd));
-				ourDrvR = capIntValue(-abs(INdrvSpd), PIDWallFollow, abs(INdrvSpd));
+				int tempL = updatePIDController(PIDWallFollow, INdrvTarget-senLeftUS.curr);
+				outDrvL = capIntValue(-abs(INdrvSpd), tempL, abs(INdrvSpd));
+				outDrvR = capIntValue(-abs(INdrvSpd), tempL, abs(INdrvSpd));
 				break;
 			case RIGHT_WALL:									//Follow Right Wall
-				int temp = updatePIDController(PIDWallFollow, INdrvTarget-senRightUS.curr);
-				outDrvL = capIntValue(-abs(INdrvSpd), PIDWallFollow, abs(INdrvSpd));
-				ourDrvR = capIntValue(-abs(INdrvSpd), PIDWallFollow, abs(INdrvSpd));
+				int tempR = updatePIDController(PIDWallFollow, INdrvTarget-senRightUS.curr);
+				outDrvL = capIntValue(-abs(INdrvSpd), tempR, abs(INdrvSpd));
+				outDrvR = capIntValue(-abs(INdrvSpd), tempR, abs(INdrvSpd));
 				break;
 			}
 
 		switch (INstfType) //Strafing (with auto gyro align)
 			{
 			case SPEED:												//Speed
-				outDrvStf = INstfSpeed;
+				outDrvS = INstfSpd;
 				autoStrafeReady = true;
 				break;
-			case ENCOD_FWD:										//Encoder distance
-			case ENCOD_TURN:
-				outDrvStf = updatePIDController(PIDStrafeEncod, INstfTarget - diffStepInt(senLeftQSE));
-				outDrvStf = capIntValue((-abs(INstfSpeed)), outDrvStf, abs(INstfSpeed));
+			case ENCODER:										//Encoder distance
+				outDrvS = updatePIDController(PIDStrafeEncod, INstfTarget - diffStepInt(senLeftQSE));
+				outDrvS = capIntValue((-abs(INstfSpd)), outDrvS, abs(INstfSpd));
 				if (abs(PIDStrafeEncod.error.curr)<PID_ZONE) autoStrafeReady = true;
 				break;
 			case LEFT_WALL:										//L Ultra distance
-				outDrvStf = updatePIDController(PIDStrafeUltra, INstfTarget - senLeftUS.curr);
-				outDrvStf = capIntValue((-abs(INstfSpeed)), outDrvStf, abs(INstfSpeed));
+				outDrvS = updatePIDController(PIDStrafeUltra, INstfTarget - senLeftUS.curr);
+				outDrvS = capIntValue((-abs(INstfSpd)), outDrvS, abs(INstfSpd));
 				if (abs(PIDStrafeUltra.error.curr)<PID_ZONE) autoStrafeReady = true;
 				break;
 			case RIGHT_WALL:									//R Ultra distance
-				outDrvStf = updatePIDController(PIDStrafeUltra, INstfTarget - senRightUS.curr);
-				outDrvStf = capIntValue((-abs(INstfSpeed)), outDrvStf, abs(INstfSpeed));
+				outDrvS = updatePIDController(PIDStrafeUltra, INstfTarget - senRightUS.curr);
+				outDrvS = capIntValue((-abs(INstfSpd)), outDrvS, abs(INstfSpd));
 				if (abs(PIDStrafeUltra.error.curr)<PID_ZONE) autoStrafeReady = true;
 				break;
 			}
 
-		if (outDrvStf != 0)
-			outDrvTrn = updatePIDController(PIDGyro, diffStepInt(senGyro));
+		if (outDrvS != 0)
+			{
+			outDrvL += updatePIDController(PIDGyro, diffStepInt(senGyro));
+			outDrvR -= outDrvL;
+			}
 
 
 		if (senLeftEdge > LINE_EDGE)  autoFoundLeft = true;  //Found Left Edge
@@ -267,15 +261,10 @@ void auto(T_DRIVE INdrvType, int INdrvSpd, int INdrvTarget,
 
 		if (INendType == TWO_EDG_LN)
 			{
-			//fwd = 127,  trn = 0,    fwd = 64,   trn = 64, left keeps going & right stops
-			//fwd = -127, trn = 0,    fwd = -64,  trn = -64, left keeps going & right stops
-			//fwd = 0,    trn = 127,  fwd = 64,   trn = 64, left keeps going, right stops
-			int temp = (outDrvFwd + outDrvTrn)/2;
-			outDrvFwd = temp;
 			if (autoFoundLeft)
-				outDrvTrn = temp;
+				outDrvL=0;
 			if (autoFoundRight)
-				outDrvTrn = -temp;
+				outDrvR = 0;
 			}
 
 		if (autoHitTarget==NOT_HIT)
