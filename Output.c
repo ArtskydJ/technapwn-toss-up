@@ -1,6 +1,7 @@
 //Constants
-static const int LEFT_CAP = 100; //yes left, not lift
+static const int LEFT_CAP = 127; //yes left, not lift
 static const int RIHT_CAP = 127;
+static const int DISABLE_RANGE = 50;
 
 //Variables
 static int mtrTarget[10]={0,0,0,0,0,0,0,0,0,0};
@@ -82,6 +83,7 @@ void outputMotion(void)
 			}
 
 		int tLLift, tRLift, tLLiftAdd, tRLiftAdd, tTarget;
+		bool tDisableLift=false;
 		tTarget = 0;
 		if (abs(outLift) > 127)
 			{updatePIDController(PIDLift, outLift*2 - (senLiftLPot.curr+senLiftRPot.curr));
@@ -90,6 +92,12 @@ void outputMotion(void)
 			capIntValue(REV, tLLift, FWD);
 			capIntValue(REV, tRLift, FWD);
 			tTarget = outLift;
+
+			if (senLiftLPot.curr<outLift+DISABLE_RANGE
+				&& senLiftLPot.curr>outLift-DISABLE_RANGE
+				&& senLiftRPot.curr<outLift+DISABLE_RANGE
+				&& senLiftRPot.curr>outLift-DISABLE_RANGE)
+				tDisableLift=true;
 			}
 		else
 			{
@@ -109,8 +117,16 @@ void outputMotion(void)
 			tLLiftAdd = 0;
 			tRLiftAdd = 0;
 			}
-		mtrTarget[LIFT_L] = tLLift + tLLiftAdd;
-		mtrTarget[LIFT_R] = tRLift + tRLiftAdd;
+		if (tDisableLift)
+			{
+			mtrTarget[LIFT_L]=0;
+			mtrTarget[LIFT_R]=0;
+			}
+		else
+			{
+			mtrTarget[LIFT_L] = tLLift + tLLiftAdd;
+			mtrTarget[LIFT_R] = tRLift + tRLiftAdd;
+			}
 		capIntValue(-LEFT_CAP, mtrTarget[LIFT_L], LEFT_CAP);
 		capIntValue(-RIHT_CAP, mtrTarget[LIFT_R], RIHT_CAP);
 

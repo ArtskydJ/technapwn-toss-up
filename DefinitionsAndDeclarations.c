@@ -17,9 +17,10 @@ toggles that are easily turned off and on.
 */
 #define L_GRND			0 //Make sure not to re-define LIFT_L or LIFT_R anywhere.
 #define L_DRIV			1
-#define L_8EEN			2
-#define L_STSH			3
-#define NO_LIFT_PRESETS	4
+#define L_STSH			2
+#define NO_LIFT_PRESETS	3
+
+#define LIFT_EIGHTEEN	500
 
 
 #define DISABLED	0
@@ -188,7 +189,7 @@ int slew(int INtargetValue, int INlastValue, int INslew);
  Constants, variables, etc.
 */
 //Constants
-const int L_PRE[NO_LIFT_PRESETS] = {230,255,500,1680};
+const int L_PRE[NO_LIFT_PRESETS] = {230,255,1680};
 const int UP = 127;
 const int DOWN = -127;
 const int FWD = 127;
@@ -203,7 +204,7 @@ const int FOLLOW = 100;
 const int BRAKE = 5;
 
 //System Variables
-float sysLiftP = 0.9; //change to const, move to output.c, make static
+float sysLiftP = 0.7; //change to const, move to output.c, make static
 bool sysAutoMode = false;
 bool sysDisabledMode = false;
 bool autoClockRunning = false;
@@ -215,7 +216,7 @@ T_ERROR sysError = ERR_NONE;
 T_LC_INT autoRoutine;
 T_LC_INT sysState;
 bool btnDisablePots;
-int liftPresetIndex = L_8EEN;
+int liftPresetIndex = L_DRIV;
 
 
 //Output Variables

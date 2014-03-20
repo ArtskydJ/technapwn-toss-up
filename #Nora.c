@@ -60,7 +60,7 @@ task main()
 		inputAutonomous();
 		inputEmulator();
 		inputTimers();
-		
+
 
 		processState();
 		processLCD();
@@ -86,6 +86,6 @@ task main()
 
 
 //These are here so that I can easily open them when #Nora.c is open
-#include "Docs/#Bug List.txt"
+/*#include "Docs/#Bug List.txt"
 #include "Docs/#To Do List.txt"
-#include "Docs/#How To Program Auto Routine.txt"
+#include "Docs/#How To Program Auto Routine.txt"*/

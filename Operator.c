@@ -14,6 +14,10 @@ static T_LC_BOOL btnLiftUp;
 static T_LC_BOOL btnLiftDown;
 static T_LC_BOOL btnIntkUp;
 static T_LC_BOOL btnIntkDown;
+static T_LC_BOOL btnLiftUp2;
+static T_LC_BOOL btnLiftDown2;
+static T_LC_BOOL btnIntkUp2;
+static T_LC_BOOL btnIntkDown2;
 static bool btnInvertDriveModifier;
 static bool btnInvertDriveFwd;
 static bool btnInvertDriveLft;
@@ -42,6 +46,10 @@ void inputOperator(void)
 	btnLiftDown.curr =			(bool)vexRT[Btn5D];
 	btnIntkUp.curr =			(bool)vexRT[Btn6U];
 	btnIntkDown.curr =			(bool)vexRT[Btn6D];
+	btnLiftUp2.curr =			(bool)vexRT[Btn5Uxmtr2];
+	btnLiftDown2.curr =			(bool)vexRT[Btn5Dxmtr2];
+	btnIntkUp2.curr =			(bool)vexRT[Btn6Uxmtr2];
+	btnIntkDown2.curr =			(bool)vexRT[Btn6Dxmtr2];
 
 	//Button Modifiers
 	btnDisablePots = 			(bool)vexRT[Btn7L];
@@ -150,6 +158,10 @@ void processOperator()
 				outLift = FWD;					//Lift Motors Reverse
 			else if (btnLiftDown.curr)		//If Lift Down Pressed
 				outLift = REV;					//Lift Motors Forward
+			else if (btnLiftUp2.curr)				//If Lift Up Pressed
+				outLift = FWD;					//Lift Motors Reverse
+			else if (btnLiftDown2.curr)		//If Lift Down Pressed
+				outLift = REV;					//Lift Motors Forward
 			}
 		else
 			{
@@ -160,6 +172,18 @@ void processOperator()
 				outLift = L_PRE[liftPresetIndex];
 				}
 			else if (pressed(btnLiftUp))	//If Lift Up Pressed
+				{
+				liftPresetIndex++;
+				capIntValue(0,liftPresetIndex,NO_LIFT_PRESETS-1);
+				outLift = L_PRE[liftPresetIndex];
+				}
+			else if (pressed(btnLiftDown2))		//If Lift Down Pressed
+				{
+				liftPresetIndex--;
+				capIntValue(0,liftPresetIndex,NO_LIFT_PRESETS-1);
+				outLift = L_PRE[liftPresetIndex];
+				}
+			else if (pressed(btnLiftUp2))	//If Lift Up Pressed
 				{
 				liftPresetIndex++;
 				capIntValue(0,liftPresetIndex,NO_LIFT_PRESETS-1);

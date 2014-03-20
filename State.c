@@ -26,9 +26,9 @@ void processState(void)
 
 		timerLCDScroll=0;
 		timerLCDBacklight=0;
-		
-		liftPresetIndex = L_8EEN;
-		
+
+		liftPresetIndex = L_DRIV;
+
 		zeroMotors();
 
 		//--Execute depending on which state changing from--//
@@ -49,7 +49,7 @@ void processState(void)
 				break;
 			case DISABLED:
 				writeDebugStreamLine("****Disabled****");
-				sysLCDBacklight=LCD_TIMEOUT;
+				sysLCDBacklight=LCD_ALWAYS_ON; //LCD_TIMEOUT;
 				break;
 			case OPERATOR:
 				writeDebugStreamLine("****Operator****");

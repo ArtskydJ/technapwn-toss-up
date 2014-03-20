@@ -3,27 +3,27 @@
 #define d90   920   //degrees, 90
 #define d180  1840  //degrees, 180
 
-void autoBlueMid2LargePre(void)
+void autoRedMid2LargePre(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-	auto(IN_SPEED,	25,		25,		0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	OUT,TIME_LIMIT,	1000,	0,	NEXT); //Forward, dump preload
-	auto(IN_SPEED,	25,		25,		0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	0,	TIME_LIMIT,	2500,	0,	NEXT); //Forward, strafe hit ball 1
+	auto(IN_SPEED,	0,		0,		0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	OUT,TIME_LIMIT,	2000,	0,	NEXT); //Forward, dump preload
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	0,	TIME_LIMIT,	1500,	0,	NEXT); //Forward, strafe hit ball 1
 	auto(IN_SPEED,	REV,	REV,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	500,	0,	NEXT); //reverse
 	auto(IN_SPEED,	FWD,	REV,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
-	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	1500,	0,	NEXT); //fwd
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	1000,	0,	NEXT); //fwd
 	auto(IN_SPEED,	REV,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
 	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	500,	0,	NEXT); //forward, hit ball 2
 	autoResetEnd();
 	}
 
-void autoRedMid2LargePre(void)
+void autoBlueMid2LargePre(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	OUT,TIME_LIMIT,	1000,	0,	NEXT); //Forward, dump preload
-	auto(IN_SPEED,	25,		25,		0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	0,	TIME_LIMIT,	2500,	0,	NEXT); //Forward, strafe hit ball 1
+	auto(IN_SPEED,	0,		0,		0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	OUT,TIME_LIMIT,	2000,	0,	NEXT); //Forward, dump preload
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_STSH],	0,	TIME_LIMIT,	1500,	0,	NEXT); //Forward, strafe hit ball 1
 	auto(IN_SPEED,	REV,	REV,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	500,	0,	NEXT); //reverse
 	auto(IN_SPEED,	REV,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
-	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	1500,	0,	NEXT); //fwd
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	1000,	0,	NEXT); //fwd
 	auto(IN_SPEED,	FWD,	REV,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
 	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		0,				0,	TIME_LIMIT,	500,	0,	NEXT); //forward, hit ball 2
 	autoResetEnd();
@@ -32,12 +32,26 @@ void autoRedMid2LargePre(void)
 void autoBlueHang2BuckyPre(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	IN,	TIME_LIMIT,	1000,	0,	NEXT); //Forward, intake
-	auto(IN_SPEED,	REV,	REV,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	300,	0,	NEXT); //reverse
-	auto(IN_SPEED,	FWD,	REV,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	d180,	0,	NEXT); //turn
-	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	1500,	0,	NEXT); //fwd
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	IN,	TIME_LIMIT,	700,	0,	NEXT); //Forward, intake
+	auto(IN_SPEED,	REV,	REV,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	2000,	0,	NEXT); //reverse
+	auto(IN_SPEED,	FWD,	REV,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	1000,	0,	NEXT); //Forward
+	auto(IN_SPEED,	FWD,	REV,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	4000,	0,	NEXT); //Forward
+	auto(IN_SPEED,	0,		0,		0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	OUT,TIME_LIMIT,	1500,	0,	NEXT); //dump
+	autoResetEnd();
+	}
+
+void autoRedHang2BuckyPre(void)
+	{
+	autoResetStart(0, AUTON, 0, 0, 0, 0);
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	IN,	TIME_LIMIT,	700,	0,	NEXT); //Forward, intake
+	auto(IN_SPEED,	REV,	REV,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	2000,	0,	NEXT); //reverse
 	auto(IN_SPEED,	REV,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
-	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	500,	0,	NEXT); //forward, hit ball 2
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	1000,	0,	NEXT); //Forward
+	auto(IN_SPEED,	REV,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	d90,	0,	NEXT); //turn
+	auto(IN_SPEED,	FWD,	FWD,	0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	0,	TIME_LIMIT,	4000,	0,	NEXT); //Forward
+	auto(IN_SPEED,	0,		0,		0,		IN_SPEED,	0,		0,		L_PRE[L_DRIV],	OUT,TIME_LIMIT,	1500,	0,	NEXT); //dump
 	autoResetEnd();
 	}
 

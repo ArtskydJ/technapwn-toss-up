@@ -343,7 +343,9 @@ void processAutonomous(void)
 			{
 			case 1: autoBlueMid2LargePre(); break;
 			case 2: autoRedMid2LargePre(); break;
-			case 3: autoBlueProgSkills(); break;
+			case 3: autoBlueHang2BuckyPre(); break;
+			case 4: autoRedHang2BuckyPre(); break;
+			case 5: autoBlueProgSkills(); break;
 			}
 #ifdef FULL_DEBUG_STREAM
 		if (autoRoutine.curr==0 && changed(sysState))

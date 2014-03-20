@@ -1,7 +1,7 @@
 //Constants
 #if (_TARGET=="Robot")
 static const int LIFT_L_OFFSET = 230; //if higher, side lowers
-static const int LIFT_R_OFFSET = 205; //if lower, side raises
+static const int LIFT_R_OFFSET = 180; //if lower, side raises
 
 //Functions
 void inputSensors(void)

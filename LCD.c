@@ -12,7 +12,8 @@ static const int M_BATT_LEVELS =		3;
 static const int M_MTR_TEST =			4;
 static const int M_ANALOG_LEVELS =		5;
 static const int M_DIGITAL_LEVELS =		6;
-static const int NO_MENU_ITEMS =		7;
+static const int M_EIGHTEEN =			7;
+static const int NO_MENU_ITEMS =		8;
 
 //Variables
 static T_LC_BOOL btnScreenLeft;//LCD Buttons
@@ -26,22 +27,21 @@ static int menuChecklistItem = 0;
 static T_LC_STRING topLCDLine = "";//LCD Screen
 static T_LC_STRING bottomLCDLine = "";
 
-static string batteryLevel[3];
 static string motorName[10];
 //static string autoString[NO_AUTO_NAME_STRS];
-static string autoNames[NO_AUTO_ROUTINES][3] = { //make const? (gives error with scroll func)
-	{"Blue Middle Zone | ", "Hit 2 large balls, ", "dump preload | 11 | "},
-	{"Red Middle Zone | ", "Hit 2 large balls, ", "dump preload | 11 |"},
-	{"Blue Programming ", "Skills |", " 21 | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "},
-	{"NONE | ", "NONE | ", "NONE | "}};
+static string autoNames[NO_AUTO_ROUTINES] = { //make const? (gives error with scroll func)
+	"B M | P 2L | 12",
+	"R M | P 2L | 12",
+	"B H | P 2B | 9",
+	"R H | P 2B | 9",
+	"B M | Prog",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE",
+	"NONE"};
 //static const char autonName[]="NONE | ";
 static string menuChecklist[NO_CHECKLIST_ITEMS*2] =
 	{
@@ -122,7 +122,6 @@ int potCentered(int INMaxVal)
 
 void inputLCD(void)
 	{
-	updateBatteryString();
 	btnScreenLeft.curr =	(bool)(nLCDButtons & 1);
 	btnScreenCenter.curr =	(bool)(nLCDButtons & 2);
 	btnScreenRight.curr =	(bool)(nLCDButtons & 4);
@@ -138,7 +137,7 @@ void stateChangeLCD(void)
 	}
 
 
-void updateScrollingText(string &INapply, string INstr1, string INstr2, string INstr3) //3 input strings
+/*void updateScrollingText(string &INapply, string INstr1, string INstr2, string INstr3) //3 input strings
 	{
 	string tStrs[3]={INstr1, INstr2, INstr3};
 	bool tScroll = timerLCDScroll >= NEXT_CHAR_MS;
@@ -167,8 +166,8 @@ void updateScrollingText(string &INapply, string INstr1, string INstr2, string I
 		timerLCDScroll = 0; //Reset Timer
 		}
 	}
-		
-/*void updateScrollingText2(char *INstr)
+
+void updateScrollingText2(char *INstr)
 	{
 	if (changedInt(autoRoutine)) //If we change autonomous routines
 		menuScrChar = 0;
@@ -225,14 +224,6 @@ void updateBacklight()
 	}
 
 
-void updateBatteryString(void)
-	{
-	StringFormat(batteryLevel[0], "Main:%1.2f | Powe", (float)nAvgBatteryLevel/1000);
-	StringFormat(batteryLevel[1], "r Expander:%1.2f ", (float)senPwrExpVoltage/70);		//70 45.6 280 or 182.4
-	StringFormat(batteryLevel[2], "| Backup:%1.2f | ", (float)BackupBatteryLevel/1000);
-	}
-
-
 void menuExecuteActivated()
 	{
 	menuItemActivated = false;
@@ -251,8 +242,12 @@ void menuExecuteActivated()
 		case M_MTR_TEST:
 			mtrTestEnabled[potPosition(10)] = (( mtrTestEnabled[potPosition(10)]+2 )%3)-1;
 			break; //Toggle Motors between -1, 0 and 1
-		case M_ANALOG_LEVELS: break; //View Analog Value
-		case M_DIGITAL_LEVELS: break; //View Digital Value
+		case M_EIGHTEEN:
+			if (outLift==LIFT_EIGHTEEN)
+				outLift = 0;
+			else
+				outLift=LIFT_EIGHTEEN;
+			break; //View Analog Value
 		default: break; //Execute nothing
 		}
 	}
@@ -277,7 +272,8 @@ void menuView()
 				case 2: StringFormat(tString0,"%s %.1f | %d<",menuItemName[menuItem.curr],((float)timerAuto/1000),autoRoutine.curr); break;
 				}
 			int temp = autoRoutine.curr-1;
-			updateScrollingText(tString1,autoNames[temp][0],autoNames[temp][1],autoNames[temp][2]);
+			strcpy(tString1,autoNames[temp]);
+			//updateScrollingText(tString1,autoNames[temp][0],autoNames[temp][1],autoNames[temp][2]);
 			break; //Scrolling Autonomous Name
 
 		case M_CHECKLIST:
@@ -288,7 +284,9 @@ void menuView()
 			tString1 = (sysMotorsEnabled)?"Enabled":"Disabled";
 			break;
 		case M_BATT_LEVELS:
-			updateScrollingText(tString1,batteryLevel[0],batteryLevel[1],batteryLevel[2]);
+			sprintf(tString1,"C%1.1f P%1.1f B%1.1f", (float)nAvgBatteryLevel/1000,
+					(float)senPwrExpVoltage/70,(float)BackupBatteryLevel/1000);
+			//updateScrollingText(tString1,batteryLevel[0],batteryLevel[1],"");
 			break; //Scrolling Battery Levels
 		case M_MTR_TEST:
 			sysMotorTest = true;
