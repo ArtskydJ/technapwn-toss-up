@@ -1,3 +1,4 @@
+//Functions
 void inputState()
 	{
 	//--Decide what state the robot is in--//
@@ -25,6 +26,10 @@ void processState(void)
 
 		timerLCDScroll=0;
 		timerLCDBacklight=0;
+		
+		liftPresetIndex = L_8EEN;
+		
+		zeroMotors();
 
 		//--Execute depending on which state changing from--//
 		switch (sysState.last)

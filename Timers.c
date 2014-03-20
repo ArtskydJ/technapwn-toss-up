@@ -1,18 +1,19 @@
-
-static int timerMaster;
-
+//Functions
 void inputTimers()
 	{
-	timerMaster = time1(T3);
+	int tTimerMaster = time1(T3);
 	ClearTimer(T3);
 	if (autoClockRunning && sysState.curr==AUTONOMOUS)
-		timerAuto +=		timerMaster;
-	timerLCDScroll +=		timerMaster;
-	timerLCDBacklight +=	timerMaster;
-	timerEmulateSpeed =		timerMaster; //Yes, it is supposed to be =, not +=
+		timerAuto +=		tTimerMaster;
+	timerLCDScroll +=		tTimerMaster;
+	timerLCDBacklight +=	tTimerMaster;
+	timerEmulateSpeed =		tTimerMaster; //Yes, it is supposed to be =, not +=
 
+	if (timerLCDScroll>62000)					timerLCDScroll = 62000; //Prevent wrapping
+	if (timerLCDBacklight>62000)				timerLCDBacklight = 62000; //Prevent wrapping
+	if (joystickIsMoved(true))					timerLCDBacklight = 0;
 #if (_TARGET=="Robot")
-	timerRobotIdle +=		timerMaster;
+	timerRobotIdle +=		tTimerMaster;
 	if (joystickIsMoved(true) || nLCDButtons>0)	timerRobotIdle = 0;
 	if (timerRobotIdle>62000)					timerRobotIdle = 62000; //Prevent wrapping
 #endif

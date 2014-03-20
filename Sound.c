@@ -1,7 +1,8 @@
-//Sound
+//Constants
 static int sndIndexLift = 0;
 static int sndIndexIntk = 0;
 
+//Functions
 void outputSound()
 	{
 	if (sysError!=ERR_NONE && sysError!=ERR_ROBOT_IDLE)

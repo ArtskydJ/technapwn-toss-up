@@ -2,5 +2,4 @@
 	#error "---------------------"
 	#error "Use Nora.c to compile"
 	#error "---------------------"
-	#error ""
 #endif

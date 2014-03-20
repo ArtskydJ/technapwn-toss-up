@@ -1,4 +1,4 @@
-#include "N_WrongCompile.c"
+#include "WrongCompile.c"
 /*
 void scriptEmpty() //Don't need???
 	{
