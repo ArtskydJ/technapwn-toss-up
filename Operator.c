@@ -2,47 +2,31 @@
 
 //Constants
 static const int JOYSTICK_DEAD_ZONE = 10;
-static const int LIFT_DISABLE_RANGE = 15;
+static const int LIFT_DISABLE_RANGE = 20;
 
 //Variables
-static bool disableLift = true;
 static bool btnDisablePots1; //Joystick 1
 static bool btnSubroutineModifier1;
 static int stkMtrTest1;
 static int stkDrvFwd1;
 static int stkDrvTrn1;
 static int stkDrvStf1;
-static T_LC_BOOL btnLiftU1;
-static T_LC_BOOL btnLiftD1;
-static T_LC_BOOL btnIntkI1;
-static T_LC_BOOL btnIntkO1;
-static T_LC_BOOL btnLftU1;
-static T_LC_BOOL btnLftL1;
-static T_LC_BOOL btnLftR1;
-static T_LC_BOOL btnLftD1;
-static T_LC_BOOL btnRhtU1;
-static T_LC_BOOL btnRhtL1;
-static T_LC_BOOL btnRhtR1;
-static T_LC_BOOL btnRhtD1;
+static T_LC_BOOL btnLiftU1,	btnLiftD1;
+static T_LC_BOOL btnIntkI1,	btnIntkO1;
+static T_LC_BOOL btnLftU1,	btnLftD1,	btnLftL1,	btnLftR1;
+static T_LC_BOOL btnRhtU1,	btnRhtD1,	btnRhtL1,	btnRhtR1;
+
 static bool btnDisablePots2; //Joystick 2
-static T_LC_BOOL btnLiftU2;
-static T_LC_BOOL btnLiftD2;
-static T_LC_BOOL btnIntkI2;
-static T_LC_BOOL btnIntkO2;
-static T_LC_BOOL btnRhtU2;
-static T_LC_BOOL btnRhtL2;
-static T_LC_BOOL btnRhtR2;
-static T_LC_BOOL btnRhtD2;
-static T_LC_BOOL btnLftU2;
-static T_LC_BOOL btnLftL2;
-static T_LC_BOOL btnLftR2;
-static T_LC_BOOL btnLftD2;
+static T_LC_BOOL btnLiftU2,	btnLiftD2;
+static T_LC_BOOL btnIntkI2,	btnIntkO2;
+static T_LC_BOOL btnLftU2,	btnLftL2,	btnLftR2,	btnLftD2;
+static T_LC_BOOL btnRhtU2,	btnRhtL2,	btnRhtR2,	btnRhtD2;
 
 //Functions
 void inputOperator(void)
 	{
 	//Set Lasts
-	setLastBool(&btnLiftU1); //Joystick 1
+	setLastBool(&btnLiftU1);
 	setLastBool(&btnLiftD1);
 	setLastBool(&btnIntkO1);
 	setLastBool(&btnIntkI1);
@@ -69,58 +53,55 @@ void inputOperator(void)
 
 #ifdef PHYSICAL_ROBOT_TARGET
 	//Sticks
-	stkDrvFwd1 =		joystickFilter(vexRT[Ch3]);
+	stkDrvFwd1 =		joystickFilter(vexRT[Ch3]); //Joystick 1
 	stkDrvStf1 =		joystickFilter(vexRT[Ch4]);
 	stkDrvTrn1 =		joystickFilter(vexRT[Ch1]);
 	stkMtrTest1 =					  (vexRT[Ch2]);
 
-	//Normal Buttons
-	btnLiftU1.curr =			(bool)vexRT[Btn5U];
-	btnLiftD1.curr =			(bool)vexRT[Btn5D];
-	btnIntkI1.curr =			(bool)vexRT[Btn6U];
-	btnIntkO1.curr =			(bool)vexRT[Btn6D];
-	btnLiftU2.curr =			(bool)vexRT[Btn5UXmtr2];
-	btnLiftD2.curr =			(bool)vexRT[Btn5DXmtr2];
-	btnIntkI2.curr =			(bool)vexRT[Btn6UXmtr2];
-	btnIntkO2.curr =			(bool)vexRT[Btn6DXmtr2];
+	//Shoulder Buttons
+	btnLiftU1.curr =	(bool)vexRT[Btn5U]; //Joystick 1
+	btnLiftD1.curr =	(bool)vexRT[Btn5D];
+	btnIntkI1.curr =	(bool)vexRT[Btn6U];
+	btnIntkO1.curr =	(bool)vexRT[Btn6D];
+	btnLiftU2.curr =	(bool)vexRT[Btn5UXmtr2]; //Joystick 2
+	btnLiftD2.curr =	(bool)vexRT[Btn5DXmtr2];
+	btnIntkI2.curr =	(bool)vexRT[Btn6UXmtr2];
+	btnIntkO2.curr =	(bool)vexRT[Btn6DXmtr2];
 
 	//Button Modifiers
-	btnDisablePots1 = 			(bool)vexRT[Btn7L];
-	btnDisablePots2 = 			(bool)vexRT[Btn7LXmtr2];
-	//btnSubroutineModifier1 =	(bool)vexRT[Btn7L];
+	btnDisablePots1 = 			(bool)vexRT[Btn7L]; //Joystick 1
+	btnDisablePots2 = 			(bool)vexRT[Btn7LXmtr2]; //Joystick 2
+	//btnSubroutineModifier1 =	(bool)vexRT[Btn7L]; //Joystick 1
 	//btnInvertDriveModifier1 =	(bool)vexRT[Btn7R];
 
-	//Function Buttons
-	btnLftU1.curr =				(bool)vexRT[Btn8U];
-	btnLftD1.curr =				(bool)vexRT[Btn8D];
-	btnLftL1.curr =				(bool)vexRT[Btn8L];
-	btnLftR1.curr =				(bool)vexRT[Btn8R];
-	btnLftU2.curr =				(bool)vexRT[Btn8UXmtr2];
-	btnLftD2.curr =				(bool)vexRT[Btn8DXmtr2];
-	btnLftL2.curr =				(bool)vexRT[Btn8LXmtr2];
-	btnLftR2.curr =				(bool)vexRT[Btn8RXmtr2];
-	btnRhtU1.curr =				(bool)vexRT[Btn8U];
-	btnRhtD1.curr =				(bool)vexRT[Btn8D];
-	btnRhtL1.curr =				(bool)vexRT[Btn8L];
-	btnRhtR1.curr =				(bool)vexRT[Btn8R];
-	btnRhtU2.curr =				(bool)vexRT[Btn8UXmtr2];
-	btnRhtD2.curr =				(bool)vexRT[Btn8DXmtr2];
-	btnRhtL2.curr =				(bool)vexRT[Btn8LXmtr2];
-	btnRhtR2.curr =				(bool)vexRT[Btn8RXmtr2];
+	//Action Buttons
+	btnLftU1.curr =		(bool)vexRT[Btn7U]; //Joystick 1
+	btnLftD1.curr =		(bool)vexRT[Btn7D];
+	btnLftL1.curr =		(bool)vexRT[Btn7L];
+	btnLftR1.curr =		(bool)vexRT[Btn7R];
+	btnRhtU1.curr =		(bool)vexRT[Btn8U];
+	btnRhtD1.curr =		(bool)vexRT[Btn8D];
+	btnRhtL1.curr =		(bool)vexRT[Btn8L];
+	btnRhtR1.curr =		(bool)vexRT[Btn8R];
+	btnLftU2.curr =		(bool)vexRT[Btn7UXmtr2]; //Joystick 2
+	btnLftD2.curr =		(bool)vexRT[Btn7DXmtr2];
+	btnLftL2.curr =		(bool)vexRT[Btn7LXmtr2];
+	btnLftR2.curr =		(bool)vexRT[Btn7RXmtr2];
+	btnRhtU2.curr =		(bool)vexRT[Btn8UXmtr2];
+	btnRhtD2.curr =		(bool)vexRT[Btn8DXmtr2];
+	btnRhtL2.curr =		(bool)vexRT[Btn8LXmtr2];
+	btnRhtR2.curr =		(bool)vexRT[Btn8RXmtr2];
 #endif
 	}
 
 
-/* This function checks if the joysticks are
-moved from their deadzones.
-*/
+//This function returns true if the joysticks are moved from their deadzones.
 bool joystickIsMoved(bool checkStkTrn)
 	{ return (stkDrvStf1 + stkDrvFwd1 + (stkDrvTrn1 * checkStkTrn)) != 0; }
 
 
-/* This function takes the raw joystick value and
-returns a scaled value.
-*/
+//This function takes the raw joystick value and returns a scaled down
+//exponetial value. This gives the driver more precise control, when needed.
 int joystickFilter(int INraw)
 	{
 	if (abs(INraw) < JOYSTICK_DEAD_ZONE)	//Dead Zone
@@ -129,7 +110,8 @@ int joystickFilter(int INraw)
 	return (INraw);
 	}
 
-
+//This function reads the previously set game pad variables and sets the output
+//variables accordingly.
 void processOperator()
 	{
 	if (sysMotorTest)
@@ -138,7 +120,7 @@ void processOperator()
 		{
 		//--Settings--//
 		if (btnSubroutineModifier1)
-			{						//Negative values are for driver autos
+			{						//Negative values are for scripts
 			if		(btnRhtU1.curr) autoRoutine.curr = -1;
 			else if	(btnRhtR1.curr) autoRoutine.curr = -2;
 			else if	(btnRhtD1.curr) autoRoutine.curr = -3;
@@ -153,16 +135,16 @@ void processOperator()
 		//--Lift--//
 		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT])
 			{
-			disableLift = false;
-			if		(btnLiftU1.curr)	outLift = UP;		//If lift up is pressed, run lift motors up
-			else if (btnLiftD1.curr)	outLift = DOWN;		//If lift down is pressed, run lift motors down
+			sysDisableLift = false;
+			if		(btnLiftU1.curr)	outLift =  UP;		//If lift up is pressed, run lift motors up
+			else if (btnLiftD1.curr)	outLift =  DOWN;	//If lift down is pressed, run lift motors down
 			else if (btnLftU1.curr)		outLift =  HALF;	//If lift up is pressed, run lift motors up
 			else if (btnLftD1.curr)		outLift = -HALF;	//If lift down is pressed, run lift motors down
-			else if (btnLiftU2.curr)	outLift = UP;		//If lift up is pressed, run lift motors up
-			else if (btnLiftD2.curr)	outLift = DOWN;		//If lift down is pressed, run lift motors down
+			else if (btnLiftU2.curr)	outLift =  UP;		//If lift up is pressed, run lift motors up
+			else if (btnLiftD2.curr)	outLift =  DOWN;	//If lift down is pressed, run lift motors down
 			else if (btnLftU2.curr)		outLift =  HALF;	//If lift up is pressed, run lift motors up
 			else if (btnLftD2.curr)		outLift = -HALF;	//If lift down is pressed, run lift motors down
-			else						disableLift = true;	//If no lift buttons are pressed, shut off lift motors
+			else						sysDisableLift = true;	//If no lift buttons are pressed, shut off lift motors
 			}
 		else
 			{
@@ -175,17 +157,17 @@ void processOperator()
 			else if (pressed(btnLftD1))		liftPresetIndex = BMP; //If Lift Up   2 pressed, next preset
 			else if (pressed(btnLftU2))		liftPresetIndex = BAR; //If Lift Down 2 pressed, previous preset
 			else if (pressed(btnLftD2))		liftPresetIndex = BMP; //If Lift Up   2 pressed, next preset
-			else							tBtnPressed=false; //If no buttons are pressed, set variable
-			if (tBtnPressed)
-				disableLift = false;
+			else							tBtnPressed = false;   //If no buttons are pressed, set variable
+			if (tBtnPressed)				sysDisableLift = false;
 
-			liftPresetIndex = capIntValue(0, liftPresetIndex, NO_OPERATOR_LIFT_PRESETS-1);
+			liftPresetIndex = capIntValue(0, liftPresetIndex, NO_LIFT_PRESETS-1);
 			outLift = lPre(liftPresetIndex);
 
-			if (abs(outLift) < LIFT_DISABLE_RANGE) //if close enough to target, stop motors
-				outLift = 0;
+			if (liftPresetIndex == (short)GND)
+				if (abs(outLift) < LIFT_DISABLE_RANGE) //if close enough to target, stop motors
+					outLift = 0;
 			}
-		if (disableLift)
+		if (sysDisableLift)
 			outLift = 0;
 
 		//--Intake--//
@@ -193,7 +175,7 @@ void processOperator()
 		else if (btnIntkI1.curr)	outIntk = IN;  //If intake in  1 pressed, intake motors intake in
 		else if (btnIntkO2.curr)	outIntk = OUT; //If intake out 2 pressed, intake motors dump out
 		else if (btnIntkI2.curr)	outIntk = IN;  //If intake in  2 pressed, intake motors intake in
-		else						outIntk = 0;   //If no intake buttons pressed and jaw is down, intake motors off
+		else						outIntk = 0;   //If no intake buttons pressed, intake motors off
 
 		//--Pneumatics--//
 		outCatapult = btnRhtR1.curr || btnRhtR2.curr;

@@ -2,7 +2,6 @@
 
 //Variables
 static T_SENSOR_STATUS autoHitTarget;
-//static int autoNextCondition;
 static bool autoFoundLeft;
 static bool autoFoundRight;
 static bool autoDriveReady;
@@ -12,6 +11,7 @@ static int autoStep;
 static int autoStepCheck;
 
 //Functions
+//This function is run when switching from operator/disabled to autonomous.
 void stateSwitchToAutonomous()
 	{
 	autoStep = 0;
@@ -19,6 +19,8 @@ void stateSwitchToAutonomous()
 	}
 
 
+//This function records and resets autonomous variables, and sensor variables
+//for in between each autonomous step.
 void autoNextStep(void)
 	{
 	static unsigned int autoTimeRecord[NO_TIME_RECORDS];
@@ -29,16 +31,9 @@ void autoNextStep(void)
 	if (autoStep < NO_TIME_RECORDS)
 		autoTimeRecord[autoStep] = time1(T1);
 	if (autoStep)
-		{
-		if (time1(T1)<100)
-			sprintf(msg1,"|%d\t\t",time1(T1));
-		else
-			sprintf(msg1,"|%d\t",time1(T1));
-		}
-	else
-		{
-		sprintf(msg1,"|Reset\t",autoStep);
-		}
+		if (time1(T1)<100)	sprintf(msg1,"|%d\t\t",time1(T1));
+		else				sprintf(msg1,"|%d\t",time1(T1));
+	else					sprintf(msg1,"|Reset\t");
 	writeDebugStreamLine("%s\t|%d\t|",msg1,autoStep);
 
 	//--Autonomous Variables--//
@@ -69,6 +64,7 @@ void autoNextStep(void)
 	}
 
 
+//This function resets autonomous variables for the beginning of autonomous.
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake)
 	{
@@ -105,6 +101,7 @@ void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 	}
 
 
+//This function resets autonomous variables for the end of autonomous.
 void autoResetEnd(void)
 	{
 	if (autoStepCheck==autoStep)
@@ -128,6 +125,7 @@ void autoResetEnd(void)
 	}
 
 
+//This function is used in autonomous routines 
 void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcata, T_END INendType, int INextra)
 	{
 	if (autoStepCheck==autoStep)
@@ -148,11 +146,11 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcat
 			outDrvL += (diffStepInt(senGyro)) * GYRO_P;
 			outDrvR -= (diffStepInt(senGyro)) * GYRO_P;
 			}
-		if (abs(outDrvL)<P_DEAD_ZONE &&
-			abs(outDrvR)<P_DEAD_ZONE &&
-			abs(outDrvS)<P_DEAD_ZONE)	autoDriveReady= true;
-		if (abs(INlift) < P_DEAD_ZONE)	autoLiftReady = true;
-		if (abs(INintk) < P_DEAD_ZONE)	autoIntkReady = true;
+		if (abs(outDrvL) < P_DEAD_ZONE &&
+			abs(outDrvR) < P_DEAD_ZONE &&
+			abs(outDrvS) < P_DEAD_ZONE)	autoDriveReady= true;
+		if (abs(INlift)  < P_DEAD_ZONE)	autoLiftReady = true;
+		if (abs(INintk)  < P_DEAD_ZONE)	autoIntkReady = true;
 
 
 		if (senLeftEdge > LINE_EDGE)  autoFoundLeft = true;  //Found Left Edge
@@ -168,9 +166,9 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcat
 			{
 			bool tHitTarget = false;
 			ClearTimer(T2); //Timer for PID wait
-			switch(INendType) // This code asks "What type of target condition are we looking for? Have we met it?"
-				{
-				case TIME_LIMIT: if (time1(T1)>=INextra) autoHitTarget = NEXT; break;
+			switch(INendType) // This code asks "What type of target condition...
+				{             // ...are we looking for? Have we met it?"
+				case TIME_LIMIT: if (time1(T1)>=INextra) tHitTarget = true; break;
 				case DRIV_READY: tHitTarget = autoDriveReady; break;
 				case LIFT_READY: tHitTarget = autoLiftReady; break;
 				case FULL_READY: tHitTarget = (autoDriveReady && autoLiftReady); break;
@@ -178,7 +176,8 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcat
 				case TWO_EDG_LN: tHitTarget = (autoFoundLeft && autoFoundRight); break;
 				case SCREEN_BTN: tHitTarget = (changedBool(btnScreenCenter)); break;
 				}
-			if (tHitTarget) autoHitTarget = (INextra == (short)NEXT) ? NEXT : PID;
+			if (tHitTarget)
+				autoHitTarget = (INextra == (short)PID) ? PID : NEXT;
 			}
 		if (autoHitTarget==PID && time1(T2)>=PID_WAIT_MS) autoHitTarget=NEXT;
 		if (INendType!=TIME_LIMIT && time1(T1)>=TIMEOUT_MS) autoHitTarget=NEXT;
@@ -188,19 +187,18 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcat
 	}
 
 
+//This runs the current script, if active
 void processScripts(void)
 	{
-	if (sysError==ERR_NONE)
+	autoStepCheck = 0;
+	switch (autoRoutine.curr) //Scripts
 		{
-		autoStepCheck = 0;
-		switch (autoRoutine.curr) //Scripts
-			{
-			case -1: scriptDescore();	break;
-			}
+		case -1: scriptDescore();	break;
 		}
 	}
 
 
+//This runs the current autonomous routine.
 void processAutonomous(void)
 	{
 	if (sysError==ERR_NONE)
@@ -233,8 +231,6 @@ void processAutonomous(void)
 	}
 
 
-/* This function takes a number of inches and
-converts it.
-*/
+//This function takes a number of inches and converts it to encoder ticks.
 int InchesToTicks(int n)
 	{ return ((float)n*360/(3.14*4)); }

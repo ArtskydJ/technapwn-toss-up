@@ -6,42 +6,28 @@
 //Variables
 static int mtrTarget[10] = {0,0,0,0,0,0,0,0,0,0};
 static int mtrSlewed[10] = {0,0,0,0,0,0,0,0,0,0};
-static int slewConstants[3][10];
+static int slewConstants[10];
 
 //Functions
+//This function sets all slew constants in an array. This ugly code simplifies
+//later code immensely.
 void initializeOutput()
 	{
-	for (int j=0; j<10; j++)
-		slewConstants[DISABLED][j] = 127;					//DISABLED
-
-	slewConstants[OPERATOR][DRIVE_FL]  = OPER_DRV_SLEW;		//OPERATOR
-	slewConstants[OPERATOR][DRIVE_BL1] = OPER_DRV_SLEW;
-	slewConstants[OPERATOR][DRIVE_BL2] = OPER_DRV_SLEW;
-	slewConstants[OPERATOR][DRIVE_FR]  = OPER_DRV_SLEW;
-	slewConstants[OPERATOR][DRIVE_BR1] = OPER_DRV_SLEW;
-	slewConstants[OPERATOR][DRIVE_BR2] = OPER_DRV_SLEW;
-	slewConstants[OPERATOR][LIFT_L]    = OPER_LIFT_SLEW;
-	slewConstants[OPERATOR][LIFT_L2]   = OPER_LIFT_SLEW;
-	slewConstants[OPERATOR][LIFT_R]    = OPER_LIFT_SLEW;
-	slewConstants[OPERATOR][INTK_L]    = OPER_INTK_SLEW;
-//	slewConstants[OPERATOR][INTK_R]    = OPER_INTK_SLEW;
-
-	slewConstants[AUTONOMOUS][DRIVE_FL]  = AUTO_DRV_SLEW;		//AUTONOMOUS
-	slewConstants[AUTONOMOUS][DRIVE_BL1] = AUTO_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_BL2] = AUTO_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_FR]  = AUTO_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_BR1] = AUTO_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_BR2] = AUTO_DRV_SLEW;
-	slewConstants[AUTONOMOUS][LIFT_L]    = AUTO_LIFT_SLEW;
-	slewConstants[AUTONOMOUS][LIFT_R]    = AUTO_LIFT_SLEW;
-	slewConstants[AUTONOMOUS][INTK_L]    = AUTO_INTK_SLEW;
-//	slewConstants[AUTONOMOUS][INTK_R]    = AUTO_INTK_SLEW;
+	slewConstants[DRIVE_FL]  = DRV_SLEW;
+	slewConstants[DRIVE_BL1] = DRV_SLEW;
+	slewConstants[DRIVE_BL2] = DRV_SLEW;
+	slewConstants[DRIVE_FR]  = DRV_SLEW;
+	slewConstants[DRIVE_BR1] = DRV_SLEW;
+	slewConstants[DRIVE_BR2] = DRV_SLEW;
+	slewConstants[LIFT_L]    = LIFT_SLEW;
+	slewConstants[LIFT_L2]   = LIFT_SLEW;
+	slewConstants[LIFT_R]    = LIFT_SLEW;
+	slewConstants[INTK_L]    = INTK_SLEW;
 
 	zeroMotors();
 	}
 
-/* This function sets all motor targets to 0.
-*/
+//This function sets all motor targets to 0, but not the motors themselves.
 void zeroMotors(void)
 	{
 	outDrvL = 0;
@@ -54,9 +40,7 @@ void zeroMotors(void)
 	}
 
 
-/* This function uses the output variables to
-set motors to their respective speeds.
-*/
+//This function applies the output variables to their respective motors.
 void outputMotion(void)
 	{
 	if (sysState.curr == DISABLED)     //Disabled
@@ -83,16 +67,14 @@ void outputMotion(void)
 
 		mtrTarget[INTK_L] = outIntk;
 
-		if (sysOutputsEnabled) //Pneumatics
-			{
-			SensorValue[CATAPULT] = outCatapult;
-			}
+		//Pneumatics
+		SensorValue[CATAPULT] = outCatapult;
 		}
 
-	for (int j=0; j<10; j++)
+	for (int j=0; j<10; j++) //Assign motors (with slew control)
 		{
-		mtrSlewed[j] += slew(mtrTarget[j], mtrSlewed[j], slewConstants[sysState.curr][j]); //SLEW CONTROLLERS
-		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD); //CAP ALL MOTORS
-		motor[j] = mtrSlewed[j]*sysOutputsEnabled; //ASSIGN MOTORS
+		mtrSlewed[j] = slew(mtrTarget[j], mtrSlewed[j], slewConstants[j]);
+		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD);
+		motor[j] = mtrSlewed[j];
 		}
 	}

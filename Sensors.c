@@ -1,6 +1,9 @@
 //Sensors.c
 
 //Functions
+//This function is run at the beginning of the program only. It is for resetting
+//the robot the it's starting state. All sensors and timers are reset, and a
+//hint is printed into the debug stream.
 void initializeSensors()
 	{
 	//--Sensors--//
@@ -23,7 +26,7 @@ void initializeSensors()
 #else
 	writeDebugStreamLine("----Emulator----");
 #endif
-	sysState.curr = DISABLED; //Usually changes to operator later
+	sysState.curr = DISABLED; //Other variables should change this to operator (see State.c)
 	autoRoutine.curr = 0;
 	}
 

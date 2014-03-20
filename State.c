@@ -1,6 +1,10 @@
 //State.c
 
 //Functions
+//This function decides if the robot is in disabled, autonomous, or operator
+//depending on what the competition switch is on (if plugged in) or what the
+//robot thinks it is in. This allows us to test autonomous without a competition
+//switch by changing variables. These variables can be modified on the LCD.
 void inputProcessState()
 	{
 	setLastInt(&sysState);
@@ -32,7 +36,7 @@ void inputProcessState()
 		//--Execute depending on which state changing from--//
 		switch (sysState.last)
 			{
-			case AUTONOMOUS:	break;
+			case AUTONOMOUS:	sysDisableLift = true;	break;
 			case DISABLED:		break;
 			case OPERATOR:		break;
 			}

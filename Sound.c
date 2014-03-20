@@ -6,6 +6,8 @@
 static int sndIndexIntk = 0;
 
 //Functions
+//This function plays sound effects (if enabled) and plays beeps if the robot
+//has an error (for example, low battery).
 void outputSound()
 	{
 	if (sysError!=ERR_NONE && sysError!=ERR_ROBOT_IDLE) //If there is an error (not including idling)

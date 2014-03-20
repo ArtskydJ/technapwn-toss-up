@@ -41,6 +41,7 @@ static string motorName[10];
 static string menuItemName[M_NO_ITEMS];
 
 //Functions
+//This function sets string variables for use in the menu.
 void initializeLCD(void)
 	{
 	motorName[DRIVE_FL]  = "L Drv Front";
@@ -61,26 +62,18 @@ void initializeLCD(void)
 	menuItemName[M_ANALOG] =     "Analog Values";
 	menuItemName[M_DIGITAL] =    "Digital Values";
 	menuItemName[M_MOTOR] =      "Motor Values";
-	menuItemName[M_VOLUME] =     "Sound Volume";
 	}
 
 
-/* This function checks how far the potentiometer is turned and compares it to
-the max number allowed. Then it returns the corresponding value. For example, if
-you want 10 numbers, then you input 10 and it will return a number from 0 - 9,
-depending on how far the potentiometer is turned.
-*/
+//This function checks how far the dial is turned compared to how many options
+//number allowed. E.g. potPosition(100) returns a number between 0 and 99,
+//proportional to how far the dial is turned.
 int potPosition(int INMaxVal)
 	{ return capIntValue(0, (float)INMaxVal*senSelectorPot/4096, INMaxVal-1); }
 
 
-/* This function is similar to potPosition, but it returns 0, 1 or 2, relative
-to the distance from a "border". 0, 2 are left and right borders, 1 is centered.
-*/
-int potCentered(int INMaxVal)
-	{ return ((float)3*INMaxVal*senSelectorPot/4096)%3; }
-
-
+//This function updates the backlight. It allows the backlight to stay off/on,
+//blink slow/fast, or to light up whenever a button is pressed.
 void updateBacklight()
 	{
 	switch (sysLCDBacklight)
@@ -114,6 +107,9 @@ void updateBacklight()
 	}
 
 
+//This function runs when the center LCD button is pressed. If menuItemActivated
+//was set to true in a switch case, then this function would repeat until the
+//center LCD button was pressed again.
 void menuExecuteActivated()
 	{
 	menuItemActivated = false;
@@ -121,12 +117,12 @@ void menuExecuteActivated()
 		{
 		case M_AUTON:
 			sysAutoMode = true;
-			break; //sysDisabledMode = false; (2013-05-13)
+			break;
 		case M_CHECKLIST:
 			menuChecklistItem = (menuChecklistItem+1)%NO_CHECKLIST_ITEMS;
 			break;
 		case M_ENABLE_OUT:
-			sysOutputsEnabled = !sysOutputsEnabled;
+			sysDisabledMode = !sysDisabledMode;
 			break; //Enable / Disable motors
 		case M_BATTERY:
 			menuBatteryItem = (menuBatteryItem+1)%2; //2 should be 3 with pow ex
@@ -137,21 +133,19 @@ void menuExecuteActivated()
 		case M_ANALOG: break; //View Analog Values
 		case M_DIGITAL: break; //View Digital Values
 		case M_MOTOR: break; //View Motor Values
-		case M_VOLUME:
-			nVolume = potPosition(101);
-			break;
 		default: break; //Execute nothing
 		}
 	}
 
 
+//This function analyzes variables and prepares text to print to the LCD. It
+//checks which menu item it is on, and creates a string, which will be printed.
 void menuView()
 	{
 	string tString0="";				//Top Line
 	string tString1="",tString2="";	//Bottom Line
 
-	sysMotorTest=false;
-
+	sysMotorTest=false; //This gets set to true in case M_MTR_TEST
 	strcpy(tString0,menuItemName[menuItemIndex]);
 	switch (menuItemIndex) //BOTTOM LINE
 		{
@@ -165,7 +159,7 @@ void menuView()
 			tString1 = menuChecklist[menuChecklistItem];
 			break;
 		case M_ENABLE_OUT:
-			tString1 = (sysOutputsEnabled)?"Enabled":"Disabled";
+			tString1 = (sysDisabledMode)?"Disabled":"Enabled";
 			break;
 		case M_BATTERY:
 			switch (menuBatteryItem)
@@ -193,9 +187,6 @@ void menuView()
 		case M_MOTOR:
 			StringFormat(tString1, "motor %1d:%1d", potPosition(10)+1,  motor[potPosition(10)]); //View Motor Value
 			break;
-		case M_VOLUME:
-			StringFormat(tString1, "Is:%d Set:%1d", nVolume, potPosition(101)); //Set Volume Level
-			break;
 		}
 
 	strcpy(topLCDLine.curr,tString0);
@@ -204,6 +195,8 @@ void menuView()
 	}
 
 
+//This function checks for errors, and prints them to the screen if any exist.
+//Otherwise, it checks for button presses, shows the menu or autonomous stats.
 void processLCD()
 	{
 	static bool errorDismissed=false;
@@ -236,9 +229,11 @@ void processLCD()
 
 			if (pressed(btnScreenLeft))		menuItemIndex--;
 			if (pressed(btnScreenRight))	menuItemIndex++;
-			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, M_NO_ITEMS-1);
-			//menuItemIndex = (menuItemIndex + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //ITEM = (ITEM + NUM) % NUM
-
+#ifdef MENU_WRAP
+			menuItemIndex = (menuItemIndex + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //ITEM = (ITEM + NUM) % NUM   |   (Wrap)
+#else
+			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, M_NO_ITEMS-1); //(Don't wrap)
+#endif
 			if (pressed(btnScreenCenter))	menuItemActivated = !menuItemActivated;
 			if (menuItemActivated)			menuExecuteActivated();
 
@@ -257,6 +252,10 @@ void processLCD()
 	}
 
 
+//This function updates the backlight, applies screen strings if they have
+//changed, and applies menu hints. Up to now, variables topLCDLine and
+//bottomLCDLine have been set to the desired strings. This keeps the LCD from
+//being cleared and set excessively (which causes ugly blinking).
 void outputLCD()
 	{
 	updateBacklight();
@@ -270,11 +269,13 @@ void outputLCD()
 		clearLCDLine(1);
 		displayLCDCenteredString(1,bottomLCDLine.curr);
 		}
+#ifndef MENU_WRAP //No wrap
 	if (sysState.curr != AUTONOMOUS && sysError==ERR_NONE)
 		{
 		if (menuItemIndex>0)                 displayLCDString(0,0, "<"); //If not at the first item, show prev arrow
 		if (menuItemIndex<(int)M_NO_ITEMS-1) displayLCDString(0,15,">"); //If not at the last item, show next arrow
 		}
+#endif
 
 	setLastString(&topLCDLine);
 	setLastString(&bottomLCDLine);

@@ -3,13 +3,14 @@
 #define AUTON_BEEP
 #define SOUND_EFFECTS
 //#define   FULL_DEBUG_STREAM
+//#define MENU_WRAP
 //#define PHYSICAL_ROBOT_TARGET //Uncomment to fake a physical robot to the emulator
 #if (_TARGET=="Robot")
 	#ifndef PHYSICAL_ROBOT_TARGET
 		#define PHYSICAL_ROBOT_TARGET
 	#endif
 #endif
-#define START_WITH_OUTPUTS_ENABLED  true
+#define START_WITH_OUTPUTS_DISABLED  false
 
 //Line Following
 #define LINE_EDGE     2500   //For edge sensors
@@ -24,12 +25,12 @@
 #define AUTONOMOUS   2
 
 //Proportional Constants
-#define LIFT_P        (float)0.5
+#define LIFT_P        (float)0.45
 #define LINE_P        (float)0.1
 #define WALL_P        (float)0.1
 #define ENCODER_P     (float)1.0
 #define SONAR_P       (float)0.6
-#define GYRO_P        (float)0.28
+#define GYRO_P        (float)0.45 //34
 
 //Autonomous - Functions
 #define straight(n)   (n),  (n)
@@ -60,20 +61,17 @@
 #define BRAKE   5  //Drive brake power
 
 //Output - Slew
-#define AUTO_DRV_SLEW     2
-#define OPER_DRV_SLEW     2
-#define AUTO_LIFT_SLEW    8
-#define OPER_LIFT_SLEW    8
-#define AUTO_INTK_SLEW    20
-#define OPER_INTK_SLEW    20
+#define DRV_SLEW     5
+#define LIFT_SLEW    12
+#define INTK_SLEW    20
 
 //Autonomous
 #define NO_TIME_RECORDS   100
-#define PID_WAIT_MS       350
+#define PID_WAIT_MS       400
 #define TIMEOUT_MS        4000
 #define P_DEAD_ZONE       20
 #define NO_AUTO_ROUTINES  12
-#define MIN_LOOP_MS       5
+#define MIN_LOOP_MS       10
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -148,7 +146,6 @@ typedef enum {
 	M_ANALOG,
 	M_DIGITAL,
 	M_MOTOR,
-	M_VOLUME,
 	M_NO_ITEMS
 	} T_MENU_ITEMS;
 
@@ -168,7 +165,7 @@ typedef enum {
 typedef enum {
 	GND = 0,	//Ground
 	STS = 1,	//Stash
-	BMP = 2,	//Bump
+	BMP = 2,	//Bump (Untested)
 	BAR = 3,	//Barrier
 	NO_LIFT_PRESETS = 4,
 	NO_OPERATOR_LIFT_PRESETS = 2,
@@ -176,15 +173,15 @@ typedef enum {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//Constants
-const int sysLiftPresets[NO_LIFT_PRESETS] = {1610,3055,1750,2395};
+//Constants									GND   STS  BMP  BAR
+const int sysLiftPresets[NO_LIFT_PRESETS] = {1645,3120,1820,2405};
 
 //System Variables
+bool sysDisableLift = true;
 bool sysAutoMode = false;
-bool sysDisabledMode = false;
+bool sysDisabledMode = START_WITH_OUTPUTS_DISABLED;
 bool autoClockRunning = false;
 bool sysMotorTest = false;
-bool sysOutputsEnabled = START_WITH_OUTPUTS_ENABLED;
 int  sysLCDBacklight=LCD_ALWAYS_ON;
 T_ERROR sysError = ERR_NONE;
 T_LC_INT autoRoutine;
@@ -244,7 +241,7 @@ void setLastInt(T_LC_INT *INLC);
 void setStepInt(T_LC_INT *INLC);
 static int potReverse(int INpot);
 int joystickFilter(int INraw);
-int slew(int INtargetValue, int INlastValue, int INslew);
+int slew(int INtargetVal, int INlastVal, int INslew);
 int potPosition(int INMaxVal);
 int emulateLiftPot(int INtimer, int INspeed, int INgearing);
 int emulateWheelQSE(int INtimer, int INspeed);

@@ -1,12 +1,9 @@
 //OtherFunctions.c
 
 //Functions
-/* This function keeps the loop time of the code constant. The value MIN_LOOP_MS
-is the minimum time the loop will take to iterate with it being constant. If the
-iteration takes longer than the minimum, then no delay is executed. If the
-iteration is faster, than a delay is applied. To check how long an iteration
-normally takes, define MIN_LOOP_MS as 0. Then watch sysLooptime in the debugger.
-*/
+//This function keeps the main loop time of the code constant. It does this by
+//waiting after each loop iteration until x milliseconds have passed since it
+//started the loop iteration. (E.g. Start loop, do stuff, wait, repeat.)
 void constantLoopTime()
 	{
 	while (time1[T4] < MIN_LOOP_MS)
@@ -15,9 +12,8 @@ void constantLoopTime()
 	}
 
 
-/* This function takes min, target, and max values. If the target is not between
-min and max, then it is forced to be between them.
-*/
+//This function forces the target between min and max. For example:
+//capIntValue(3,1,7) == 3 | capIntValue(3,19,7) == 7 | capIntValue(3,5,7) == 5
 int capIntValue(int min, int value, int max)
 	{
 	if (value < min) value = min;
@@ -26,56 +22,36 @@ int capIntValue(int min, int value, int max)
 	}
 
 
-/*This function returns a reversed value for pots that were installed so that
-the number goes up when the arm goes down, etc.
-*/
+//This function returns a reversed value for pots that were installed backwards.
 int potReverse(int INpot)
 	{ return (4095-INpot); }
 
 
-/* This function calculates the proportional, integral and derivative values for
-the specified T_PID values. (See DefinitionsAndDeclarations.c for T_PID.)
-*/
-int updatePIDController(T_PID &INPID, int INerror)
-	{
-	INPID.error.curr = INerror;
-	INPID.integral = (INPID.integral * 4 / 5) + INPID.error.curr;
-	INPID.derivative = INPID.error.curr - INPID.error.last;
-	setLastInt(&INPID.error); //have not tested with ampersand (&)
-	INPID.output = (float)(INPID.error.curr	* INPID.kp)
-						+ (INPID.integral	* INPID.ki)
-						+ (INPID.derivative	* INPID.kd);
-	return (INPID.output);
-	}
+//This function calcs a new motor value with target, previous, and slew values.
+//E.g. slew(100, 0, 5) == 5 | slew(100, 15, 5) == 20 | slew(-100,-80,5) == -85
+int slew(int INtargetVal, int INlastVal, int INslew)
+	{ return (INlastVal + capIntValue(-INslew, INtargetVal-INlastVal, INslew)); }
+
+/*int slew(int INtargetVal, int INlastVal, int INslew)
+	{ return capIntValue(-abs(INslew), INtargetVal-INlastVal, abs(INslew)); }*/
 
 
-/* This function calcs a new motor value with target, previous, and slew values.
-*/
-int slew(int INtargetValue, int INlastValue, int INslew)
-	{ return capIntValue(-abs(INslew), INtargetValue-INlastValue, abs(INslew)); }
-
-
-/* This function returns the delta for the emulated quadrature shaft encoder
-with the given speed of a wheel.
-*/
+//This function returns the delta for the emulated quadrature shaft encoder
+//with the given speed of a wheel.
 int emulateWheelQSE(int INtimer, int INspeed)
-	{
-	return ( (float) INspeed * INtimer / (FWD * 2) );
-	}
+	{ return ( (float) INspeed * INtimer / (FWD * 2) ); }
 
 
-/* This function returns the delta for the emulated potentiometer position with
-the given speed and gearing of a lift. INgearing needs 5 if the gearing is 1:5,
-a 7 if the gearing is 1:7, etc.
-*/
+//This function returns the delta for the emulated potentiometer position with
+//the given speed and gearing of a lift. INgearing needs 5 if the gearing is 1:5,
+//a 7 if the gearing is 1:7, etc.
+
 int emulateLiftPot(int INtimer, int INspeed, int INgearing)
-	{return (abs(INspeed)>30) ? ((float) INspeed*INtimer / (25*INgearing)) : 0;
-	}
+	{ return (abs(INspeed)>30) ? ((float) INspeed*INtimer / (25*INgearing)) : 0; }
 
 
-/* This function returns the delta for the emulated gyroscope with the given
-speed of the left and right sides.
-*/
+//This function returns the delta for the emulated gyroscope with the given
+//speed of the left and right sides.
 int emulateGyro(int INtimer, int INleft, int INright)
 	{
 	INleft =  capIntValue(REV, INleft,  FWD);
@@ -84,8 +60,7 @@ int emulateGyro(int INtimer, int INleft, int INright)
 	}
 
 
-/* These functions are for the LC types. (Last-Current types.)
-*/
+//These functions are for the LC types. (Last-Current types)
 bool changedBool(T_LC_BOOL INLC) //Returns true if the boolean changed
 	{ return (INLC.last != INLC.curr); }
 
@@ -116,18 +91,6 @@ void setLastString(T_LC_STRING *INLC) //Sets the last value to the current value
 void setStepInt(T_LC_INT *INLC) //Sets the step start value to the current value
 	{ INLC->stepStart = INLC->curr; }
 
-/*void setToZeroBool(T_LC_BOOL *INLC) //Sets the last and current values to 0
-	{ INLC->last = false;
-	INLC->curr = false; }*/
-
 void setToZeroInt(T_LC_INT *INLC) //Sets the last and current values to 0
 	{ INLC->last = 0;
 	INLC->curr = 0; }
-
-/*void slewLCInt(T_LC_INT *INLC, int INnum)
-	{
-	int diff = INLC->curr - INLC->last;
-	if		(diff > INnum) diff = INnum;
-	else if (diff < -INnum) diff = -INnum;
-	INLC->curr += diff;
-	}*/
