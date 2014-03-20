@@ -36,27 +36,27 @@ int slew(int INtargetVal, int INlastVal, int INslew)
 	{ return capIntValue(-abs(INslew), INtargetVal-INlastVal, abs(INslew)); }*/
 
 //This function turns 2 motor values into 1 coded value
-long encode(int l, int r)
+unsigned int encode(int l, int r)
 	{
-	l = capIntValue(REV, l, FWD) + FWD;
-	r = capIntValue(REV, r, FWD) + FWD;
-	return (l * 255) + r;
+	ubyte tL = capIntValue(REV, l, FWD) + FWD;
+	ubyte tR = capIntValue(REV, r, FWD) + FWD;
+	return (tL<<8) + tR;
 	}
 
 //This function turns the first coded value back to the original value
-int decodeL(long n)
+int decodeL(unsigned int n)
 	{
-	int temp = n % 255;
-	temp = capIntValue(0, temp, 255);
-	temp = (n - temp)/255;
+	unsigned int temp = (n >> 8);
+	temp = (temp & 255); //255 = 2^8 = 0000000011111111
+	temp = capIntValue(0, temp, 254);
 	return temp - 127;
 	}
 
 //This function turns the second coded value back to the original value
-int decodeR(long n)
+int decodeR(unsigned int n)
 	{
-	int temp = n % 255;
-	temp = capIntValue(0, temp, 255);
+	unsigned int temp = (n & 255); //255 = 2^8 = 0000000011111111
+	temp = capIntValue(0, temp, 254);
 	return temp - 127;
 	}
 
@@ -118,3 +118,78 @@ void setStepInt(T_LC_INT *INLC) //Sets the step start value to the current value
 void setToZeroInt(T_LC_INT *INLC) //Sets the last and current values to 0
 	{ INLC->last = 0;
 	INLC->curr = 0; }
+
+
+
+//Autonomous Calculation Functions
+//Do not confuse encode() with an encoder!
+//----------STRAFE----------
+int usStrfL(int n) //Strafe to Left Ultrasonic setpoint
+	{ return (n-senLeftUS.curr)*US_STRF_P; }
+
+int usStrfR(int n) //Strafe to Right Ultrasonic setpoint
+	{ return (senRightUS.curr-n)*US_STRF_P; }
+
+int encStrf1(int n) //Strafe to Left Encoder setpoint
+	{ return (n+senLeftQSE.curr)*ENC_STRF_P; }
+
+//----------DRIVE----------
+unsigned int spd(int n, int m) //Separate sides different power
+	{ return encode(n,m); }
+
+unsigned int stopped() //Don't move forward or reverse
+	{ return encode(0, 0); }
+
+unsigned int straight(int n) //Both sides same power
+	{ return encode(n, n); }
+
+unsigned int turn2(int n) //Both sides turn power
+	{ return encode(n, -n); }
+
+unsigned int turnL(int n) //Left side turn power
+	{ return encode(n, 0); }
+
+unsigned int turnR(int n) //Right side turn power
+	{ return encode(0, n); }
+
+unsigned int gyroL(int n) //Left side turn gyro
+	{ return encode((n*10 - senGyro.curr)*GYRO_P*2, 0); }
+
+unsigned int gyroR(int n) //Right side turn gyro
+	{ return encode(0, -(n*10 - senGyro.curr)*GYRO_P*2); }
+
+unsigned int gyro2(int n) //Both sides turn gyro
+	{ return encode(
+		(n*10 - senGyro.curr)*GYRO_P,
+		-(n*10 - senGyro.curr)*GYRO_P); }
+
+unsigned int enc(int n, int m) //Individual sides encoders
+	{ return encode(
+		(n-senLeftQSE.curr)*ENC_DRV_P,
+		(m-senRightQSE.curr)*ENC_DRV_P); }
+
+unsigned int enc1(int n) //Both sides, one encoder
+	{ return encode(
+		(n-senLeftQSE.curr)*ENC_DRV_P,
+		(n-senLeftQSE.curr)*ENC_DRV_P); }
+
+//----------ULTRASONIC FOLLOW----------
+unsigned int usFllwL(int n, int m) //Follow left wall a set distance with left ultrasonic
+	{ return encode(
+		n - ((float)senLeftUS.curr-m)* US_FLLW_P,
+		n + ((float)senLeftUS.curr-m)* US_FLLW_P); }
+
+unsigned int usFllwR(int n, int m) //Follow right wall a set distance with right ultrasonic
+	{ return encode(
+		n + ((float)senRightUS.curr-m)*US_FLLW_P,
+		n - ((float)senRightUS.curr-m)*US_FLLW_P); }
+
+unsigned int usFllwNowL(int n) //Follow left wall at starting distance with left ultrasonic
+	{ return encode(
+		(n - ((float)diffStepInt(senLeftUS))* US_FLLW_P),
+		(n + ((float)diffStepInt(senLeftUS))* US_FLLW_P)); }
+
+unsigned int usFllwNowR(int n) //Follow right wall at starting distance with right ultrasonic
+	{ return encode(
+		n + ((float)diffStepInt(senRightUS))*US_FLLW_P,
+		n - ((float)diffStepInt(senRightUS))*US_FLLW_P); }

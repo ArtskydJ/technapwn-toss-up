@@ -6,18 +6,18 @@ static const int LCD_BLINK_SLOW_MS =	500;
 static const int LCD_BLINK_FAST_MS =	200;
 static const int LCD_TIMEOUT_MS =		5000;
 static const string autoNames[NO_AUTO_ROUTINES] = {
-	"Left Mid 1, 12pt",
-	"Riht Mid 1, 12pt",
-	"Left Hng 1, 12pt",
-	"Riht Hng 1, 12pt",
-	"Left Mid 2, 15pt",
-	"Riht Mid 2, 15pt",
-	"",
-	"Test Ultra Fllw2",
-	"Test Things",
-	"Test Ultra Fllw",
-	"Test Gyro-Turn",
-	"Left Mid Skills1"};
+	"L Red Mid 1 12pt",
+	"R Blu Mid 1 12pt",
+	"L Red Hng 1 17pt",
+	"R Blu Hng 1 17pt",
+	"L Red Mid 2 15pt",
+	"R Blu Mid 2 15pt",
+	"L Red Hng 2 21pt",
+	"None",
+	"None",
+	"None",
+	"Current Test",
+	"L Red Mid Prog 1"};
 static const string menuChecklist[NO_CHECKLIST_ITEMS] = {
 	"Cortex on",
 	"Power Expandr on",

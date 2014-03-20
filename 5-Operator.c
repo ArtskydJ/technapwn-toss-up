@@ -180,7 +180,7 @@ void processOperator()
 		//--Pneumatics--//
 		outCatapult = btnRhtR1.curr || btnRhtR2.curr;
 
-		outLoader = ((btnIntkO1.curr && btnIntkI1.curr) || (btnIntkO2.curr && btnIntkI2.curr));
+		outLoader = btnRhtD1.curr || btnRhtD2.curr;
 
 		//--Script Takeover Checking and Applying Outputs--//
 		if (autoScriptTakeover[DRIVE] && (outDrvL != 0 || outDrvR != 0 || outDrvS != 0) )
