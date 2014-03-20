@@ -1,0 +1,54 @@
+How to program autonomous routines:
+
+
+----- How to drive -----
+L = -Left/Type- column
+R = -Rht/Spd- column
+S = -Sft/Tgt- column
+
+To drive, input:
+	L | speed
+		encoder distance
+	R | speed
+		encoder distance
+	
+To strafe, input:
+	S | speed
+		enc(distance)
+		L_US(distance)
+		R_US(distance)
+
+To follow a line, input:
+	L | CNTR_LINE
+	R | speed
+	S | 0
+	
+To turn with the gyro, input:
+	L | GYRO_TURN
+	R | speed
+	S | target rotation
+	
+To turn left wheels with the gyro, input:
+	L | GYRO_LEFT
+	R | speed
+	S | target rotation
+	
+To turn right wheels with the gyro, input:
+	L | GYRO_RIHT
+	R | speed
+	S | target rotation
+	
+To follow the left wall, input:
+	L | LEFT_WALL
+	R | speed
+	S | target distance from wall
+	
+To follow the right wall, input:
+	L | RIHT_WALL
+	R | speed
+	S | target distance from wall
+
+
+----- How to do other things -----
+LIFT | Input speed or height into the -Lift- column
+SKIP TO STEP | Input wanted step into the -Action- column of RESET_AUTO
