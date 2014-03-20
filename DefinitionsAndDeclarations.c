@@ -24,12 +24,12 @@
 #define AUTONOMOUS   2
 
 //Proportional Constants
-#define LIFT_P        (float)1.0
+#define LIFT_P        (float)0.5
 #define LINE_P        (float)0.1
 #define WALL_P        (float)0.1
 #define ENCODER_P     (float)1.0
 #define SONAR_P       (float)0.6
-#define GYRO_P        (float)0.2
+#define GYRO_P        (float)0.28
 
 //Autonomous - Functions
 #define straight(n)   (n),  (n)
@@ -42,8 +42,8 @@
 #define enc(n,m)      (n-senLeftQSE.curr)*ENCODER_P, ((m)-senRightQSE.curr)*ENCODER_P
 #define usL(n)        (n-senLeftUS.curr)*SONAR_P
 #define usR(n)        (n-senRightUS.curr)*SONAR_P
-#define L_CST(n)      (n-senLiftPot.curr)*LIFT_P
-#define L_PRE(n)      (sysLiftPresets[n]-senLiftPot.curr)*LIFT_P
+#define lPos(n)       (n-senLiftPot.curr)*LIFT_P
+#define lPre(n)       (sysLiftPresets[n]-senLiftPot.curr)*LIFT_P
 
 //Autonomous - Presets
 #define UP      127
@@ -70,9 +70,7 @@
 //Autonomous
 #define NO_TIME_RECORDS   100
 #define PID_WAIT_MS       350
-#define SENSOR_HIT        0
-#define MIN_TIMEOUT       1
-#define MAX_TIMEOUT       2
+#define TIMEOUT_MS        4000
 #define P_DEAD_ZONE       20
 #define NO_AUTO_ROUTINES  12
 #define MIN_LOOP_MS       5
@@ -168,16 +166,18 @@ typedef enum {
 	} T_AUTO_SCRIPT;
 
 typedef enum {
-	L_GRND = 0,
-	L_BARR,
-	L_STSH,
-	NO_LIFT_PRESETS
+	GND = 0,	//Ground
+	STS = 1,	//Stash
+	BMP = 2,	//Bump
+	BAR = 3,	//Barrier
+	NO_LIFT_PRESETS = 4,
+	NO_OPERATOR_LIFT_PRESETS = 2,
 	} T_LIFT_PRESETS;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants
-const int sysLiftPresets[NO_LIFT_PRESETS] = {1655,2395,3055};
+const int sysLiftPresets[NO_LIFT_PRESETS] = {1610,3055,1750,2395};
 
 //System Variables
 bool sysAutoMode = false;
@@ -189,8 +189,7 @@ int  sysLCDBacklight=LCD_ALWAYS_ON;
 T_ERROR sysError = ERR_NONE;
 T_LC_INT autoRoutine;
 T_LC_INT sysState;
-bool btnDisablePots;
-int liftPresetIndex = L_BARR;
+int liftPresetIndex = BAR;
 
 //Output Variables
 int outDrvL;
@@ -235,7 +234,7 @@ short mtrTestEnabled[10]={0,0,0,0,0,0,0,0,0,0};
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
 void autoResetEnd(void);
-void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, T_END INendType, int INextra);
+void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcata, T_END INendType, int INextra);
 void zeroMotors(void);
 void stateSwitchToAutonomous(void);
 void inputOperator(void);

@@ -10,8 +10,8 @@ static const string autoNames[NO_AUTO_ROUTINES] = {
 	"Blu Mid 1  N  12",
 	"Red Hng 1  S  11",
 	"Blu Hng 1  S  11",
-	"Test Red Mid 2 N",
-	"NONE",
+	"Red Mid 2  N  15",
+	"Blu Mid 2  N  15",
 	"NONE",
 	"NONE",
 	"Test Things",
@@ -177,7 +177,7 @@ void menuView()
 			break; //Battery Levels
 		case M_MTR_TEST:
 			sysMotorTest = true;
-			StringFormat(tString2,"%3d",abs(stkMtrTest)); //negative sign will not fit; using abs()
+			StringFormat(tString2,"%3d",abs(stkMtrTest1)); //negative sign will not fit; using abs()
 			strcat(tString0, tString2);
 			int temp1 = potPosition(10);
 			int temp2 = mtrTestEnabled[temp1];
@@ -213,12 +213,12 @@ void processLCD()
 		switch(sysError)
 			{
 			case ERR_LOW_CORTEX:
-				topLCDLine.curr=	"ERROR--Low";
-				bottomLCDLine.curr=	"Cortex Battery";
+				topLCDLine.curr =    "ERROR--Low";
+				bottomLCDLine.curr = "Cortex Battery";
 				break;
 			case ERR_LOW_POW_EX:
-				topLCDLine.curr=	"ERROR--Low Power";
-				bottomLCDLine.curr=	"Expander Battery";
+				topLCDLine.curr =    "ERROR--Low Power";
+				bottomLCDLine.curr = "Expander Battery";
 				break;
 			case ERR_ROBOT_IDLE:
 				topLCDLine.curr =    "3018  Techna PWN";

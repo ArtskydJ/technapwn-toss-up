@@ -181,6 +181,7 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcat
 			if (tHitTarget) autoHitTarget = (INextra == (short)NEXT) ? NEXT : PID;
 			}
 		if (autoHitTarget==PID && time1(T2)>=PID_WAIT_MS) autoHitTarget=NEXT;
+		if (INendType!=TIME_LIMIT && time1(T1)>=TIMEOUT_MS) autoHitTarget=NEXT;
 		if (autoHitTarget==NEXT) autoNextStep();
 		}
 	autoStepCheck++;
@@ -212,7 +213,7 @@ void processAutonomous(void)
 			case 03: autoRedHang1();	break;
 			case 04: autoBlueHang1();	break;
 			case 05: autoRedMid2();		break;
-			case 06:					break;
+			case 06: autoBlueMid2();	break;
 			case 07:					break;
 			case 08:					break;
 			case 09: autoTestThings();	break;

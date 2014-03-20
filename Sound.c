@@ -1,10 +1,8 @@
 //Sound.c
 
 //Constants
-#define NO_SOUNDS_LIFT 1
 #define NO_SOUNDS_INTK 2
 //Variables
-static int sndIndexLift = 0;
 static int sndIndexIntk = 0;
 
 //Functions
@@ -18,23 +16,27 @@ void outputSound()
 #ifdef SOUND_EFFECTS
 	else //No errors!
 		{
-		if (sgn(outLift) == sgn(UP) && bSoundActive==false) //If the lift is going up
+		if (bSoundActive==false)
 			{
-			switch (sndIndexLift)
+			if (sgn(outLift) == sgn(UP)) //If the lift is going up
 				{
-				case 0: PlaySoundFile("Inception.wav"); break;
+				PlaySoundFile("Inception.wav");
 				}
-			sndIndexLift = (sndIndexLift+1)%NO_SOUNDS_LIFT;
-			}
-		
-		if (sgn(outIntk) == sgn(IN) && bSoundActive==false) //If the intake is intaking
-			{
-			switch (sndIndexIntk)
+			
+			if (sgn(outIntk) == sgn(IN)) //If the intake is intaking
 				{
-				case 0: PlaySoundFile("LaserFire.wav"); break;
-				case 1: PlaySoundFile("GearClicking4.wav"); break;
+				switch (sndIndexIntk)
+					{
+					case 0: PlaySoundFile("LaserFire.wav"); break;
+					case 1: PlaySoundFile("GearClicking4.wav"); break;
+					}
+				sndIndexLift = (sndIndexLift+1)%NO_SOUNDS_INTK;
 				}
-			sndIndexLift = (sndIndexLift+1)%NO_SOUNDS_INTK;
+			
+			if (outCata)
+				{
+				PlaySoundFile("Smash.wav");
+				}
 			}
 		}
 #endif

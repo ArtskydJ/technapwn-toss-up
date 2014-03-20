@@ -25,7 +25,7 @@ void inputProcessState()
 		timerLCDScroll=0;
 		timerLCDBacklight=0;
 
-		liftPresetIndex = L_BARR;
+		liftPresetIndex = BAR;
 
 		zeroMotors();
 

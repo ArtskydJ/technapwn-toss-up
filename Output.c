@@ -1,7 +1,7 @@
 //Output.c
 
 //Constants
-static const int LIFT_DISABLE_RANGE = 10;
+//static const int LIFT_DISABLE_RANGE = 10;
 
 //Variables
 static int mtrTarget[10] = {0,0,0,0,0,0,0,0,0,0};
@@ -66,7 +66,7 @@ void outputMotion(void)
 	else if (sysMotorTest)             //Enabled, Motor test mode
 		{
 		for (int j=0; j<10; j++)
-			mtrTarget[j] = (mtrTestEnabled[j]*stkMtrTest);
+			mtrTarget[j] = (mtrTestEnabled[j]*stkMtrTest1);
 		}
 	else                               //Enabled, Normal mode
 		{
@@ -77,8 +77,6 @@ void outputMotion(void)
 		mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
 		mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
 
-		if (abs(outLift) < LIFT_DISABLE_RANGE) //if close enough to target, stop motors
-			outLift = 0;
 		mtrTarget[LIFT_L] =  outLift;
 		mtrTarget[LIFT_L2] = outLift;
 		mtrTarget[LIFT_R] =  outLift;

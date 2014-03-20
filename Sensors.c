@@ -8,7 +8,7 @@ void initializeSensors()
 	SensorValue[QUAD_RIGHT] = 0;
 	SensorValue[GYRO] = 0;
 	SensorValue[CATAPULT] = 0;
-	outCatapult = 0;
+	outCatapult = false;
 
 	//--Timers--//
 	ClearTimer(T1);
