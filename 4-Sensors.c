@@ -110,7 +110,7 @@ void inputSensors(void)
 		{
 		senLeftQSE.curr +=  emulateWheelQSE(combinedTime, outDrvL);
 		senRightQSE.curr += emulateWheelQSE(combinedTime, outDrvR);
-		senLiftPot.curr +=  emulateLiftPot(combinedTime, outLift, 10);
+		senLiftPot.curr +=  emulateLiftPot(combinedTime, outLift, 5);
 		senGyro.curr +=     emulateGyro(combinedTime, outDrvL, outDrvR);
 		combinedTime = 0;
 		}

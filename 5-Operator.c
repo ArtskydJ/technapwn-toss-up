@@ -133,7 +133,7 @@ void processOperator()
 		outDrvS = stkDrvStf1;
 
 		//--Lift--//
-		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT])
+		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT] || outDescorer!=0)
 			{
 			sysDisableLift = false;
 			if		(btnLiftU1.curr)	outLift =  UP;		//If lift up is pressed, run lift motors up
@@ -179,9 +179,11 @@ void processOperator()
 		else if (btnIntkI2.curr)	outIntk = IN;  //If intake in  2 pressed, intake motors intake in
 		else						outIntk = 0;   //If no intake buttons pressed, intake motors off
 
+		//--Descorer--//
+		if (pressed(btnLftD2))	outDescorer = (outDescorer==0)? FWD : 0;
+		
 		//--Pneumatics--//
 		outCatapult = btnRhtR1.curr || btnRhtR2.curr;
-
 		outLoader = btnRhtD1.curr || btnRhtD2.curr;
 
 		//--Script Takeover Checking and Applying Outputs--//

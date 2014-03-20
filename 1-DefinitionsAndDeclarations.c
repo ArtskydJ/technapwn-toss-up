@@ -53,9 +53,10 @@
 #define BRAKE   5  //Drive brake power
 
 //Output - Slew
-#define DRV_SLEW     8  //was 5
-#define LIFT_SLEW    12
-#define INTK_SLEW    20
+#define DRV_SLEW   8  //was 5
+#define LIFT_SLEW  12
+#define INTK_SLEW  20
+#define DSCR_SLEW  12
 
 //Autonomous
 #define NO_TIME_RECORDS   100
@@ -189,6 +190,7 @@ int outDrvR;
 int outDrvS;
 int outLift;
 int outIntk;
+int outDescorer;
 bool outCatapult;
 bool outLoader;
 //bool outBrake;

@@ -20,9 +20,9 @@ void initializeOutput()
 	slewConstants[DRIVE_BR1] = DRV_SLEW;
 	slewConstants[DRIVE_BR2] = DRV_SLEW;
 	slewConstants[LIFT_L]    = LIFT_SLEW;
-	slewConstants[LIFT_L2]   = LIFT_SLEW;
 	slewConstants[LIFT_R]    = LIFT_SLEW;
 	slewConstants[INTK_L]    = INTK_SLEW;
+	slewConstants[DESCORER]  = DSCR_SLEW;
 
 	zeroMotors();
 	}
@@ -60,13 +60,11 @@ void outputMotion(void)
 		mtrTarget[DRIVE_FR] =  outDrvR - outDrvS;
 		mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
 		mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
-
 		mtrTarget[LIFT_L] =  outLift;
-		mtrTarget[LIFT_L2] = outLift;
 		mtrTarget[LIFT_R] =  outLift;
-
 		mtrTarget[INTK_L] = outIntk;
-
+		mtrTarget[DESCORER] = outDescorer;
+		
 		//Pneumatics
 		SensorValue[CATAPULT] = outCatapult;
 		SensorValue[LOADER] = outLoader;
@@ -78,11 +76,4 @@ void outputMotion(void)
 		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD);
 		motor[j] = mtrSlewed[j];
 		}
-
-	static int last = 0, now = 0, val=0;
-	now = vexRT[Btn8L];
-	if (now && !last) val = !val;
-	motor[LIFT_L2] = val*127;
-	last = vexRT[Btn8L];
-
 	}
