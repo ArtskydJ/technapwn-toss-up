@@ -160,7 +160,7 @@ void processOperator()
 		if (1) //(btnDisablePots)
 			{
 			if (tLastLiftPressed)
-				outLift = 15;
+				outLift = 10;
 			else
 				outLift = 0;
 			if (btnDisablePots)

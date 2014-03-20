@@ -7,7 +7,6 @@ toggles that are easily turned off and on.
 */
 //#define AUTON_BEEP
 //#define SOUND_EFFECTS
-//#define LIFT_SYNC
 
 
 #if (_TARGET=="Robot")
@@ -20,37 +19,46 @@ toggles that are easily turned off and on.
  These #define's make the autonomous commands
 easier to read and remake.
 */
-#define straight(n)    (n),  (n)
-#define turn2(n)       (n),  -(n)
-#define turnL(n)       (n),  0
-#define turnR(n)       0,    -(n)
-#define gyro2(n)       ((n)-senGyro.curr), (-(n)+senGyro.curr)
-#define strafe(n)      0,    0,    (n)
-#define stopped()      0,    0,    0
-#define enc(n,m)       (n)-senLeftQSE.curr, (m)-senRightQSE.curr
-#define usL(n)         (n)-senLeftUS.curr
-#define usR(n)         (n)-senRightUS.curr
-/*
-SPEED       //Drive/Strafe with input Speeds
-ENCODER     //Drive/Strafe with input Encoder
-LEFT_WALL   //Drive following/Strafe to the Left  Wall
-RIGHT_WALL  //Drive following/Strafe to the Right Wall
-LINE_FOLLOW //Drive following the Center Line
-GYRO_TURN   //Drive with a PID gyroscope turn
-*/
+
+#define LINE_EDGE     2500   //For edge sensors
+#define LINE_PERCENT  0.2    //0=tile 1=tape
+#define LINE_LO       1200   //Left Tile
+#define LINE_HI       1960   //Left Tape
+#define LINE_TARGET   LINE_LO + ((float)LINE_PERCENT * (LINE_HI - LINE_LO))
+
+#define LIFT_P        (float)0.3
+#define LINE_P        (float)0.1
+#define WALL_P        (float)0.1
+#define ENCODER_P     (float)1.0
+#define SONAR_P       (float)0.6
+#define GYRO_P        (float)2.0
+
+#define straight(n)   (n),  (n)
+#define turn2(n)      (n),  -(n)
+#define turnL(n)      (n),  0
+#define turnR(n)      0,    -(n)
+#define gyro2(n)      (((n)-senGyro.curr)*GYRO_P), \
+                     ((-(n)+senGyro.curr)*GYRO_P)
+#define strafe(n)     0,    0,    (n)
+#define stopped()     0,    0,    0
+#define enc(n,m)      (((n)-senLeftQSE.curr)*ENCODER_P), \
+                      (((m)-senRightQSE.curr)*ENCODER_P)
+#define usL(n)        (((n)-senLeftUS.curr)*SONAR_P)
+#define usR(n)        (((n)-senRightUS.curr)*SONAR_P)
 
 //Operator, Autonomous - Lift Presets
+//Make sure not to re-define LIFT_L or LIFT_R anywhere.
 #define L_PRE_START      128
-#define L_GRND			 128 //Make sure not to re-define LIFT_L or LIFT_R anywhere.
+#define L_GRND			 128
 #define L_DRIV			 129
 #define L_STSH			 130
 #define L_PRE_END        130
 #define NO_LIFT_PRESETS	 (L_PRE_END-L_PRE_START+1)
 
 //State
-#define DISABLED	0
-#define OPERATOR	1
-#define AUTONOMOUS	2
+#define DISABLED     0
+#define OPERATOR     1
+#define AUTONOMOUS   2
 
 //Autonomous - Presets
 #define UP      127
@@ -135,17 +143,6 @@ typedef enum {
 	PID = 1
 	} T_SENSOR_STATUS;
 
-#ifndef NEW_AUTO
-typedef enum {
-	SPEED = 0,   //Drive/Strafe with input Speeds
-	ENCODER,    //Drive/Strafe with input Encoder
-	LEFT_WALL,  //Drive following/Strafe to the Left  Wall
-	RIGHT_WALL, //Drive following/Strafe to the Right Wall
-	//LINE_FOLLOW,  //Drive following the Center Line
-	GYRO_TURN   //Drive with a PID gyroscope turn
-	} T_DRIVE;
-#endif
-
 typedef enum {
 	TIME_LIMIT = 0,	//Time Limit
 	DRIV_READY,	//Finished using Drive (including strafing)
@@ -208,15 +205,8 @@ typedef enum {
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType, T_SCRIPT_TAKEOVER INstoType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
 void autoResetEnd(void);
-#ifdef NEW_AUTO
 void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
-		T_END INendType, int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
-#else
-void auto(T_DRIVE INdrvType, int INdrvSpd, int INdrvTarget,
-          T_DRIVE INstfType, int INstfSpd, int INstfTarget,
-          int INlift, int INintk, T_END INendType,
-          int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
-#endif
+	T_END INendType, int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
 void zeroMotors(void);
 void initializeAutonomous(void);
 void initializeLCD(void);
@@ -241,10 +231,9 @@ void emulateSensors(void);
  Constants, variables, etc.
 */
 //Constants
-const int L_PRE[NO_LIFT_PRESETS] = {230,255,1680};
+const int L_PRESETS[NO_LIFT_PRESETS] = {230,255,1680};
 
 //System Variables
-float sysLiftP = 0.7; //change to const, move to output.c, make static
 bool sysAutoMode = false;
 bool sysDisabledMode = false;
 bool autoClockRunning = false;

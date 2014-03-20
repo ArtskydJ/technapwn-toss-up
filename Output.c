@@ -1,5 +1,5 @@
 //Constants
-static const int DISABLE_RANGE = 50;
+static const int LIFT_DISABLE_RANGE = 50;
 
 //Variables
 static int mtrTarget[10]={0,0,0,0,0,0,0,0,0,0};
@@ -19,6 +19,7 @@ void initializeOutput()
 	slewConstants[OPERATOR][DRIVE_BR1] = OPER_DRV_SLEW;
 	slewConstants[OPERATOR][DRIVE_BR2] = OPER_DRV_SLEW;
 	slewConstants[OPERATOR][LIFT_L]    = OPER_LIFT_SLEW;
+	slewConstants[OPERATOR][LIFT_L2]   = OPER_LIFT_SLEW;
 	slewConstants[OPERATOR][LIFT_R]    = OPER_LIFT_SLEW;
 	slewConstants[OPERATOR][INTK_L]    = OPER_INTK_SLEW;
 	//slewConstants[OPERATOR][INTK_R]    = OPER_INTK_SLEW;
@@ -55,12 +56,16 @@ set motors to their respective speeds.
 */
 void outputMotion(void)
 	{
-	if (sysState.curr == DISABLED)
+	if (sysState.curr == DISABLED)     //Disabled
+		{
 		zeroMotors();
-	else if (sysMotorTest)
+		}
+	else if (sysMotorTest)             //Enabled, Motor mode
+		{
 		for (int j=0; j<10; j++)
 			mtrTarget[j] = (mtrTestEnabled[j]*stkMtrTest);
-	else
+		}
+	else                               //Enabled, Normal mode
 		{
 		mtrTarget[DRIVE_FL] =  outDrvL + outDrvS;
 		mtrTarget[DRIVE_BL1] = outDrvL - outDrvS;
@@ -69,69 +74,34 @@ void outputMotion(void)
 		mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
 		mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
 
-		int tLLift, tRLift, tLLiftAdd, tRLiftAdd, tTarget;
-		bool tDisableLift=false;
-		tTarget = 0;
-		if (abs(outLift) > 127)
+		if (outLift >= L_PRE_START && outLift <= L_PRE_END)     //preset position
 			{
-			updatePIDController(PIDLift, outLift*2 - (senLiftLPot.curr+senLiftRPot.curr));
-			tLLift = capIntValue(REV, PIDLift.output, FWD);
-			tRLift = capIntValue(REV, PIDLift.output, FWD);
-			tTarget = outLift;
-
-			if (senLiftLPot.curr < outLift + DISABLE_RANGE &&
-			    senLiftLPot.curr > outLift - DISABLE_RANGE &&
-			    senLiftRPot.curr < outLift + DISABLE_RANGE &&
-			    senLiftRPot.curr > outLift - DISABLE_RANGE)
-				tDisableLift=true;
-			}
-		else
-			{
-			tLLift = outLift;
-			tRLift = outLift;
+			outLift = L_PRESETS[outLift-L_PRE_START];
 			}
 
-#ifdef LIFT_SYNC
-		if (!btnDisablePots)
-#else
-		if (0)
-#endif
+		if (abs(outLift) > 127)                                 //position
 			{
-			tLLiftAdd = capIntValue(REV*2, (senLiftRPot.curr-senLiftLPot.curr)*sysLiftP, FWD*2);
-			tRLiftAdd = capIntValue(REV*2, (senLiftLPot.curr-senLiftRPot.curr)*sysLiftP, FWD*2);
-			}
-		else
-			{
-			tLLiftAdd = 0;
-			tRLiftAdd = 0;
+			if (senLiftLPot.curr < outLift + LIFT_DISABLE_RANGE &&
+			    senLiftLPot.curr > outLift - LIFT_DISABLE_RANGE &&
+			    senLiftRPot.curr < outLift + LIFT_DISABLE_RANGE &&
+			    senLiftRPot.curr > outLift - LIFT_DISABLE_RANGE)  //if close to target, neutralize lift
+					outLift = 0;
+			else
+				outLift = outLift*2 - (senLiftLPot.curr+senLiftRPot.curr); //otherwise, target potentiometers
 			}
 
-		if (tDisableLift)
-			{
-			mtrTarget[LIFT_L]=0;
-			mtrTarget[LIFT_R]=0;
-			}
-		else
-			{
-			mtrTarget[LIFT_L] = tLLift + tLLiftAdd;
-			mtrTarget[LIFT_R] = tRLift + tRLiftAdd;
-			}
-		mtrTarget[LIFT_L] = mtrTarget[LIFT_L];
-		mtrTarget[LIFT_R] = mtrTarget[LIFT_R];
-
+		mtrTarget[LIFT_L] =  outLift;
+		mtrTarget[LIFT_L2] = outLift;
+		mtrTarget[LIFT_R] =  outLift;
 
 		mtrTarget[INTK_L] = outIntk;
-		//mtrTarget[INTK_R] = outIntk;
-		if (sysMotorsEnabled)
-			{
-			SensorValue[BRAKE] = outBrake;
-			}
+
 		}
 
 	for (int j=0; j<10; j++)
 		{
 		mtrSlewed[j] += slew(mtrTarget[j], mtrSlewed[j], slewConstants[sysState.curr][j]); //SLEW CONTROLLERS
-		mtrSlewed[j] = capIntValue(-127, mtrSlewed[j], 127); //CAP ALL MOTORS
+		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD); //CAP ALL MOTORS
 		motor[j] = mtrSlewed[j]*sysMotorsEnabled; //ASSIGN MOTORS
 		}
 	}
@@ -142,7 +112,7 @@ previously assigned motor value, and the slew.
 */
 int slew(int INtargetValue, int INlastValue, int INslew)
 	{
-	return capIntValue(-INslew, INtargetValue-INlastValue, INslew);
+	return capIntValue(-abs(INslew), INtargetValue-INlastValue, abs(INslew));
 	}
 
 

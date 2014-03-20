@@ -1,12 +1,12 @@
 void autoTestThings(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-		//D Type,D Speed,D Target,S Type,S Speed,S Target,Lift,		Intake,End Type,Min time,Max time,Action
-	auto(GYRO_TURN,	FWD,	900,	SPEED,	FWD,	0,		0,			0,	DRIV_READY,	800,	1200,	PID);
-	auto(GYRO_TURN,	FWD,	900,	SPEED,	FWD,	0,		0,			0,	DRIV_READY,	800,	1200,	PID);
-	auto(ENCODER,	1450,	1450,	SPEED,	FWD,	0,		L_PRE[L_STSH],0,	FULL_READY,	2100,	3000,	PID);
-	auto(SPEED,	0,		0,		LEFT_WALL,FWD,		600,	L_PRE[L_STSH],0,	FULL_READY,	2000,	3000,	PID);
-	auto(SPEED,	0,		0,		SPEED,	FWD,		0,		0,			0,	TIME_LIMIT,	3000,	0,		NEXT);
+		//L,	R,		S,		Lift,	Intk,End Type,	Min,	Max,Action
+	auto(gyro2(900),	0,		0,		0,	DRIV_READY,	800,	1200,	PID);
+	auto(gyro2(900),	0,		0,		0,	DRIV_READY,	800,	1200,	PID);
+	auto(enc(1450,1450),0,		L_STSH,	0,	FULL_READY,	2100,	3000,	PID);
+	auto(straight(0),	usL(18),L_STSH,	0,	FULL_READY,	2000,	3000,	PID);
+	auto(straight(0),	FWD,	0,		0,	TIME_LIMIT,	3000,	0,		NEXT);
 	autoResetEnd();
 	}
 
@@ -14,12 +14,12 @@ void autoTestThings(void)
 void autoTestDrive(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-		//D Type,D Speed,D Target,S Type,S Speed,S Target,Lift,		Intake,End Type,Min time,Max time,Action
-	auto(SPEED,	-100,	-100,	SPEED,	20,		0,		0,			0,	TIME_LIMIT,	500,	0,		NEXT);
-	auto(SPEED,	100,	100,	SPEED,	20,		0,		0,			0,	TIME_LIMIT,	800,	0,		NEXT);
-	auto(SPEED,	1450,	1450,	SPEED,	0,		0,		0,			0,	TIME_LIMIT,	2200,	0,		NEXT);
-	auto(SPEED,	10,		10,		SPEED,	40,		0,		0,			0,	TIME_LIMIT,	2200,	0,		NEXT);
-	auto(SPEED,	0,		0,		SPEED,	FWD,	0,		0,			0,	TIME_LIMIT,	3200,	0,		NEXT);
+		//L,	R,		S,		Lift,	Intk,End Type,	Min,	Max,Action
+	auto(straight(-100),20,		0,		0,	TIME_LIMIT,	500,	0,		NEXT);
+	auto(straight(100),	20,		0,		0,	TIME_LIMIT,	800,	0,		NEXT);
+	auto(1450,	1450,	0,		0,		0,	TIME_LIMIT,	2200,	0,		NEXT);
+	auto(straight(10),	40,		0,		0,	TIME_LIMIT,	2200,	0,		NEXT);
+	auto(straight(0),	FWD,	0,		0,	TIME_LIMIT,	3200,	0,		NEXT);
 	autoResetEnd();
 	}
 
@@ -27,8 +27,8 @@ void autoTestDrive(void)
 void autoTestGyro(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-		//D Type,D Speed,D Target,S Type,S Speed,S Target,Lift,		Intake,End Type,Min time,Max time,Action
-	auto(SPEED,	REV,	FWD,	SPEED,	0,			0,		0,			0,	TIME_LIMIT,	0,		0,		PID);
-	auto(SPEED,	FWD,	REV,	SPEED,	0,			0,		0,			0,	TIME_LIMIT,	0,		0,		PID);
+		//L,	R,		S,		Lift,	Intk,End Type,	Min,	Max,Action
+	auto(gyro2(-900),	0,		0,		0,	DRIV_READY,	0,		0,	PID);
+	auto(gyro2(900),	0,		0,		0,	DRIV_READY,	0,		0,	PID);
 	autoResetEnd();
 	}
