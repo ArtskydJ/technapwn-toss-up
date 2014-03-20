@@ -23,25 +23,16 @@ void inputSensors(void)
 	if (timerLCDScroll>62000)      timerLCDScroll =    62000; //Prevent wrapping
 	if (timerLCDBacklight>62000)   timerLCDBacklight = 62000; //Prevent wrapping
 	if (timerRobotIdle>62000)      timerRobotIdle =    62000; //Prevent wrapping
-	//if (joystickIsMoved(true) && LCD_TIMEOUT) timerLCDBacklight = 0; //!!!!!!!!!!!!!!!!!!!!!!!!!1backlight mode!!!!!!!!!!!!!!!!!!!!!!!!
+	if ((joystickIsMoved(true) || nLCDButtons != 0)
+		&& sysLCDBacklight==(T_BACKLIGHT)LCD_TIMEOUT)
+                                   timerLCDBacklight = 0;     //Reset
 
 #ifdef PHYSICAL_ROBOT_TARGET
 	timerRobotIdle +=		tTimerMaster;
 	if (joystickIsMoved(true) || nLCDButtons>0)	timerRobotIdle = 0;
 
 	//--Robot Sensors--//
-	static int addToGyro=0;
-	senGyro.curr = SensorValue[GYRO] + addToGyro;
-	if ((senGyro.last%3600)>3300 && (senGyro.curr%3600)<300)
-		{
-		addToGyro += 3600;
-		senGyro.curr += 3600;
-		}
-	if ((senGyro.last%3600)<300 && (senGyro.curr%3600)>3300)
-		{
-		addToGyro -= 3600;
-		senGyro.curr -= 3600;
-		}
+	senGyro.curr =     SensorValue[GYRO];
 	senLeftQSE.curr =  SensorValue[QUAD_LEFT];
 	senRightQSE.curr = SensorValue[QUAD_RIGHT];
 	senLeftUS.curr =   SensorValue[ULTRA_LEFT];
@@ -54,7 +45,7 @@ void inputSensors(void)
 	sysError = ERR_NONE;
 	//if (senPwrExpVoltage<7200)	sysError = ERR_LOW_POW_EX; //power expander voltage is not x1000
 	//if (timerRobotIdle>=60000)	sysError = ERR_ROBOT_IDLE;
-	if (nAvgBatteryLevel<1000)		sysError = ERR_LOW_CORTEX;
+	if (nAvgBatteryLevel<6400)		sysError = ERR_LOW_CORTEX;
 
 	//--Sensor Irregularity Fixer--//
 	slewLCInt(senGyro,3);		//Estimated .5

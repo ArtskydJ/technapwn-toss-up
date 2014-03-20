@@ -96,6 +96,10 @@ void outputMotion(void)
 
 		mtrTarget[INTK_L] = outIntk;
 
+		if (sysMotorsEnabled) //Pneumatics
+			{
+			SensorValue[INTK_EXTEND] = outIntkExtend;
+			}
 		}
 
 	for (int j=0; j<10; j++)

@@ -9,7 +9,7 @@
 #pragma config(Sensor, dgtl3,  QUAD_RIGHT,     sensorQuadEncoder)
 #pragma config(Sensor, dgtl5,  ULTRA_LEFT,     sensorSONAR_cm)
 #pragma config(Sensor, dgtl7,  ULTRA_RIGHT,    sensorSONAR_cm)
-#pragma config(Sensor, dgtl12, BRAKE,          sensorDigitalOut)
+#pragma config(Sensor, dgtl12, INTK_EXTEND,    sensorDigitalOut)
 #pragma config(Motor,  port1,           DRIVE_BL1,     tmotorVex393, openLoop, reversed)
 #pragma config(Motor,  port2,           DRIVE_BR2,     tmotorVex393, openLoop)
 #pragma config(Motor,  port3,           LIFT_R,        tmotorVex393, openLoop, reversed)
@@ -41,7 +41,6 @@
 
 task main()
 	{
-	initializeAutonomous();
 	initializeOutput();
 	initializeLCD();
 	initializeOther();

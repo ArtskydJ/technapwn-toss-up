@@ -29,6 +29,8 @@ void autoTestGyro(void)
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,End Type,	Min,	Max,Action
 	auto(gyro2(-900),	0,		0,		0,	DRIV_READY,	0,		0,	PID);
-	auto(gyro2(900),	0,		0,		0,	DRIV_READY,	0,		0,	PID);
+	auto(straight(FWD),	0,		0,		0,	TIME_LIMIT,	1000,	0,		NEXT);
+//	auto(stopped(),				0,		0,	TIME_LIMIT,	1000,	0,	PID);
+//	auto(gyro2(900),	0,		0,		0,	DRIV_READY,	0,		0,	PID);
 	autoResetEnd();
 	}

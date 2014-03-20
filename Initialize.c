@@ -3,9 +3,10 @@
 //Functions
 void initializeOther()
 	{
-	//--Encoders--//
+	//--Sensors--//
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
+	SensorValue[GYRO] = 0;
 
 	//--Timers--//
 	ClearTimer(T1);
@@ -20,5 +21,6 @@ void initializeOther()
 #else
 	writeDebugStreamLine("----Emulator----");
 #endif
-	sysState.curr=DISABLED; //Should change to operator later
+	sysState.curr = DISABLED; //Usually changes to operator later
+	autoRoutine.curr = 0;
 	}

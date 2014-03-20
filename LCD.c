@@ -5,9 +5,6 @@ static const int LCD_BLINK_FAST_MS =	200;
 static const int LCD_TIMEOUT_MS =		5000;
 
 //Variables
-static T_LC_BOOL btnScreenLeft; //LCD Buttons
-static T_LC_BOOL btnScreenCenter;
-static T_LC_BOOL btnScreenRight;
 static T_MENU_ITEMS menuItemIndex; //LCD Menu
 static bool menuItemActivated=false;
 static int menuChecklistItem = 0;
@@ -20,8 +17,8 @@ static string motorName[10];
 static string autoNames[NO_AUTO_ROUTINES] = { //make const? (gives error with scroll func)
 	"B M | P 2L | 12",
 	"R M | P 2L | 12",
-	"B H | P 2B | 9",
-	"R H | P 2B | 9",
+	"B H | P5B2L | 9",
+	"R H | P5B2L | 9",
 	"NONE",
 	"NONE",
 	"NONE",
@@ -136,8 +133,6 @@ void updateBacklight()
 		break;
 
 		case LCD_TIMEOUT:
-			if (nLCDButtons != 0)
-				timerLCDBacklight=0;
 			bLCDBacklight = (timerLCDBacklight<LCD_TIMEOUT_MS);
 		break;
 		}
@@ -232,7 +227,8 @@ void menuView()
 
 void processLCD()
 	{
-	if (sysError!=ERR_NONE)
+	static bool errorDismissed=false;
+	if (sysError!=ERR_NONE && errorDismissed==false)
 		{
 		sysLCDBacklight=LCD_BLINK_SLOW;
 		switch(sysError)
@@ -250,6 +246,8 @@ void processLCD()
 				bottomLCDLine.curr = " Robotics  Nora ";
 				break;
 			}
+		if (nLCDButtons != 0)
+			errorDismissed = true;
 		}
 	else
 		{
@@ -269,7 +267,7 @@ void processLCD()
 			}
 		else if (sysState.curr == AUTONOMOUS)
 			{
-			if (btnScreenLeft.curr && btnScreenRight.curr)
+			if (btnScreenLeft.curr || btnScreenRight.curr)
 				sysAutoMode = false;
 
 			sysLCDBacklight=LCD_ALWAYS_ON;

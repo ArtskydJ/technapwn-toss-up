@@ -12,22 +12,18 @@ static int stkDrvTrn;
 static int stkDrvStf;
 static T_LC_BOOL btnLiftUp;
 static T_LC_BOOL btnLiftDown;
-static T_LC_BOOL btnIntkUp;
-static T_LC_BOOL btnIntkDown;
+static T_LC_BOOL btnIntkIn;
+static T_LC_BOOL btnIntkOut;
 static T_LC_BOOL btnLiftUp2;
 static T_LC_BOOL btnLiftDown2;
-static T_LC_BOOL btnIntkUp2;
-static T_LC_BOOL btnIntkDown2;
+static T_LC_BOOL btnIntkIn2;
+static T_LC_BOOL btnIntkOut2;
 static bool btnInvertDriveModifier;
-static bool btnInvertDriveFwd;
-static bool btnInvertDriveLft;
-static bool btnInvertDriveRev;
-static bool btnInvertDriveRht;
 static bool btnSubroutineModifier;
-static bool btnSubroutine1;
-static bool btnSubroutine2;
-static bool btnSubroutine3;
-static bool btnSubroutine4;
+static T_LC_BOOL btnRhtU;
+static T_LC_BOOL btnRhtL;
+static T_LC_BOOL btnRhtR;
+static T_LC_BOOL btnRhtD;
 static char sysInvertDrive = 0;
 static char sysInvertDriveOffset = 0;
 
@@ -37,8 +33,16 @@ void inputOperator(void)
 	//Set Lasts
 	setLastBool(&btnLiftUp);
 	setLastBool(&btnLiftDown);
-	setLastBool(&btnIntkUp);
-	setLastBool(&btnIntkDown);
+	setLastBool(&btnIntkOut);
+	setLastBool(&btnIntkIn);
+	setLastBool(&btnLiftUp2);
+	setLastBool(&btnLiftDown2);
+	setLastBool(&btnIntkOut2);
+	setLastBool(&btnIntkIn2);
+	setLastBool(&btnRhtU);
+	setLastBool(&btnRhtD);
+	setLastBool(&btnRhtL);
+	setLastBool(&btnRhtR);
 
 #ifdef PHYSICAL_ROBOT_TARGET
 	//Sticks
@@ -50,12 +54,12 @@ void inputOperator(void)
 	//Normal Buttons
 	btnLiftUp.curr =			(bool)vexRT[Btn5U];
 	btnLiftDown.curr =			(bool)vexRT[Btn5D];
-	btnIntkUp.curr =			(bool)vexRT[Btn6U];
-	btnIntkDown.curr =			(bool)vexRT[Btn6D];
+	btnIntkIn.curr =			(bool)vexRT[Btn6U];
+	btnIntkOut.curr =			(bool)vexRT[Btn6D];
 	btnLiftUp2.curr =			(bool)vexRT[Btn5UXmtr2];
 	btnLiftDown2.curr =			(bool)vexRT[Btn5DXmtr2];
-	btnIntkUp2.curr =			(bool)vexRT[Btn6UXmtr2];
-	btnIntkDown2.curr =			(bool)vexRT[Btn6DXmtr2];
+	btnIntkIn2.curr =			(bool)vexRT[Btn6UXmtr2];
+	btnIntkOut2.curr =			(bool)vexRT[Btn6DXmtr2];
 
 	//Button Modifiers
 	btnDisablePots = 			(bool)vexRT[Btn7L];
@@ -63,14 +67,10 @@ void inputOperator(void)
 	//btnInvertDriveModifier =	(bool)vexRT[Btn7R];
 
 	//Function Buttons
-	btnInvertDriveFwd =			(bool)vexRT[Btn8U];
-	btnInvertDriveRev =			(bool)vexRT[Btn8D];
-	btnInvertDriveLft =			(bool)vexRT[Btn8L];
-	btnInvertDriveRht =			(bool)vexRT[Btn8R];
-	btnSubroutine1 =			(bool)vexRT[Btn8U];
-	btnSubroutine2 =			(bool)vexRT[Btn8D];
-	btnSubroutine3 =			(bool)vexRT[Btn8L];
-	btnSubroutine4 =			(bool)vexRT[Btn8R];
+	btnRhtU.curr =				(bool)vexRT[Btn8U];
+	btnRhtD.curr =				(bool)vexRT[Btn8D];
+	btnRhtL.curr =				(bool)vexRT[Btn8L];
+	btnRhtR.curr =				(bool)vexRT[Btn8R];
 #endif
 	}
 
@@ -105,17 +105,17 @@ void processOperator()
 		//--Settings--//
 		if (btnInvertDriveModifier)
 			{
-			if		(btnInvertDriveFwd) sysInvertDriveOffset = DRV_FWD;
-			else if	(btnInvertDriveRev) sysInvertDriveOffset = DRV_REV;
-			else if	(btnInvertDriveLft) sysInvertDriveOffset = DRV_LFT;
-			else if	(btnInvertDriveRht) sysInvertDriveOffset = DRV_RHT;
+			if		(btnRhtU.curr) sysInvertDriveOffset = DRV_FWD;
+			else if	(btnRhtD.curr) sysInvertDriveOffset = DRV_REV;
+			else if	(btnRhtL.curr) sysInvertDriveOffset = DRV_LFT;
+			else if	(btnRhtR.curr) sysInvertDriveOffset = DRV_RHT;
 			}
 		if (btnSubroutineModifier)
 			{						//Negative values are for driver autos
-			if		(btnSubroutine1) autoRoutine.curr = -1;
-			else if	(btnSubroutine2) autoRoutine.curr = -2;
-			else if	(btnSubroutine3) autoRoutine.curr = -3;
-			else if	(btnSubroutine4) autoRoutine.curr = -4;
+			if		(btnRhtU.curr) autoRoutine.curr = -1;
+			else if	(btnRhtR.curr) autoRoutine.curr = -2;
+			else if	(btnRhtD.curr) autoRoutine.curr = -3;
+			else if	(btnRhtL.curr) autoRoutine.curr = -4;
 			}
 		sysInvertDrive = DRV_FWD; //((senAbsGyro+450)%900 + sysInvertDriveOffset) % 4;
 
@@ -192,42 +192,41 @@ void processOperator()
 		else
 			{
 			if (pressed(btnLiftDown))		//If Lift Down Pressed
-				{
-				liftPresetIndex = capIntValue(128, liftPresetIndex-1, 128+(NO_LIFT_PRESETS-1));
-				outLift = liftPresetIndex;
-				}
+				liftPresetIndex--;
 			else if (pressed(btnLiftUp))	//If Lift Up Pressed
-				{
-				liftPresetIndex = capIntValue(128, liftPresetIndex+1, 128+(NO_LIFT_PRESETS-1));
-				outLift = liftPresetIndex;
-				}
-			else if (pressed(btnLiftDown2))		//If Lift Down Pressed
-				{
-				liftPresetIndex = capIntValue(128, liftPresetIndex-1, 128+(NO_LIFT_PRESETS-1));
-				outLift = liftPresetIndex;
-				}
+				liftPresetIndex++;
+			else if (pressed(btnLiftDown2))	//If Lift Down Pressed
+				liftPresetIndex--;
 			else if (pressed(btnLiftUp2))	//If Lift Up Pressed
-				{
-				liftPresetIndex = capIntValue(128, liftPresetIndex+1, 128+(NO_LIFT_PRESETS-1));
-				outLift = liftPresetIndex;
-				}
+				liftPresetIndex++;
+
+			liftPresetIndex = capIntValue(L_PRE_START, liftPresetIndex, L_PRE_END);
+			outLift = liftPresetIndex;
 			}
 
 
 
 		//--Intake--//
-		if (btnIntkUp.curr || btnIntkDown.curr || btnIntkUp2.curr || btnIntkDown2.curr)
+		if (btnIntkIn.curr || btnIntkOut.curr || btnIntkIn2.curr || btnIntkOut2.curr)
 			{
 			if (autoScriptTakeover[INTK] == STO_TAKEOVER)
 				autoRoutine.curr = 0; //Disable script
 			}
 
-		if (btnIntkUp.curr)				//If Intake Out Pressed
-			outIntk = REV;					//Intake Motors Reverse
-		else if (btnIntkDown.curr)		//If Intake In Pressed
-			outIntk = FWD;					//Intake Motors Forward
+		if (btnIntkOut.curr)			//If Intake Out Pressed
+			outIntk = OUT;					//Intake Motors Reverse, dump out
+		else if (btnIntkIn.curr)		//If Intake In Pressed
+			outIntk = IN;					//Intake Motors Forward
+		else if (btnIntkOut2.curr)			//If Intake Out Pressed
+			outIntk = OUT;					//Intake Motors Reverse, dump out
+		else if (btnIntkIn2.curr)		//If Intake In Pressed
+			outIntk = IN;					//Intake Motors Forward
+		else if (outIntkExtend)			//If no intake buttons are pressed and jaw is up
+			outIntk = IN/2;
 		else							//If no Intake buttons Pressed
 			outIntk = 0;					//Intake Motors Off
 
+		//--Pneumatics--//
+		if (pressed(btnRhtR)) outIntkExtend = !outIntkExtend;
 		}
 	}

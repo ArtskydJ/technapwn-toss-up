@@ -11,11 +11,6 @@ static int autoStepCheck;
 static int autoStepStatus;
 
 //Functions
-void initializeAutonomous(void)
-	{
-	autoRoutine.curr = 0;
-	}
-
 void stateSwitchToAutonomous()
 	{
 	autoStep = 0;
@@ -69,6 +64,7 @@ void autoNextStep(void)
 	setToZeroInt(senRightQSE);
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
+	SensorValue[GYRO] = 0;
 	setAutoStepsStarts();
 	ClearTimer(T1);
 	//beep
@@ -181,7 +177,7 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
 																		autoHitTarget = INdelayPID; break;
 				case ONE_EDG_LN: if (autoFoundLeft || autoFoundRight)	autoHitTarget = INdelayPID; break;
 				case TWO_EDG_LN: if (autoFoundLeft && autoFoundRight)	autoHitTarget = INdelayPID; break;
-				case SCREEN_BTN: if (nLCDButtons)						autoHitTarget = INdelayPID; break;
+				case SCREEN_BTN: if (changedBool(btnScreenCenter))		autoHitTarget = INdelayPID; break;
 				default://nothing
 				}
 			}
@@ -224,10 +220,10 @@ void processAutonomous(void)
 		autoStepCheck = 0;
 		switch (autoRoutine.curr) //Routines
 			{
-			case 01: autoBlueMid2LargePre();  break;
-			case 02: autoRedMid2LargePre();   break;
-			case 03: autoBlueHang2BuckyPre(); break;
-			case 04: autoRedHang2BuckyPre();  break;
+			case 01: autoBlueMid1();  break;
+			case 02: autoRedMid1();   break;
+			case 03: autoBlueHang1(); break;
+			case 04: autoRedHang1();  break;
 			case 05:                          break;
 			case 06:                          break;
 			case 07:                          break;

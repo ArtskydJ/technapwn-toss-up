@@ -31,7 +31,7 @@ easier to read and remake.
 #define WALL_P        (float)0.1
 #define ENCODER_P     (float)1.0
 #define SONAR_P       (float)0.6
-#define GYRO_P        (float)2.0
+#define GYRO_P        (float)0.4
 
 #define straight(n)   (n),  (n)
 #define turn2(n)      (n),  -(n)
@@ -87,7 +87,7 @@ easier to read and remake.
 
 //Autonomous
 #define NO_TIME_RECORDS   100
-#define PID_WAIT_MS       200
+#define PID_WAIT_MS       350
 #define SENSOR_HIT        0
 #define MIN_TIMEOUT       1
 #define MAX_TIMEOUT       2
@@ -208,9 +208,6 @@ void autoResetEnd(void);
 void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
 	T_END INendType, int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
 void zeroMotors(void);
-void initializeAutonomous(void);
-void initializeLCD(void);
-void initializeOutput(void);
 void stateSwitchToAutonomous(void);
 void inputOperator(void);
 void inputLCD(void);
@@ -253,7 +250,8 @@ int outDrvR;
 int outDrvS;
 int outLift;
 int outIntk;
-bool outBrake;
+//bool outBrake;
+bool outIntkExtend;
 
 
 //Sensor Variables
@@ -268,6 +266,11 @@ T_LC_INT senLeftUS;
 T_LC_INT senRightUS;
 T_LC_INT senLeftQSE;
 T_LC_INT senRightQSE;
+
+//LCD Buttons
+T_LC_BOOL btnScreenLeft;
+T_LC_BOOL btnScreenCenter;
+T_LC_BOOL btnScreenRight;
 
 //Timer Variables
 unsigned int timerElapsedTime	= 0;
