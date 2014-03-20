@@ -1,3 +1,5 @@
+//State.c
+
 //Functions
 void inputProcessState()
 	{
@@ -41,15 +43,15 @@ void inputProcessState()
 			case AUTONOMOUS:
 				writeDebugStreamLine("***Autonomous***");
 				stateSwitchToAutonomous();
-				sysLCDBacklight=LCD_ALWAYS_ON;
+				sysLCDBacklight = LCD_ALWAYS_ON;
 				break;
 			case DISABLED:
 				writeDebugStreamLine("****Disabled****");
-				sysLCDBacklight=LCD_ALWAYS_ON; //LCD_TIMEOUT;
+				sysLCDBacklight = LCD_ALWAYS_ON; //LCD_TIMEOUT;
 				break;
 			case OPERATOR:
 				writeDebugStreamLine("****Operator****");
-				sysLCDBacklight=LCD_ALWAYS_ON;
+				sysLCDBacklight = LCD_ALWAYS_ON;
 				break;
 			}
 		}

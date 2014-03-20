@@ -1,12 +1,11 @@
-//Definitions.c
-//2013-05-06
+//DefinitionsAndDeclarations.c
 
 /*FLAGS
  These flags are meant to be overall system
 toggles that are easily turned off and on.
 */
-//#define AUTON_BEEP
-//#define SOUND_EFFECTS
+#define AUTON_BEEP
+#define SOUND_EFFECTS
 
 
 #if (_TARGET=="Robot")
@@ -36,15 +35,13 @@ easier to read and remake.
 #define straight(n)   (n),  (n)
 #define turn2(n)      (n),  -(n)
 #define turnL(n)      (n),  0
-#define turnR(n)      0,    -(n)
-#define gyro2(n)      (((n)-senGyro.curr)*GYRO_P), \
-                     ((-(n)+senGyro.curr)*GYRO_P)
+#define turnR(n)      0,    (n)
+#define gyro2(n)      ((n)*10-senGyro.curr)*GYRO_P, (-(n)*10+senGyro.curr)*GYRO_P
 #define strafe(n)     0,    0,    (n)
 #define stopped()     0,    0,    0
-#define enc(n,m)      (((n)-senLeftQSE.curr)*ENCODER_P), \
-                      (((m)-senRightQSE.curr)*ENCODER_P)
-#define usL(n)        (((n)-senLeftUS.curr)*SONAR_P)
-#define usR(n)        (((n)-senRightUS.curr)*SONAR_P)
+#define enc(n,m)      ((n)-senLeftQSE.curr)*ENCODER_P, ((m)-senRightQSE.curr)*ENCODER_P
+#define usL(n)        ((n)-senLeftUS.curr)*SONAR_P
+#define usR(n)        ((n)-senRightUS.curr)*SONAR_P
 
 //Operator, Autonomous - Lift Presets
 //Make sure not to re-define LIFT_L or LIFT_R anywhere.
@@ -72,7 +69,8 @@ easier to read and remake.
 #define FULL    127
 #define HALF    64
 #define FOLLOW  100
-#define BRAKE   5
+#define BRAKE   5  //Drive brake power
+#define HOLD	10 //Lift holding power
 
 #define NO_AUTO_ROUTINES  12
 #define MIN_LOOP_MS       5
@@ -162,8 +160,9 @@ typedef enum {
 typedef enum {
 	DRIVE = 0,
 	LIFT,
-	INTK
-	} T_COMPONENT;
+	INTK,
+	NO_SUBSYSTEMS
+	} T_SUBSYSTEM;
 
 typedef enum {
 	ERR_NONE = 0,
@@ -174,13 +173,14 @@ typedef enum {
 
 typedef enum {
 	M_AUTON = 0,
+	M_ENABLE_OUT,
 	M_CHECKLIST,
-	M_DIS_ENABLE_MTRS,
-	M_BATT_LEVELS,
+	M_BATTERY,
 	M_MTR_TEST,
-	M_ANALOG_LEVELS,
-	M_DIGITAL_LEVELS,
-	NO_MENU_ITEMS
+	M_ANALOG,
+	M_DIGITAL,
+	M_VOLUME,
+	M_NO_ITEMS
 	} T_MENU_ITEMS;
 
 typedef enum {
@@ -210,7 +210,6 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
 void zeroMotors(void);
 void stateSwitchToAutonomous(void);
 void inputOperator(void);
-void inputLCD(void);
 void inputSensors(void);
 bool joystickIsMoved(bool checkStkTrn);
 void setLastInt(T_LC_INT *INLC);
@@ -219,9 +218,9 @@ static int potReverse(int INpot);
 int joystickFilter(int INraw);
 int slew(int INtargetValue, int INlastValue, int INslew);
 int potPosition(int INMaxVal);
-int emulateLiftPot(int INspeed, int INgearing);
-int emulateWheelQSE(int INspeed);
-void emulateSensors(void);
+int emulateLiftPot(int INtimer, int INspeed, int INgearing);
+int emulateWheelQSE(int INtimer, int INspeed);
+int emulateGyro(int INtimer, int INleft, int INright);
 
 
 /* Declarations
@@ -280,5 +279,5 @@ unsigned int timerAuto			= 0;
 unsigned int timerRobotIdle		= 0;
 
 //Other
-bool autoScriptTakeover[3]={0,0,0};
+bool autoScriptTakeover[NO_SUBSYSTEMS]={0,0,0};
 short mtrTestEnabled[10]={0,0,0,0,0,0,0,0,0,0};

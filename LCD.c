@@ -1,5 +1,7 @@
+//LCD.c
+
 //Constants
-static const int NO_CHECKLIST_ITEMS =	9;
+static const int NO_CHECKLIST_ITEMS =	10;
 static const int LCD_BLINK_SLOW_MS =	500;
 static const int LCD_BLINK_FAST_MS =	200;
 static const int LCD_TIMEOUT_MS =		5000;
@@ -9,61 +11,64 @@ static T_MENU_ITEMS menuItemIndex; //LCD Menu
 static bool menuItemActivated=false;
 static int menuChecklistItem = 0;
 static int menuBatteryItem = 0;
-static T_LC_STRING topLCDLine = "";//LCD Screen
-static T_LC_STRING bottomLCDLine = "";
+static T_LC_STRING topLCDLine;//LCD Screen
+static T_LC_STRING bottomLCDLine;
 
 static string motorName[10];
 //static string autoString[NO_AUTO_NAME_STRS];
 static string autoNames[NO_AUTO_ROUTINES] = { //make const? (gives error with scroll func)
-	"B M | P 2L | 12",
-	"R M | P 2L | 12",
-	"B H | P5B2L | 9",
-	"R H | P5B2L | 9",
+//   1234567890123456
+	"Red-Mid-1  N  12",
+	"Blu-Mid-1  N  12",
+	"Red-Hng-1  S  11",
+	"Blu-Hng-1  S  11",
 	"NONE",
 	"NONE",
 	"NONE",
 	"NONE",
 	"Test Things",
-	"Test Drive Time",
-	"Test Gyro Turn",
-	"B M | Prog"};
+	"Test Drive-Time",
+	"Test Gyro-Turn",
+	"Red-Mid Skills 1"};
 //static const char autonName[]="NONE | ";
-static string menuChecklist[NO_CHECKLIST_ITEMS*2] =
+static const string menuChecklist[NO_CHECKLIST_ITEMS] =
 	{
-	"      ",	"Batteries in",
-	"      ",	"Batts charged",
-	" Power",	"Ex + Cortex on",
-	"      ",	"Joy plugged in",
-	"  Joy ",	"lights green",
-	"      ",	"Robot aligned",
-	"      ",	"Correct auton",
-	"      ",	"Preload in",
-	" Robot",	"fits in 18\""
+	"Batteries in",
+	"Batteries chargd",
+	"Cortex on",
+	"Power Expandr on",
+	"Joy plugged in",
+	"Joy lights green",
+	"Robot aligned",
+	"Correct auton",
+	"Preload in",
+	"Robot fits in 18"
 	};
 
-static string menuItemName[NO_MENU_ITEMS];
+static string menuItemName[M_NO_ITEMS];
 
 //Functions
 void initializeLCD(void)
 	{
-	motorName[DRIVE_FL]  = "Frnt L Dr";
-	motorName[DRIVE_BL1] = "Back L Dr1";
-	motorName[DRIVE_BL2] = "Back L Dr2";
-	motorName[DRIVE_FR]  = "Frnt R Dr1";
-	motorName[DRIVE_BR1] = "Back R Dr1";
-	motorName[DRIVE_BR2] = "Back R Dr2";
-	motorName[LIFT_L]    = "L Lift";
+	motorName[DRIVE_FL]  = "L Drv Front";
+	motorName[DRIVE_BL1] = "L Drv Back 1";
+	motorName[DRIVE_BL2] = "L Drv Back 2";
+	motorName[DRIVE_FR]  = "R Drv Front";
+	motorName[DRIVE_BR1] = "R Drv Back 1";
+	motorName[DRIVE_BR2] = "R Drv Back 2";
+	motorName[LIFT_L]    = "L Lift 1";
+	motorName[LIFT_L2]   = "L Lift 2";
 	motorName[LIFT_R]    = "R Lift";
 	motorName[INTK_L]    = "Intake";
-	//motorName[INTK_R]    = "R Intake";
 
-	menuItemName[M_AUTON] = "Time:";
-	menuItemName[M_CHECKLIST] = "Checklist:";
-	menuItemName[M_DIS_ENABLE_MTRS] = "Outputs are:";
-	menuItemName[M_BATT_LEVELS] = "Battery Levels:";
-	menuItemName[M_MTR_TEST] = "Motor Test:";
-	menuItemName[M_ANALOG_LEVELS] = "Analog Value:";
-	menuItemName[M_DIGITAL_LEVELS] = "Digital Value:";
+	menuItemName[M_AUTON] =      "Time:";
+	menuItemName[M_CHECKLIST] =  "Checklist:";
+	menuItemName[M_ENABLE_OUT] = "Outputs are:";
+	menuItemName[M_BATTERY] =    "Battery Volts:";
+	menuItemName[M_MTR_TEST] =   "Motor Test:";
+	menuItemName[M_ANALOG] =     "Analog Value:";
+	menuItemName[M_DIGITAL] =    "Digital Value:";
+	menuItemName[M_VOLUME] =     "Sound Volume:";
 	}
 
 
@@ -88,21 +93,6 @@ borders, while 1 is centered.
 int potCentered(int INMaxVal)
 	{
 	return ((float)3*INMaxVal*senSelectorPot/4096)%3;
-	}
-
-
-void inputLCD(void)
-	{
-	//--Set Lasts--//
-	setLastBool(&btnScreenLeft);
-	setLastBool(&btnScreenCenter);
-	setLastBool(&btnScreenRight);
-	setLastString(&topLCDLine);
-	setLastString(&bottomLCDLine);
-
-	btnScreenLeft.curr =	(bool)(nLCDButtons & 1);
-	btnScreenCenter.curr =	(bool)(nLCDButtons & 2);
-	btnScreenRight.curr =	(bool)(nLCDButtons & 4);
 	}
 
 
@@ -150,17 +140,20 @@ void menuExecuteActivated()
 		case M_CHECKLIST:
 			menuChecklistItem = (menuChecklistItem+1)%NO_CHECKLIST_ITEMS;
 			break;
-		case M_DIS_ENABLE_MTRS:
+		case M_ENABLE_OUT:
 			sysMotorsEnabled = !sysMotorsEnabled;
 			break; //Enable / Disable motors
-		case M_BATT_LEVELS:
+		case M_BATTERY:
 			menuBatteryItem = (menuBatteryItem+1)%3;
 			break; //View battery Levels
 		case M_MTR_TEST:
 			mtrTestEnabled[potPosition(10)] = (( mtrTestEnabled[potPosition(10)]+2 )%3)-1;
 			break; //Toggle Motors between -1, 0 and 1
-		case M_ANALOG_LEVELS: break; //View Analog Value
-		case M_DIGITAL_LEVELS: break; //View Digital Value
+		case M_ANALOG: break; //View Analog Value
+		case M_DIGITAL: break; //View Digital Value
+		case M_VOLUME:
+			nVolume = potPosition(5);
+			break;
 		default: break; //Execute nothing
 		}
 	}
@@ -177,45 +170,42 @@ void menuView()
 	switch (menuItemIndex) //BOTTOM LINE
 		{
 		case M_AUTON:
-			switch (potCentered(NO_AUTO_ROUTINES))
-				{
-				case 0: StringFormat(tString0,"%s %.1f |>%d ",menuItemName[menuItemIndex],((float)timerAuto/1000),autoRoutine.curr); break;
-				case 1: StringFormat(tString0,"%s %.1f | %d ",menuItemName[menuItemIndex],((float)timerAuto/1000),autoRoutine.curr); break;
-				case 2: StringFormat(tString0,"%s %.1f | %d<",menuItemName[menuItemIndex],((float)timerAuto/1000),autoRoutine.curr); break;
-				}
+			StringFormat(tString0,"%s %3.1f | %d ",menuItemName[menuItemIndex],(float)timerAuto/1000,autoRoutine.curr);
 			int temp = autoRoutine.curr-1;
 			strcpy(tString1,autoNames[temp]);
 			break; //Scrolling Autonomous Name
 
 		case M_CHECKLIST:
-			strcat(tString0, menuChecklist[menuChecklistItem*2]);
-			tString1 = menuChecklist[menuChecklistItem*2+1];
+			tString1 = menuChecklist[menuChecklistItem];
 			break;
-		case M_DIS_ENABLE_MTRS:
+		case M_ENABLE_OUT:
 			tString1 = (sysMotorsEnabled)?"Enabled":"Disabled";
 			break;
-		case M_BATT_LEVELS:
+		case M_BATTERY:
 			switch (menuBatteryItem)
 				{
-				case 0: sprintf(tString1,"Cortex: %1.3f", (float)nAvgBatteryLevel/1000);   break;
-				case 1: sprintf(tString1,"Pow Ex: %1.3f", (float)senPwrExpVoltage/70);     break;
-				case 2: sprintf(tString1,"Backup: %1.3f", (float)BackupBatteryLevel/1000); break;
+				case 0: sprintf(tString1,"Cortex:    %1.3f", (float)nAvgBatteryLevel/1000);   break;
+				case 1: sprintf(tString1,"Power Exp: %1.3f", (float)senPwrExpVoltage/70);     break;
+				case 2: sprintf(tString1,"Backup 9v: %1.3f", (float)BackupBatteryLevel/1000); break;
 				}
 			break; //Scrolling Battery Levels
 		case M_MTR_TEST:
 			sysMotorTest = true;
-			StringFormat(tString2,"%5d",stkMtrTest);
+			StringFormat(tString2,"%3d",abs(stkMtrTest)); //negative sign will not fit; using abs()
 			strcat(tString0, tString2);
 			int temp1 = potPosition(10);
 			int temp2 = mtrTestEnabled[temp1];
 			strcpy(tString1,motorName[temp1]);
 			tString2 = (temp2==-1)?"|Rev": (temp2==1)?"|Fwd":"|Off"; // -1 Rev    1 Fwd    0 Off
 			break;
-		case M_ANALOG_LEVELS:
+		case M_ANALOG:
 			StringFormat(tString1, "anlg %1d:%1d", potPosition(8)+1,  SensorValue[potPosition(8)   ]);//View Analog Value
 			break;
-		case M_DIGITAL_LEVELS:
+		case M_DIGITAL:
 			StringFormat(tString1, "dgtl %1d:%1d", potPosition(12)+1, SensorValue[potPosition(12)+8]); //View Digital Value
+			break;
+		case M_VOLUME:
+			StringFormat(tString1, "Is:%d Set:%1d", nVolume, potPosition(5)); //Set Volume Level
 			break;
 		}
 
@@ -257,7 +247,7 @@ void processLCD()
 
 			if (pressed(btnScreenLeft))		menuItemIndex--;
 			if (pressed(btnScreenRight))	menuItemIndex++;
-			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, NO_MENU_ITEMS-1);
+			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, M_NO_ITEMS-1);
 			//menuItemIndex = (menuItemIndex + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //ITEM = (ITEM + NUM) % NUM
 
 			if (pressed(btnScreenCenter))	menuItemActivated = !menuItemActivated;
@@ -268,10 +258,11 @@ void processLCD()
 		else if (sysState.curr == AUTONOMOUS)
 			{
 			if (btnScreenLeft.curr || btnScreenRight.curr)
-				sysAutoMode = false;
+				sysAutoMode = false; //Only works when competition switch is unplugged (see State.c)
 
 			sysLCDBacklight=LCD_ALWAYS_ON;
-			StringFormat(topLCDLine.curr,"Time:%.1f | %d ",((float)timerAuto/1000),autoRoutine.curr);
+			string s1,s2;
+			StringFormat(topLCDLine.curr,"Time: %3.1f | %d ",((float)timerAuto/1000),autoRoutine.curr);
 			StringFormat(bottomLCDLine.curr, "Step: %d", autoStep);	//Show step
 			}
 		}
@@ -281,27 +272,22 @@ void processLCD()
 void outputLCD()
 	{
 	updateBacklight();
-	if (topLCDLine.curr != topLCDLine.last)
+	if (changedString(topLCDLine))
 		{
 		clearLCDLine(0);
 		displayLCDCenteredString(0,topLCDLine.curr);
 		}
-	if (bottomLCDLine.curr != bottomLCDLine.last)
+	if (changedString(bottomLCDLine))
 		{
 		clearLCDLine(1);
-		if (sysState.curr==AUTONOMOUS || strlen(bottomLCDLine.curr)<16)
-			displayLCDCenteredString(1,bottomLCDLine.curr);
-		else
-			{
-			if (menuItemIndex==0)
-				displayLCDString(1,0,bottomLCDLine.curr);
-			else
-				displayLCDString(1,1,bottomLCDLine.curr);
-			}
+		displayLCDCenteredString(1,bottomLCDLine.curr);
 		}
 	if (sysState.curr != AUTONOMOUS && sysError==ERR_NONE)
 		{
-		if (menuItemIndex>0)                    displayLCDString(1,0, "<"); //If not at the first item, show prev arrow
-		if (menuItemIndex<(int)NO_MENU_ITEMS-1) displayLCDString(1,15,">"); //If not at the last item, show next arrow
+		if (menuItemIndex>0)                 displayLCDString(0,0, "<"); //If not at the first item, show prev arrow
+		if (menuItemIndex<(int)M_NO_ITEMS-1) displayLCDString(0,15,">"); //If not at the last item, show next arrow
 		}
+
+	setLastString(&topLCDLine);
+	setLastString(&bottomLCDLine);
 	}

@@ -1,3 +1,5 @@
+//Autonomous.c
+
 //Variables
 static T_SENSOR_STATUS autoHitTarget;
 //static int autoNextCondition;
@@ -15,16 +17,6 @@ void stateSwitchToAutonomous()
 	{
 	autoStep = 0;
 	autoStepCheck = 0;
-	}
-
-void setAutoStepsStarts()
-	{
-	//--Sensors--//
-	setStepInt(&senGyro);
-	setStepInt(&senLeftQSE);
-	setStepInt(&senRightQSE);
-	setStepInt(&senLeftUS);
-	setStepInt(&senRightUS);
 	}
 
 
@@ -51,7 +43,8 @@ void autoNextStep(void)
 	if		(autoStepStatus==MIN_TIMEOUT)	sprintf(msg2,"Min");
 	else if	(autoStepStatus==MAX_TIMEOUT)	sprintf(msg2,"Max");
 	writeDebugStreamLine("%s%s\t|%d\t|",msg1,msg2,autoStep);
-	autoClockRunning = true;
+	
+	//--Autonomous Variables--//
 	autoFoundLeft = false;
 	autoFoundRight = false;
 	autoDriveReady = false;
@@ -60,12 +53,21 @@ void autoNextStep(void)
 	autoHitTarget = NOT_HIT;
 	autoStepStatus = SENSOR_HIT;
 	autoStep++;
-	setToZeroInt(senLeftQSE);
-	setToZeroInt(senRightQSE);
+	
+	setToZeroInt(&senGyro);
+	setToZeroInt(&senLeftQSE);
+	setToZeroInt(&senRightQSE);
+	SensorValue[GYRO] = 0;
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
-	SensorValue[GYRO] = 0;
-	setAutoStepsStarts();
+	
+	//--Sensor Step Starts--//
+	setStepInt(&senGyro);
+	setStepInt(&senLeftQSE);
+	setStepInt(&senRightQSE);
+	setStepInt(&senLeftUS);
+	setStepInt(&senRightUS);
+	
 	ClearTimer(T1);
 	//beep
 	}
@@ -101,6 +103,7 @@ void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType, T_SCRIPT_TAKEOVER IN
 			writeDebugStreamLine("Skip to\t|%d\t|",INgoToStep);
 			}
 		timerAuto = 0;
+		autoClockRunning = true;
 		}
 	autoStepCheck++;
 	}
@@ -111,8 +114,9 @@ void autoResetEnd(void)
 	if (autoStepCheck==autoStep)
 		{
 		zeroMotors();
-		setToZeroInt(senLeftQSE);
-		setToZeroInt(senRightQSE);
+		setToZeroInt(&senGyro);
+		setToZeroInt(&senLeftQSE);
+		setToZeroInt(&senRightQSE);
 
 		writeDebugStreamLine("+-----------+---+");
 		writeDebugStreamLine("|Time: %.1f\t\t|",((float)timerAuto/1000));
@@ -145,8 +149,8 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
 		outIntk = INintk;
 		if (outDrvS != 0)
 			{
-			outDrvL += (diffStepInt(senGyro) - senGyro.curr) * GYRO_P;
-			outDrvR -= (diffStepInt(senGyro) - senGyro.curr) * GYRO_P;
+			outDrvL += (diffStepInt(senGyro)) * GYRO_P;
+			outDrvR -= (diffStepInt(senGyro)) * GYRO_P;
 			}
 		if (abs(outDrvL)<PID_ZONE && abs(outDrvR)<PID_ZONE && abs(outDrvS)<PID_ZONE)
 			autoDriveReady=true;
@@ -173,8 +177,7 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
 				case TIME_LIMIT: if (time1(T1)>=INminTime)				autoHitTarget = INdelayPID; break;
 				case DRIV_READY: if (autoDriveReady)					autoHitTarget = INdelayPID; break;
 				case LIFT_READY: if (autoLiftReady)						autoHitTarget = INdelayPID; break;
-				case FULL_READY: if (autoDriveReady && autoLiftReady)
-																		autoHitTarget = INdelayPID; break;
+				case FULL_READY: if (autoDriveReady && autoLiftReady)	autoHitTarget = INdelayPID; break;
 				case ONE_EDG_LN: if (autoFoundLeft || autoFoundRight)	autoHitTarget = INdelayPID; break;
 				case TWO_EDG_LN: if (autoFoundLeft && autoFoundRight)	autoHitTarget = INdelayPID; break;
 				case SCREEN_BTN: if (changedBool(btnScreenCenter))		autoHitTarget = INdelayPID; break;
@@ -220,10 +223,10 @@ void processAutonomous(void)
 		autoStepCheck = 0;
 		switch (autoRoutine.curr) //Routines
 			{
-			case 01: autoBlueMid1();  break;
-			case 02: autoRedMid1();   break;
-			case 03: autoBlueHang1(); break;
-			case 04: autoRedHang1();  break;
+			case 01: autoRedMid1();   break;
+			case 02: autoBlueMid1();  break;
+			case 03: autoRedHang1();  break;
+			case 04: autoBlueHang1(); break;
 			case 05:                          break;
 			case 06:                          break;
 			case 07:                          break;

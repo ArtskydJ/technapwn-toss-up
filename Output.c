@@ -1,3 +1,5 @@
+//Output.c
+
 //Constants
 static const int LIFT_DISABLE_RANGE = 50;
 
@@ -108,46 +110,4 @@ void outputMotion(void)
 		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD); //CAP ALL MOTORS
 		motor[j] = mtrSlewed[j]*sysMotorsEnabled; //ASSIGN MOTORS
 		}
-	}
-
-
-/* This function gets the target motor value, the
-previously assigned motor value, and the slew.
-*/
-int slew(int INtargetValue, int INlastValue, int INslew)
-	{
-	return capIntValue(-abs(INslew), INtargetValue-INlastValue, abs(INslew));
-	}
-
-
-/* This function returns the delta for the
-emulated quadrature shaft encoder with the given
-speed of a wheel.
-*/
-int emulateWheelQSE(int INspeed)
-	{
-	//127 * 5 /
-	return ( (float) INspeed * timerElapsedTime / (127 * 2) );
-	}
-
-
-/* This function returns the delta for the
-emulated potentiometer position with the given
-speed and gearing of a lift.
- INgearing needs a 5 if the gearing is 1:5, a 7
-if the gearing is 1:7, etc.
-*/
-int emulateLiftPot(int INspeed, int INgearing)
-	{
-	//127 * 5 / 10
-	//50rpm*elapsedMS/gearing
-	return ( (float) INspeed * timerElapsedTime / (25*INgearing) );
-	}
-
-void emulateSensors(void)
-	{
-	senLeftQSE.curr  +=	emulateWheelQSE(mtrSlewed[DRIVE_BL1]);
-	senRightQSE.curr +=	emulateWheelQSE(mtrSlewed[DRIVE_BR1]);
-	senLiftLPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_L], 10);
-	senLiftRPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_R], 10);
 	}

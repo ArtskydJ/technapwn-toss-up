@@ -1,9 +1,7 @@
+//Operator.c
+
 //Constants
 static const int JOYSTICK_DEAD_ZONE = 10;
-static const int DRV_FWD = 0;
-static const int DRV_LFT = 1;
-static const int DRV_REV = 2;
-static const int DRV_RHT = 3;
 
 //Variables
 static int stkMtrTest;
@@ -18,14 +16,11 @@ static T_LC_BOOL btnLiftUp2;
 static T_LC_BOOL btnLiftDown2;
 static T_LC_BOOL btnIntkIn2;
 static T_LC_BOOL btnIntkOut2;
-static bool btnInvertDriveModifier;
 static bool btnSubroutineModifier;
 static T_LC_BOOL btnRhtU;
 static T_LC_BOOL btnRhtL;
 static T_LC_BOOL btnRhtR;
 static T_LC_BOOL btnRhtD;
-static char sysInvertDrive = 0;
-static char sysInvertDriveOffset = 0;
 
 //Functions
 void inputOperator(void)
@@ -102,14 +97,8 @@ void processOperator()
 		sysMotorTest = !joystickIsMoved(0);
 	else
 		{
+		int tDrvL, tDrvR, tDrvS, tLift, tIntk;
 		//--Settings--//
-		if (btnInvertDriveModifier)
-			{
-			if		(btnRhtU.curr) sysInvertDriveOffset = DRV_FWD;
-			else if	(btnRhtD.curr) sysInvertDriveOffset = DRV_REV;
-			else if	(btnRhtL.curr) sysInvertDriveOffset = DRV_LFT;
-			else if	(btnRhtR.curr) sysInvertDriveOffset = DRV_RHT;
-			}
 		if (btnSubroutineModifier)
 			{						//Negative values are for driver autos
 			if		(btnRhtU.curr) autoRoutine.curr = -1;
@@ -117,116 +106,115 @@ void processOperator()
 			else if	(btnRhtD.curr) autoRoutine.curr = -3;
 			else if	(btnRhtL.curr) autoRoutine.curr = -4;
 			}
-		sysInvertDrive = DRV_FWD; //((senAbsGyro+450)%900 + sysInvertDriveOffset) % 4;
 
-		//--Controls--//
-		switch(sysInvertDrive)
-			{
-			case DRV_RHT: //Rotated 0°   (Robot faces driver's right)
-				outDrvL = stkDrvStf;
-				outDrvR = stkDrvStf;
-				outDrvS = stkDrvFwd;
-				break;
-			case DRV_FWD: //Rotated 90°  (Robot faces away from driver)
-				outDrvL = stkDrvFwd;
-				outDrvR = stkDrvFwd;
-				outDrvS = stkDrvStf;
-				break;
-			case DRV_LFT: //Rotated 180° (Robot faces driver's left)
-				outDrvL = -stkDrvStf;
-				outDrvR = -stkDrvStf;
-				outDrvS = -stkDrvFwd;
-				break;
-			case DRV_REV: //Rotated 270° (Robot faces driver)
-				outDrvL = -stkDrvFwd;
-				outDrvR = -stkDrvFwd;
-				outDrvS = -stkDrvStf;
-				break;
-			}
-		outDrvL += stkDrvTrn;
-		outDrvR -= stkDrvTrn;
 		//--Drive--//
-		if (joystickIsMoved(0))
-			if (autoScriptTakeover[DRIVE] == STO_TAKEOVER)
-				autoRoutine.curr = 0; //Disable script
+		tDrvL = stkDrvFwd + stkDrvTrn;
+		tDrvR = stkDrvFwd - stkDrvTrn;
+		tDrvS = stkDrvStf;
 
 		//--Lift--//
-		static bool tLastLiftPressed=0;
-		if (btnLiftUp.curr || btnLiftDown.curr || btnLiftUp2.curr || btnLiftDown2.curr)
+		if (1)				//Replace from here...
 			{
-			if (autoScriptTakeover[LIFT] == STO_TAKEOVER)
-				autoRoutine.curr = 0; //Disable script
-			}
-		if (1) //(btnDisablePots)
-			{
-			if (tLastLiftPressed)
-				outLift = 10;
-			else
-				outLift = 0;
 			if (btnDisablePots)
-				{
-				tLastLiftPressed = false;
-				outLift = 0;				//Lift Motors Off
-				}
-			if (btnLiftUp.curr)				//If Lift Up Pressed
-				{
-				tLastLiftPressed = true;
-				outLift = FWD;					//Lift Motors Reverse
-				}
-			else if (btnLiftDown.curr)		//If Lift Down Pressed
-				{
-				outLift = REV;					//Lift Motors Forward
-				tLastLiftPressed = false;
-				}
-			else if (btnLiftUp2.curr)				//If Lift Up Pressed
-				{
-				tLastLiftPressed = true;
-				outLift = FWD;					//Lift Motors Reverse
-				}
-			else if (btnLiftDown2.curr)		//If Lift Down Pressed
-				{
-				tLastLiftPressed = false;
-				outLift = REV;					//Lift Motors Forward
-				}
+				tLift = 0;	//...To here...
+
+//		if (btnDisablePots || autoScriptTakeover[LIFT]==STO_ADD)
+//			{				//...With these! (when the lift gets a potentiometer)
+			if (btnLiftUp.curr)				//If lift up is pressed
+				tLift = UP;						//Run lift motors up
+			else if (btnLiftDown.curr)		//If lift down is pressed
+				tLift = DOWN;					//Run lift motors down
+			else if (btnLiftUp2.curr)		//If lift up is pressed
+				tLift = UP;						//Run lift motors up
+			else if (btnLiftDown2.curr)		//If lift down is pressed
+				tLift = DOWN;					//Run lift motors down
+			else							//If no lift buttons are pressed
+				tLift = (tLift>0) ? HOLD : 0;	//Run lift motors at hold or 0
 			}
 		else
 			{
 			if (pressed(btnLiftDown))		//If Lift Down Pressed
-				liftPresetIndex--;
+				liftPresetIndex--;				//Previous preset
 			else if (pressed(btnLiftUp))	//If Lift Up Pressed
-				liftPresetIndex++;
+				liftPresetIndex++;				//Next preset
 			else if (pressed(btnLiftDown2))	//If Lift Down Pressed
-				liftPresetIndex--;
+				liftPresetIndex--;				//Previous preset
 			else if (pressed(btnLiftUp2))	//If Lift Up Pressed
-				liftPresetIndex++;
+				liftPresetIndex++;				//Next preset
 
 			liftPresetIndex = capIntValue(L_PRE_START, liftPresetIndex, L_PRE_END);
-			outLift = liftPresetIndex;
+			tLift = liftPresetIndex;
 			}
-
-
 
 		//--Intake--//
-		if (btnIntkIn.curr || btnIntkOut.curr || btnIntkIn2.curr || btnIntkOut2.curr)
-			{
-			if (autoScriptTakeover[INTK] == STO_TAKEOVER)
-				autoRoutine.curr = 0; //Disable script
-			}
-
-		if (btnIntkOut.curr)			//If Intake Out Pressed
-			outIntk = OUT;					//Intake Motors Reverse, dump out
-		else if (btnIntkIn.curr)		//If Intake In Pressed
-			outIntk = IN;					//Intake Motors Forward
-		else if (btnIntkOut2.curr)			//If Intake Out Pressed
-			outIntk = OUT;					//Intake Motors Reverse, dump out
-		else if (btnIntkIn2.curr)		//If Intake In Pressed
-			outIntk = IN;					//Intake Motors Forward
+		if (btnIntkOut.curr)			//If intake out 1 pressed
+			tIntk = OUT;					//Intake motors dump out
+		else if (btnIntkIn.curr)		//If intake in 1 pressed
+			tIntk = IN;						//Intake motors intake in
+		else if (btnIntkOut2.curr)		//If intake out 2 pressed
+			tIntk = OUT;					//Intake motors dump out
+		else if (btnIntkIn2.curr)		//If intake in 2 pressed
+			tIntk = IN;						//Intake motors intake in
 		else if (outIntkExtend)			//If no intake buttons are pressed and jaw is up
-			outIntk = IN/2;
-		else							//If no Intake buttons Pressed
-			outIntk = 0;					//Intake Motors Off
+			tIntk = IN*3/4;					//Intake motors slow intake in
+		else							//If no intake buttons pressed and jaw is down
+			tIntk = 0;						//Intake motors off
+
 
 		//--Pneumatics--//
-		if (pressed(btnRhtR)) outIntkExtend = !outIntkExtend;
+		if (pressed(btnRhtR))
+			outIntkExtend = !outIntkExtend;
+
+
+		//--Script Takeover Checking and Applying Outputs--//
+		if (tDrvL != 0 || tDrvR != 0 || tDrvS != 0) //If drive is being moved manually
+			{
+			switch (autoScriptTakeover[DRIVE])
+				{
+				case STO_ADD:	//Add to outputs
+					outDrvL += tDrvL;
+					outDrvR += tDrvR;
+					outDrvS += tDrvS;
+					break;
+				case STO_TAKEOVER:
+					autoRoutine.curr = 0; //Disable script
+					//No break statement (purposeful)
+				case STO_NONE:
+					outDrvL = tDrvL;
+					outDrvR = tDrvR;
+					outDrvS = tDrvS;
+					break;
+				}
+			}
+		if (tLift != 0 && tLift != HOLD) //If lift is being moved manually
+			{
+			switch (autoScriptTakeover[LIFT])
+				{
+				case STO_ADD:	//Add to outputs
+					//outLift += tLift; //Will not work with target positions
+					break;
+				case STO_TAKEOVER:
+					autoRoutine.curr = 0; //Disable script
+					//No break statement (purposeful)
+				case STO_NONE:
+					outLift = tLift;
+					break;
+				}
+			}
+		if (tIntk != 0) //If intake is being moved manually
+			{
+			switch (autoScriptTakeover[INTK])
+				{
+				case STO_ADD:	//Add to outputs
+					outIntk += tIntk;
+					break;
+				case STO_TAKEOVER:
+					autoRoutine.curr = 0; //Disable script
+					//No break statement (purposeful)
+				case STO_NONE:
+					outIntk = tIntk;
+					break;
+				}
+			}
 		}
 	}
