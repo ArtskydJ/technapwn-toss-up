@@ -134,69 +134,73 @@ int encStrf1(int n) //Strafe to Left Encoder setpoint
 	{ return (n + (senLeftQSE.curr + senLeftQSE.curr)/2) * ENC_STRF_P; }
 
 //----------DRIVE----------
-unsigned int spd(int n, int m) //Separate sides different power
-	{ return encode(n,m); }
+//--Speed--//
+unsigned int spd(int spdL, int spdR) //Separate sides different power
+	{ return encode(spdL, spdR); }
 
 unsigned int stopped() //Don't move forward or reverse
 	{ return encode(0, 0); }
 
-unsigned int straight(int n) //Both sides same power
-	{ return encode(n, n); }
+unsigned int straight(int spd) //Both sides same power
+	{ return encode(spd, spd); }
 
-unsigned int turn2(int n) //Both sides turn power
-	{ return encode(n, -n); }
+unsigned int turn2(int spd) //Both sides turn power
+	{ return encode(spd, -spd); }
 
-unsigned int turnL(int n) //Left side turn power
-	{ return encode(n, 0); }
+unsigned int turnL(int spd) //Left side turn power
+	{ return encode(spd, 0); }
 
-unsigned int turnR(int n) //Right side turn power
-	{ return encode(0, n); }
+unsigned int turnR(int spd) //Right side turn power
+	{ return encode(0, spd); }
 
-unsigned int gyroL(int n) //Left side turn gyro
-	{ return encode((n*10 - senGyro.curr)*GYRO_P*2, 0); }
+//--Degrees--//
+unsigned int gyroL(int deg) //Left side turn gyro
+	{ return encode((deg*10 - senGyro.curr)*GYRO_P*2, 0); }
 
-unsigned int gyroR(int n) //Right side turn gyro
-	{ return encode(0, -(n*10 - senGyro.curr)*GYRO_P*2); }
+unsigned int gyroR(int deg) //Right side turn gyro
+	{ return encode(0, -(deg*10 - senGyro.curr)*GYRO_P*2); }
 
-unsigned int gyro2(int n) //Both sides turn gyro
+unsigned int gyro2(int deg) //Both sides turn gyro
 	{ return encode(
-		(n*10 - senGyro.curr)*GYRO_P,
-		-(n*10 - senGyro.curr)*GYRO_P); }
+		(deg*10 - senGyro.curr)*GYRO_P,
+		-(deg*10 - senGyro.curr)*GYRO_P); }
 
-unsigned int enc(int n, int m) //Individual sides encoders
+//--Encoders--//
+unsigned int enc(int distL, int distR) //Individual sides encoders
 	{ return encode(
-		(n-senLeftQSE.curr)*ENC_DRV_P,
-		(m-senRightQSE.curr)*ENC_DRV_P); }
+		(distL-senLeftQSE.curr)*ENC_DRV_P,
+		(distR-senRightQSE.curr)*ENC_DRV_P); }
 
-unsigned int enc1(int n) //Both sides, one target, two encoders
+unsigned int enc1(int dist) //Both sides, one target, two encoders
 	{ return encode(
-		(n-senLeftQSE.curr)*ENC_DRV_P,
-		(n-senRightQSE.curr)*ENC_DRV_P); }
+		(dist-senLeftQSE.curr)*ENC_DRV_P,
+		(dist-senRightQSE.curr)*ENC_DRV_P); }
 
-unsigned int enc1Spd(int n, int m) //Both sides, one target, two encoders, custom speed
-	{
-	/*int tL =
-	int tR =*/ return encode(
-		capIntValue(-abs(m), (n-senLeftQSE.curr)*ENC_DRV_P, abs(m)),
-		capIntValue(-abs(m), (n-senRightQSE.curr)*ENC_DRV_P, abs(m))); }
+unsigned int enc1Spd(int dist, int spd) //Both sides, one target, two encoders, custom speed
+	{ return encode(
+		capIntValue(-abs(spd), (dist-senLeftQSE.curr)*ENC_DRV_P, abs(spd)),
+		capIntValue(-abs(spd), (dist-senRightQSE.curr)*ENC_DRV_P, abs(spd))); }
+
+//--Line Following--//
+
 
 //----------ULTRASONIC FOLLOW----------
-unsigned int usFllwL(int n, int m) //Follow left wall a set distance with left ultrasonic
+unsigned int usFllwL(int spd, int dist) //Follow left wall a set distance with left ultrasonic
 	{ return encode(
-		n - ((float)senLeftUS.curr-m)* US_FLLW_P,
-		n + ((float)senLeftUS.curr-m)* US_FLLW_P); }
+		spd - ((float)senLeftUS.curr-dist)* US_FLLW_P,
+		spd + ((float)senLeftUS.curr-dist)* US_FLLW_P); }
 
-unsigned int usFllwR(int n, int m) //Follow right wall a set distance with right ultrasonic
+unsigned int usFllwR(int spd, int dist) //Follow right wall a set distance with right ultrasonic
 	{ return encode(
-		n + ((float)senRightUS.curr-m)*US_FLLW_P,
-		n - ((float)senRightUS.curr-m)*US_FLLW_P); }
+		spd + ((float)senRightUS.curr-dist)*US_FLLW_P,
+		spd - ((float)senRightUS.curr-dist)*US_FLLW_P); }
 
-unsigned int usFllwNowL(int n) //Follow left wall at starting distance with left ultrasonic
+unsigned int usFllwNowL(int spd) //Follow left wall at starting distance with left ultrasonic
 	{ return encode(
-		(n - ((float)diffStepInt(senLeftUS))* US_FLLW_P),
-		(n + ((float)diffStepInt(senLeftUS))* US_FLLW_P)); }
+		(spd - ((float)diffStepInt(senLeftUS))* US_FLLW_P),
+		(spd + ((float)diffStepInt(senLeftUS))* US_FLLW_P)); }
 
-unsigned int usFllwNowR(int n) //Follow right wall at starting distance with right ultrasonic
+unsigned int usFllwNowR(int spd) //Follow right wall at starting distance with right ultrasonic
 	{ return encode(
-		n + ((float)diffStepInt(senRightUS))*US_FLLW_P,
-		n - ((float)diffStepInt(senRightUS))*US_FLLW_P); }
+		spd + ((float)diffStepInt(senRightUS))*US_FLLW_P,
+		spd - ((float)diffStepInt(senRightUS))*US_FLLW_P); }
