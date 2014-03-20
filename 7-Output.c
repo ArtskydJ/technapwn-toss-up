@@ -69,6 +69,7 @@ void outputMotion(void)
 
 		//Pneumatics
 		SensorValue[CATAPULT] = outCatapult;
+		SensorValue[LOADER] = outLoader;
 		}
 
 	for (int j=0; j<10; j++) //Assign motors (with slew control)

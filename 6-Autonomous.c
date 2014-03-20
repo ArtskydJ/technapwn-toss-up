@@ -126,21 +126,22 @@ void autoResetEnd(void)
 
 
 //This function is used in autonomous routines
-void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcata, T_END INendType, int INextra)
+void auto(long INspeeds, int INspdS, int INlift, int INintk, bool INcata, bool INload, T_END INendType, int INextra)
 	{
 	if (autoStepCheck==autoStep)
 		{
 #ifdef FULL_DEBUG_STREAM
-		writeDebugStreamLine("1 lft=%d rht=%d str=%d lift=%d intk=%d cata=%d end=%d pid=%d",
-			INspdL, INspdR, INspdS, INlift, INintk, INcata, INendType, INextra));
+		writeDebugStreamLine("1 lft=%d rht=%d stf=%d lift=%d intk=%d cata=%d end=%d pid=%d",
+			decodeL(INspeeds), decodeR(INspeeds), INspdS, INlift, INintk, INcata, INload, INendType, INextra));
 #endif
 		//--Set Outputs--//
-		outDrvL = INspdL;
-		outDrvR = INspdR;
+		outDrvL = decodeL(INspeeds);
+		outDrvR = decodeR(INspeeds);
 		outDrvS = INspdS;
 		outLift = INlift;
 		outIntk = INintk;
 		outCatapult = INcata;
+		outLoader = INload;
 		if (outDrvS != 0)
 			{
 			outDrvL += (diffStepInt(senGyro)) * GYRO_P;
@@ -212,7 +213,7 @@ void processAutonomous(void)
 			case 04: autoBlueHang1();		break;
 			case 05: autoRedMid2();			break;
 			case 06: autoBlueMid2();		break;
-			case 07: autoRedMid3();			break;
+			case 07: 						break;
 			case 08: autoTestUltraFollow2();break;
 			case 09: autoTestThings();		break;
 			case 10: autoTestUltraFollow();	break;

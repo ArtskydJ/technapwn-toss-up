@@ -33,24 +33,7 @@
 #define US_FLLW_P     (float)2.0 //works ok at 2 at 40 target power
 #define GYRO_P        (float)0.45 //34
 
-//Autonomous - Functions
-#define straight(n)   (n),  (n)
-#define turn2(n)      (n),  -(n)
-#define turnL(n)      (n),  0
-#define turnR(n)      0,    (n)
-#define gyro2(n)      ((n)*10-senGyro.curr)*GYRO_P, (-(n)*10+senGyro.curr)*GYRO_P
-#define gyroL(n)      ((n)*10-senGyro.curr)*GYRO_P, 0
-#define gyroR(n)      0, (-(n)*10+senGyro.curr)*GYRO_P
-#define strafe(n)     0,    0,    (n)
-#define stopped()     0,    0,    0
-#define enc(n,m)      (n-senLeftQSE.curr)*ENCODER_P, ((m)-senRightQSE.curr)*ENCODER_P
-#define enc1(n)       (n-senLeftQSE.curr)*ENCODER_P, ((n)-senLeftQSE.curr)*ENCODER_P
-#define usStrfL(n)    (n-senLeftUS.curr)*US_STRF_P
-#define usStrfR(n)    (senRightUS.curr-n)*US_STRF_P
-#define usFllwL(n,m)  (n - ((float)senLeftUS.curr-m)* US_FLLW_P), (n + ((float)senLeftUS.curr-m)* US_FLLW_P)
-#define usFllwR(n,m)  (n + ((float)senRightUS.curr-m)*US_FLLW_P), (n - ((float)senRightUS.curr-m)*US_FLLW_P)
-#define usFllwNowL(n) (n - ((float)diffStepInt(senLeftUS))* US_FLLW_P), (n + ((float)diffStepInt(senLeftUS))* US_FLLW_P)
-#define usFllwNowR(n) (n + ((float)diffStepInt(senRightUS))*US_FLLW_P), (n - ((float)diffStepInt(senRightUS))*US_FLLW_P)
+//Lift - Function-like-definitions
 #define lPos(n)       (n-senLiftPot.curr)*LIFT_P
 #define lPre(n)       (sysLiftPresets[n]-senLiftPot.curr)*LIFT_P
 
@@ -75,7 +58,7 @@
 
 //Autonomous
 #define NO_TIME_RECORDS   100
-#define PID_WAIT_MS       400
+#define PID_WAIT_MS       350 //2014-02-11 was 400
 #define TIMEOUT_MS        4000
 #define P_DEAD_ZONE       20
 #define NO_AUTO_ROUTINES  12
@@ -206,6 +189,7 @@ int outDrvS;
 int outLift;
 int outIntk;
 bool outCatapult;
+bool outLoader;
 //bool outBrake;
 
 //Sensor Variables
@@ -217,6 +201,7 @@ T_LC_INT senLiftPot;
 T_LC_INT senGyro;
 T_LC_INT senLeftUS;
 T_LC_INT senRightUS;
+T_LC_INT senCenterUS;
 T_LC_INT senLeftQSE;
 T_LC_INT senRightQSE;
 
@@ -242,7 +227,7 @@ short mtrTestEnabled[10]={0,0,0,0,0,0,0,0,0,0};
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
 void autoResetEnd(void);
-void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcata, T_END INendType, int INextra);
+void auto(long INspeeds, int INspdS, int INlift, int INintk, bool INcata, bool INload, T_END INendType, int INextra);
 void zeroMotors(void);
 void stateSwitchToAutonomous(void);
 void inputOperator(void);

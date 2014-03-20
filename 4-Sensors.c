@@ -11,7 +11,9 @@ void initializeSensors()
 	//SensorValue[QUAD_RIGHT] = 0;
 	SensorValue[GYRO] = 0;
 	SensorValue[CATAPULT] = 0;
+	SensorValue[LOADER] = 0;
 	outCatapult = false;
+	outLoader = false;
 
 	//--Timers--//
 	ClearTimer(T1);
@@ -39,6 +41,7 @@ void inputSensors(void)
 	setLastInt(&senRightQSE);
 	setLastInt(&senLeftUS);
 	setLastInt(&senRightUS);
+	setLastInt(&senCenterUS);
 	setLastInt(&autoRoutine);
 	setLastInt(&senLiftPot);
 	setLastBool(&btnScreenLeft);
@@ -78,6 +81,8 @@ void inputSensors(void)
 	if (SensorValue[ULTRA_LEFT]>US_DEAD_ZONE)
 		senLeftUS.curr =   SensorValue[ULTRA_LEFT];
 	if (SensorValue[ULTRA_RIGHT]>US_DEAD_ZONE)
+		senRightUS.curr =  SensorValue[ULTRA_RIGHT];
+	if (SensorValue[ULTRA_CENTER]>US_DEAD_ZONE)
 		senRightUS.curr =  SensorValue[ULTRA_RIGHT];
 	senSelectorPot =   SensorValue[POT_SELECTOR];
 	//senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];

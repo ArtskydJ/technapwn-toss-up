@@ -164,8 +164,8 @@ void processOperator()
 			outLift = lPre(liftPresetIndex);
 
 			if (liftPresetIndex == (short)GND)
-				if (outLift < LIFT_DISABLE_RANGE) //outLift was abs(outLift)
-					sysDisableLift = true; //outLift = 0;
+				if (abs(outLift) < LIFT_DISABLE_RANGE) //outLift was abs(outLift)
+					outLift = 0; //sysDisableLift = true;
 			}
 		if (sysDisableLift)
 			outLift = 0;
@@ -179,6 +179,8 @@ void processOperator()
 
 		//--Pneumatics--//
 		outCatapult = btnRhtR1.curr || btnRhtR2.curr;
+
+		outLoader = ((btnIntkO1.curr && btnIntkI1.curr) || (btnIntkO2.curr && btnIntkI2.curr));
 
 		//--Script Takeover Checking and Applying Outputs--//
 		if (autoScriptTakeover[DRIVE] && (outDrvL != 0 || outDrvR != 0 || outDrvS != 0) )
