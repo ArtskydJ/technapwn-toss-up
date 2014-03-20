@@ -1,46 +1,6 @@
 void initialize()
 	{
-	//--Structs--//
-	//PID Controllers
-	PIDLiftL.kp = 0.1;
-	PIDLiftL.ki = 0.00;
-	PIDLiftL.kd = 0.00;
-
-	PIDLiftR.kp = 0.1;
-	PIDLiftR.ki = 0.00;
-	PIDLiftR.kd = 0.00;
-
-	/*PIDIntk.kp = 0.1;
-	PIDIntk.ki = 0.00;
-	PIDIntk.kd = 0.00;*/
-
-	PIDLineFollow.kp = 0.1;
-	PIDLineFollow.ki = 0.00;
-	PIDLineFollow.kd = 0.00;
-
-	PIDWallFollow.kp = 0.1;
-	PIDWallFollow.ki = 0.00;
-	PIDWallFollow.kd = 0.00;
-
-	PIDDriveL.kp = 0.6;
-	PIDDriveL.ki = 0.00;
-	PIDDriveL.kd = 0.00;
-
-	PIDDriveR.kp = 0.6;
-	PIDDriveR.ki = 0.00;
-	PIDDriveR.kd = 0.00;
-
-	PIDStrafeEncod.kp = 0.6;
-	PIDStrafeEncod.ki = 0.00;
-	PIDStrafeEncod.kd = 0.00;
-
-	PIDStrafeUltra.kp = 0.6;
-	PIDStrafeUltra.ki = 0.00;
-	PIDStrafeUltra.kd = 0.00;
-
-	PIDGyro.kp = 2;
-	PIDGyro.ki = 0.00;
-	PIDGyro.kd = 0.00;
+	initializeAutonomous();
 
 	//--Motor Names--//
 	motorName[DRIVE_FL]  = "Frnt L Dr";
@@ -93,5 +53,4 @@ void initialize()
 	//--Other--//
 	writeDebugStreamLine("================");
 	sysState.curr=OPERATOR;
-	autoRoutine.curr = 0;
 	}

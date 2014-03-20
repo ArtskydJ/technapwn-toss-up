@@ -1,4 +1,24 @@
-void outputMotion()
+
+static short mtrTarget[10]={0,0,0,0,0,0,0,0,0,0};
+static short mtrSlewed[10]={0,0,0,0,0,0,0,0,0,0};
+
+/* This function sets all motor targets to 0.
+*/
+void zeroMotors(void)
+	{
+	outLift = 0;
+	outDrvX = 0;
+	outDrvY = 0;
+	outDrvZ = 0;
+	for (int j=0; j<10; j++)
+		mtrTarget[j] = 0;
+	}
+
+
+/* This function uses the output variables to
+set motors to their respective speeds.
+*/
+void outputMotion(void)
 	{
 	if (sysState.curr == DISABLED)
 		zeroMotors();
@@ -26,30 +46,39 @@ void outputMotion()
 			mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
 			}
 
-		float tLLift, tRLift;			// LIFT SYNC...
-		int tLLiftAdd, tRLiftAdd, tTarget=0;
+		int tLLift, tRLift, tLLiftAdd, tRLiftAdd, tTarget;
+		tTarget = 0;
 		if (abs(outLift) > 127)
 			{
-			tLLift = updatePIDController(PIDLiftL, outLift - senLiftLPot);
-			tRLift = updatePIDController(PIDLiftR, outLift - senLiftRPot);
+			tLLift = updatePIDController(PIDLiftL, outLift - senLiftLPot.curr);
+			tRLift = updatePIDController(PIDLiftR, outLift - senLiftRPot.curr);
 			capValue(REV,tLLift,FWD);
 			capValue(REV,tRLift,FWD);
 			tTarget = outLift;
 			}
-		else if (outLift != 0)
+		else
 			{
 			tLLift = outLift;
 			tRLift = outLift;
 			}
 
-		tLLiftAdd = senLiftRPot-senLiftLPot;
-		tRLiftAdd = senLiftLPot-senLiftRPot;
-		capValue(REV, tLLiftAdd, FWD);
-		capValue(REV, tRLiftAdd, FWD);
-		mtrTarget[LIFT_L] = tLLift+tLLiftAdd;
-		mtrTarget[LIFT_R] = tRLift+tRLiftAdd;
+		if (0) //if (btnNoPots.curr)
+			{
+			tLLiftAdd = senLiftRPot.curr-senLiftLPot.curr;
+			tRLiftAdd = senLiftLPot.curr-senLiftRPot.curr;
+			capValue(REV*2, tLLiftAdd, FWD*2);
+			capValue(REV*2, tRLiftAdd, FWD*2);
+			}
+		else
+			{
+			tLLiftAdd = 0;
+			tRLiftAdd = 0;
+			}
+		mtrTarget[LIFT_L] = tLLift + tLLiftAdd;
+		mtrTarget[LIFT_R] = tRLift + tRLiftAdd;
 
-		
+
+
 		mtrTarget[INTK_L] = outIntk;
 		//mtrTarget[INTK_R] = outIntk;
 		}
@@ -60,4 +89,15 @@ void outputMotion()
 		capValue(-127, mtrSlewed[j], 127); //CAP ALL MOTORS
 		motor[j] = mtrSlewed[j]*sysMotorsEnabled; //ASSIGN MOTORS
 		}
+	}
+
+
+void inputEmulator(void)
+	{
+#if (_TARGET!="Robot")
+	senLeftQSE.curr  +=	emulateWheelQSE(mtrSlewed[DRIVE_BL1]);
+	senRightQSE.curr +=	emulateWheelQSE(mtrSlewed[DRIVE_BR1]);
+	senLiftLPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_L], 15);
+	senLiftRPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_R], 15);
+#endif
 	}

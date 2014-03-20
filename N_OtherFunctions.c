@@ -23,25 +23,19 @@ current-step values are overwritten.
 */
 void setAllLasts()
 	{
+	setLCDLasts();
+	setOperatorLasts();
+
 	//--Sensors--//
 	setLast(senGyro);
 	setLast(senLeftQSE);
 	setLast(senRightQSE);
 	setLast(senLeftUS);
 	setLast(senRightUS);
-	//--Buttons--//
-	setLast(btnScreenLeft);
-	setLast(btnScreenCenter);
-	setLast(btnScreenRight);
-	setLast(btnLiftUp);
-	setLast(btnLiftDown);
+
 	//--System--//
 	setLast(sysState);
 	setLast(autoRoutine);
-	//--Other--//
-	setLast(menuItem);
-	setLast(topLCDLine);
-	setLast(bottomLCDLine);
 	}
 
 /* This function keeps the loop time of the code
@@ -130,18 +124,6 @@ int joystickFilter(int INraw)
 	}
 
 
-/* This function sets all motor targets to 0.
-*/
-void zeroMotors()
-	{
-	outLift = 0;
-	outDrvX = 0;
-	outDrvY = 0;
-	outDrvZ = 0;
-	for (int j=0; j<10; j++)
-		mtrTarget[j] = 0;
-	}
-
 /* This function checks the voltage on the cortex
 and power expander. It also checks if the robot
 has been idle for over a minute. If one of these
@@ -152,17 +134,17 @@ void processErrors()
 #if (_TARGET=="Robot") //Gives the low battery error when emulated.
 	sysError = ERR_NONE;
 	//if (senPwrExpVoltage<7200)		sysError = ERR_LOW_POW_EX; //power expander voltage is not x1000
-	if (timerRobotIdle>=60000)		sysError = ERR_ROBOT_IDLE;
-	if (nAvgBatteryLevel<7000)		sysError = ERR_LOW_CORTEX;
+	//if (timerRobotIdle>=60000)		sysError = ERR_ROBOT_IDLE;
+	if (nAvgBatteryLevel<1000)		sysError = ERR_LOW_CORTEX;
 #endif
 	}
 
-/* This function checks if the joysticks are
-moved from their deadzones.
-*/
-bool joystickIsMoved(bool checkStkZ)
+
+void updateBatteryString(void)
 	{
-	return (stkDrvX + stkDrvY + (stkDrvZ * checkStkZ)) != 0;
+	StringFormat(batteryLevel[0], "Main:%1.2f | Powe", (float)nAvgBatteryLevel/1000);
+	StringFormat(batteryLevel[1], "r Expander:%1.2f ", (float)senPwrExpVoltage/70);		//70 45.6 280 or 182.4
+	StringFormat(batteryLevel[2], "| Backup:%1.2f | ", (float)BackupBatteryLevel/1000);
 	}
 
 
@@ -172,7 +154,7 @@ speed of a wheel.
 */
 int emulateWheelQSE(int INspeed)
 	{
-	return ( (float) INspeed * timerMaster / (127 * 2) );
+	return ( (float) INspeed * timerEmulateSpeed / (127 * 2) );
 	}
 
 
@@ -184,7 +166,5 @@ if the gearing is 1:7, etc.
 */
 int emulateLiftPot(int INspeed, int INgearing)
 	{
-	return ( (float) INspeed * timerMaster / (25*INgearing) );
+	return ( (float) INspeed * timerEmulateSpeed / (25*INgearing) );
 	}
-
-

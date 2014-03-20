@@ -1,4 +1,4 @@
-void stateControl()
+void inputState()
 	{
 	//--Decide what state the robot is in--//
 	if (nVexRCReceiveState & vrCompetitionSwitch)	//If the Competition switch is plugged in...
@@ -13,15 +13,19 @@ void stateControl()
 		else if (sysAutoMode)	sysState.curr = AUTONOMOUS;
 		else					sysState.curr = OPERATOR;
 		}
+	}
 
+
+void processState(void)
+	{
 	if (changed(sysState))
 		{
 		//--Execute whenever the state changes--//
-		menuScrStr = 0;
-		menuScrChar = 0;
+		stateChangeLCD();
+
 		timerLCDScroll=0;
 		timerLCDBacklight=0;
-		
+
 		//--Execute depending on which state changing from--//
 		switch (sysState.last)
 			{
@@ -29,14 +33,13 @@ void stateControl()
 			case DISABLED:		break;
 			case OPERATOR:		break;
 			}
-			
+
 		//--Execute depending on which state changing to--//
 		switch (sysState.curr)
 			{
 			case AUTONOMOUS:
 				writeDebugStreamLine("***Autonomous***");
-				autoStep = 0;
-				autoStepCheck = 0;
+				stateSwitchToAutonomous();
 				sysLCDBacklight=LCD_ALWAYS_ON;
 				break;
 			case DISABLED:

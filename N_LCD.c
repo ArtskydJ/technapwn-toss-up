@@ -1,3 +1,81 @@
+//LCD Buttons
+static T_LC_BOOL btnScreenLeft;
+static T_LC_BOOL btnScreenCenter;
+static T_LC_BOOL btnScreenRight;
+
+//LCD Menu
+static T_LC_INT menuItem;
+static int menuScrStr=0;
+static int menuScrChar=0;
+static int menuDisplayPos;
+static bool menuItemActivated=false;
+static int menuChecklistItem=0;
+
+//LCD Screen
+static T_LC_STRING topLCDLine = "";
+static T_LC_STRING bottomLCDLine = "";
+
+//String Arrays
+static const string autoName[NO_AUTO_ROUTINES][NO_AUTO_NAME_STRS]={
+	//Names of each of our Autonomous routines
+	"NONE | ","NONE | ","NONE | ",		//1
+	"NONE | ","NONE | ","NONE | ",		//2
+	"NONE | ","NONE | ","NONE | ",		//3
+	"NONE | ","NONE | ","NONE | ",		//4
+	"NONE | ","NONE | ","NONE | ",		//5
+	"NONE | ","NONE | ","NONE | ",		//6
+	"NONE | ","NONE | ","NONE | ",		//7
+	"NONE | ","NONE | ","NONE | ",		//8
+	"NONE | ","NONE | ","NONE | ",		//9
+	"NONE | ","NONE | ","NONE | ",		//10
+	"NONE | ","NONE | ","NONE | ",		//11
+	"NONE | ","NONE | ","NONE | "};	//12
+static const string menuChecklist[NO_CHECKLIST_ITEMS*2]={
+	"      ",	"Batteries in",
+	"      ",	"Batts charged",
+	" Power",	"Ex + Cortex on",
+	"      ",	"Joy plugged in",
+	"  Joy ",	"lights green",
+	"      ",	"Robot aligned",
+	"      ",	"Correct auton",
+	"      ",	"Preload in",
+	" Robot",	"fits in 18\""};
+static const string menuItemName[NO_MENU_ITEMS]={
+	"Time:",			//1 (case 0:)
+	"Checklist:",
+	"Dis/Enable Mtrs",
+	"Battery Levels:",
+	"Motor Test:",
+	"Motor Test:",
+	"Analog Value:",
+	"Digital Value:"};
+
+void setLCDLasts(void)
+	{
+	setLast(btnScreenLeft);
+	setLast(btnScreenCenter);
+	setLast(btnScreenRight);
+	setLast(menuItem);
+	setLast(topLCDLine);
+	setLast(bottomLCDLine);
+	}
+
+
+void inputLCD(void)
+	{
+	btnScreenLeft.curr =	(bool)(nLCDButtons & 1);
+	btnScreenCenter.curr =	(bool)(nLCDButtons & 2);
+	btnScreenRight.curr =	(bool)(nLCDButtons & 4);
+	}
+
+
+void stateChangeLCD(void)
+	{
+	menuScrStr = 0;
+	menuScrChar = 0;
+	}
+
+
 void updateScrollingText(string *INStrs, int INNOStrs)
 	{
 	if (changed(autoRoutine)) //If we change autonomous routines

@@ -41,7 +41,7 @@ tion of system constants.
 #define NO_AUTO_NAME_STRS	3
 //#define NO_AUTO_COLUMNS		9
 #define NO_TIME_RECORDS		100
-#define NO_CHECKLIST_ITEMS	10
+#define NO_CHECKLIST_ITEMS	9
 
 /*Time
  Minimum Loop time; scrolling text next
@@ -303,7 +303,18 @@ typedef struct
 say "undefined procedure" will not give errors.
 */
 void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
-void autoResetEnd();
+void autoResetEnd(void);
 void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
 		int INstrfType, int INstrfSpeed, int INstrfTarget,
 		int INlift, int INintk, int INendType, int INminTime, int INmaxTime, int INdelayPID);
+void zeroMotors(void);
+void setLCDLasts(void);
+void setOperatorLasts(void);
+void initializeAutonomous(void);
+void stateChangeLCD(void);
+void stateSwitchToAutonomous(void);
+void inputOperator(void);
+void inputLCD(void);
+void inputEmulator(void); //In N_Output.c
+void inputSensors(void);
+void inputTimers(void);

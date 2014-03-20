@@ -1,4 +1,94 @@
-void autoNextStep()
+//Autonomous
+static int  autoHitTarget;
+//static int autoNextCondition;
+static bool autoFoundLeft;
+static bool autoFoundRight;
+static bool autoDriveReady;
+static bool autoLiftReady;
+static bool autoIntkReady;
+static bool autoStrafeReady;
+static int  autoStep;
+static int  autoStepCheck;
+static int  autoStepStatus;
+
+//PID
+static T_PID PIDLiftL;
+static T_PID PIDLiftR;
+//static T_PID PIDIntk; //Continuous intake; don't need.
+static T_PID PIDLineFollow;
+static T_PID PIDWallFollow;
+static T_PID PIDDriveL;
+static T_PID PIDDriveR;
+static T_PID PIDStrafeEncod;
+static T_PID PIDStrafeUltra;
+static T_PID PIDGyro;
+
+//Arrays
+static unsigned int autoTimeRecord[NO_TIME_RECORDS];
+
+
+void initializeAutonomous(void)
+	{
+		//PID Controllers
+	PIDLiftL.kp = 0.1;
+	PIDLiftL.ki = 0.00;
+	PIDLiftL.kd = 0.00;
+
+	PIDLiftR.kp = 0.1;
+	PIDLiftR.ki = 0.00;
+	PIDLiftR.kd = 0.00;
+
+	/*PIDIntk.kp = 0.1;
+	PIDIntk.ki = 0.00;
+	PIDIntk.kd = 0.00;*/
+
+	PIDLineFollow.kp = 0.1;
+	PIDLineFollow.ki = 0.00;
+	PIDLineFollow.kd = 0.00;
+
+	PIDWallFollow.kp = 0.1;
+	PIDWallFollow.ki = 0.00;
+	PIDWallFollow.kd = 0.00;
+
+	PIDDriveL.kp = 0.6;
+	PIDDriveL.ki = 0.00;
+	PIDDriveL.kd = 0.00;
+
+	PIDDriveR.kp = 0.6;
+	PIDDriveR.ki = 0.00;
+	PIDDriveR.kd = 0.00;
+
+	PIDStrafeEncod.kp = 0.6;
+	PIDStrafeEncod.ki = 0.00;
+	PIDStrafeEncod.kd = 0.00;
+
+	PIDStrafeUltra.kp = 0.6;
+	PIDStrafeUltra.ki = 0.00;
+	PIDStrafeUltra.kd = 0.00;
+
+	PIDGyro.kp = 2;
+	PIDGyro.ki = 0.00;
+	PIDGyro.kd = 0.00;
+	
+	autoRoutine.curr = 0;
+	}
+
+
+void inputAutonomous()
+	{
+	if (sysState.curr != AUTONOMOUS)	//if not in autonomous
+		autoRoutine.curr = potPosition(NO_AUTO_ROUTINES)+1;
+	}
+
+
+void stateSwitchToAutonomous()
+	{
+	autoStep = 0;
+	autoStepCheck = 0;
+	}
+
+
+void autoNextStep(void)
 	{
 #ifdef FULL_DEBUG_STREAM
 	writeDebugStreamLine("autoNextStep");
@@ -55,9 +145,9 @@ void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bo
 			{
 			if (INautoType==SCRIPT)
 				{
-				autoScriptTakeover[DRIVE] = (bool)INscriptTakeoverType * INscriptDrive;
-				autoScriptTakeover[LIFT]  = (bool)INscriptTakeoverType * INscriptLift;
-				autoScriptTakeover[INTK]  = (bool)INscriptTakeoverType * INscriptIntake;
+				autoScriptTakeover[DRIVE] = (bool)(INscriptTakeoverType * INscriptDrive);
+				autoScriptTakeover[LIFT]  = (bool)(INscriptTakeoverType * INscriptLift);
+				autoScriptTakeover[INTK]  = (bool)(INscriptTakeoverType * INscriptIntake);
 				}
 			else
 				for (int i=0; i<3; i++)
@@ -78,7 +168,7 @@ void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bo
 	}
 
 
-void autoResetEnd()
+void autoResetEnd(void)
 	{
 	if (autoStepCheck==autoStep /*|| !sysVirtualAuto*/)
 		{
@@ -233,7 +323,7 @@ void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
 	}
 
 
-void processScripts()
+void processScripts(void)
 	{
 	if (sysError==ERR_NONE)
 		{
@@ -247,7 +337,7 @@ void processScripts()
 	}
 
 
-void processAutonomous()
+void processAutonomous(void)
 	{
 	if (sysError==ERR_NONE)
 		{
