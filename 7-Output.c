@@ -78,4 +78,11 @@ void outputMotion(void)
 		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD);
 		motor[j] = mtrSlewed[j];
 		}
+
+	static int last = 0, now = 0, val=0;
+	now = vexRT[Btn8L];
+	if (now && !last) val = !val;
+	motor[LIFT_L2] = val*127;
+	last = vexRT[Btn8L];
+
 	}

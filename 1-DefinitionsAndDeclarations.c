@@ -29,8 +29,8 @@
 #define LINE_P        (float)0.1
 #define WALL_P        (float)0.1
 #define ENC_DRV_P     (float)0.3
-#define ENC_STRF_P    (float)1.2
-#define US_STRF_P     (float)7.0
+#define ENC_STRF_P    (float)2.0
+#define US_STRF_P     (float)8.0 //was 7.0 2014-03-12
 #define US_FLLW_P     (float)2.0 //works ok at 2 at 40 target power
 #define GYRO_P        (float)0.45 //34
 
@@ -169,7 +169,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {1650,3220,1900,2420};
+const int sysLiftPresets[NO_LIFT_PRESETS] = {1680,3180,1880,2450}; //bar was 2420
 
 //System Variables
 bool sysDisableLift = true;

@@ -160,6 +160,8 @@ void processOperator()
 			else							tBtnPressed = false;   //If no buttons are pressed, set variable
 			if (tBtnPressed)				sysDisableLift = false;
 
+
+
 			liftPresetIndex = capIntValue(0, liftPresetIndex, NO_LIFT_PRESETS-1);
 			outLift = lPre(liftPresetIndex);
 

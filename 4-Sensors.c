@@ -8,7 +8,7 @@ void initializeSensors()
 	{
 	//--Sensors--//
 	SensorValue[QUAD_LEFT] = 0;
-	//SensorValue[QUAD_RIGHT] = 0;
+	SensorValue[QUAD_RIGHT] = 0;
 	SensorValue[GYRO] = 0;
 	SensorValue[CATAPULT] = 0;
 	SensorValue[LOADER] = 0;
@@ -84,17 +84,17 @@ void inputSensors(void)
 
 	//--Robot Sensors--//
 	senGyro.curr =     SensorValue[GYRO];
-	senLeftQSE.curr =  -SensorValue[QUAD_LEFT]; //reversed
-	//senRightQSE.curr = SensorValue[QUAD_RIGHT];
+	senLeftQSE.curr =  SensorValue[QUAD_LEFT]; //reversed
+	senRightQSE.curr = SensorValue[QUAD_RIGHT];
 	if (SensorValue[ULTRA_LEFT]>US_DEAD_ZONE)
 		senLeftUS.curr =   SensorValue[ULTRA_LEFT];
 	if (SensorValue[ULTRA_RIGHT]>US_DEAD_ZONE)
 		senRightUS.curr =  SensorValue[ULTRA_RIGHT];
-	if (SensorValue[ULTRA_CENTER]>US_DEAD_ZONE)
-		senRightUS.curr =  SensorValue[ULTRA_RIGHT];
+	/*if (SensorValue[ULTRA_CENTER]>US_DEAD_ZONE)
+		senRightUS.curr =  SensorValue[ULTRA_RIGHT];*/
 	senSelectorPot =   SensorValue[POT_SELECTOR];
 	//senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];
-	senLiftPot.curr =  SensorValue[POT_LIFT];
+	senLiftPot.curr =  potReverse(SensorValue[POT_LIFT]);
 
 	//--Errors--//
 	sysError = ERR_NONE;

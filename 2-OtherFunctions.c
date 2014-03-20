@@ -131,7 +131,7 @@ int usStrfR(int n) //Strafe to Right Ultrasonic setpoint
 	{ return (senRightUS.curr-n)*US_STRF_P; }
 
 int encStrf1(int n) //Strafe to Left Encoder setpoint
-	{ return (n+senLeftQSE.curr)*ENC_STRF_P; }
+	{ return (n + (senLeftQSE.curr + senLeftQSE.curr)/2) * ENC_STRF_P; }
 
 //----------DRIVE----------
 unsigned int spd(int n, int m) //Separate sides different power
@@ -168,10 +168,17 @@ unsigned int enc(int n, int m) //Individual sides encoders
 		(n-senLeftQSE.curr)*ENC_DRV_P,
 		(m-senRightQSE.curr)*ENC_DRV_P); }
 
-unsigned int enc1(int n) //Both sides, one encoder
+unsigned int enc1(int n) //Both sides, one target, two encoders
 	{ return encode(
 		(n-senLeftQSE.curr)*ENC_DRV_P,
-		(n-senLeftQSE.curr)*ENC_DRV_P); }
+		(n-senRightQSE.curr)*ENC_DRV_P); }
+
+unsigned int enc1Spd(int n, int m) //Both sides, one target, two encoders, custom speed
+	{
+	/*int tL =
+	int tR =*/ return encode(
+		capIntValue(-abs(m), (n-senLeftQSE.curr)*ENC_DRV_P, abs(m)),
+		capIntValue(-abs(m), (n-senRightQSE.curr)*ENC_DRV_P, abs(m))); }
 
 //----------ULTRASONIC FOLLOW----------
 unsigned int usFllwL(int n, int m) //Follow left wall a set distance with left ultrasonic
