@@ -1,54 +1,136 @@
-How to program autonomous routines:
+/------------------------------------\
+| How to Program Autonomous Routines |
+\------------------------------------/
 
 
------ How to drive -----
-L = -Left/Type- column
-R = -Rht/Spd- column
-S = -Sft/Tgt- column
 
-To drive, input:
-	L | speed
-		encoder distance
-	R | speed
-		encoder distance
-	
-To strafe, input:
-	S | speed
-		enc(distance)
-		L_US(distance)
-		R_US(distance)
+------------------------
+----- How to Drive -----
+------------------------
 
-To follow a line, input:
-	L | CNTR_LINE
-	R | speed
-	S | 0
-	
-To turn with the gyro, input:
-	L | GYRO_TURN
-	R | speed
-	S | target rotation
-	
-To turn left wheels with the gyro, input:
-	L | GYRO_LEFT
-	R | speed
-	S | target rotation
-	
-To turn right wheels with the gyro, input:
-	L | GYRO_RIHT
-	R | speed
-	S | target rotation
-	
-To follow the left wall, input:
-	L | LEFT_WALL
-	R | speed
-	S | target distance from wall
-	
-To follow the right wall, input:
-	L | RIHT_WALL
-	R | speed
-	S | target distance from wall
+**SPEED**
+Drive Type		DT_IN_SPD
+Left Speed		(left speed)
+Right Speed		(right speed)
+Drive Target	0
+
+**ENCODER DISTANCE**
+Drive Type		DT_IN_ENC
+Left Speed		(left encoder target)
+Right Speed		(right encoder target)
+Drive Target	(both max speed)
+
+**FOLLOW LINE**
+Drive Type		DT_C_LINE
+Left Speed		(left target speed)
+Right Speed		(right target speed)
+Drive Target	0
+
+**GYRO TURN**
+Drive Type		DT_G_TURN
+Left Speed		(left max speed)
+Right Speed		(right max speed)
+Drive Target	(target gyro ticks)
+
+**FOLLOW WALL LEFT ULTRASONIC**
+Drive Type		DT_LEFT_W
+Left Speed		(left target speed)
+Right Speed		(right target speed)
+Drive Target	(target wall distance)
+
+**FOLLOW WALL RIGHT ULTRASONIC**
+Drive Type		DT_RIHT_W
+Left Speed		(left target speed)
+Right Speed		(right target speed)
+Drive Target	(target wall distance)
 
 
------ How to do other things -----
-LIFT | Input speed or height into the -Lift- column
-SKIP TO STEP | Input wanted step into the -Action- column of RESET_AUTO
+
+-------------------------
+----- How to Strafe -----
+-------------------------
+
+**SPEED**
+Strafe Type		ST_IN_SPD
+Strafe Speed	(strafe speed)
+Strafe Target	0
+
+**ENCODER DISTANCE**
+Strafe Type		ST_IN_ENC
+Strafe Speed	(strafe speed)
+Strafe Target	(encoder distance)
+
+**LEFT ULTRASONIC DISTANCE**
+Strafe Type		ST_U_LEFT
+Strafe Speed	(strafe speed)
+Strafe Target	(left ultrasonic distance)
+
+**RIGHT ULTRASONIC DISTANCE**
+Strafe Type		ST_U_RIHT
+Strafe Speed	(strafe speed)
+Strafe Target	(right ultrasonic distance)
+
+
+
+------------------------------------------
+----- How to End the Autonomous Step -----
+------------------------------------------
+
+[Note: A Max Time of 0 disables max time]
+
+**TIME**
+End Type	ET_TIME_LIMIT
+Min Time	(minimum time)
+Max Time	(maximum time)
+Action		0
+
+**DRIVE + STRAFE FINISHED**
+End Type	ET_DRIV_READY
+Min Time	(minimum time)
+Max Time	(maximum time)
+Action		NEXT or PID
+
+**LIFT FINISHED**
+End Type	ET_LIFT_READY
+Min Time	(minimum time)
+Max Time	(maximum time)
+Action		NEXT or PID
+
+**DRIVE + STRAFE + LIFT FINISHED**
+End Type	ET_FULL_READY
+Min Time	(minimum time)
+Max Time	(maximum time)
+Action		NEXT or PID
+
+**ONE EDGE LINE SENSOR HIT**
+End Type	ET_ONE_EDG_LN
+Min Time	(minimum time)
+Max Time	(maximum time)
+Action		NEXT or PID
+
+**TWO EDGE LINE SENSORS LINED UP**
+End Type	ET_TWO_EDG_LN
+Min Time	(minimum time)
+Max Time	(maximum time)
+Action		NEXT or PID
+
+**LCD BUTTON PRESSED**
+End Type	ET_SCREEN_BTN
+Min Time	(minimum time)
+Max Time	(maximum time)
+Action		0
+
+
+
+----------------------------------
+----- How to Do Other Things -----
+----------------------------------
+
+**LIFT**
+Lift			(lift speed or height)
+
+**INTAKE**
+Intake			(intake speed)
+
+**SKIP TO STEP**
+Input step number into autoResetStart's first argument

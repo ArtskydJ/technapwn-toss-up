@@ -55,13 +55,13 @@ void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bo
 			{
 			if (INautoType==SCRIPT)
 				{
-				autoScriptTakeover[DRIVE] = INscriptTakeoverType * INscriptDrive;
-				autoScriptTakeover[LIFT]  = INscriptTakeoverType * INscriptLift;
-				autoScriptTakeover[INTK]  = INscriptTakeoverType * INscriptIntake;
+				autoScriptTakeover[DRIVE] = (bool)INscriptTakeoverType * INscriptDrive;
+				autoScriptTakeover[LIFT]  = (bool)INscriptTakeoverType * INscriptLift;
+				autoScriptTakeover[INTK]  = (bool)INscriptTakeoverType * INscriptIntake;
 				}
 			else
 				for (int i=0; i<3; i++)
-					autoScriptTakeover[i] = ST_NONE;
+					autoScriptTakeover[i] = (bool)STO_NONE;
 			}
 		autoNextStep();
 		if (INgoToStep>=2)
@@ -80,7 +80,7 @@ void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bo
 
 void autoResetEnd()
 	{
-	if (autoStepCheck==autoStep || !sysVirtualAuto)
+	if (autoStepCheck==autoStep /*|| !sysVirtualAuto*/)
 		{
 		zeroMotors();
 		setToZero(senLeftQSE);
@@ -89,7 +89,7 @@ void autoResetEnd()
 		writeDebugStreamLine("+-----------+---+");
 		writeDebugStreamLine("|Time: %.1f\t\t|",((float)timerAuto/1000));
 		writeDebugStreamLine("+---------------+");
-		sysVirtualAuto = false;
+		//sysVirtualAuto = false;
 		sysLCDBacklight = LCD_BLINK_SLOW;
 		autoClockRunning = false;
 		autoRoutine.curr = 0;
@@ -100,13 +100,17 @@ void autoResetEnd()
 	}
 
 
-void auto(int INdrvLft, int INdrvRht, int INdrvStrafe, int INlift, int INintk, int INendType, int INminTime, int INmaxTime, int INdelayPID)
+void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
+		int INstrfType, int INstrfSpeed, int INstrfTarget,
+		int INlift, int INintk, int INendType, int INminTime, int INmaxTime, int INdelayPID)
 	{
 	if (autoStepCheck==autoStep)
 		{
 #ifdef FULL_DEBUG_STREAM
-		writeDebugStreamLine("dl=%d dr=%d ds=%d l=%d i=%d et=%d mn=%d mx=%d dp=%d",
-			INdrvLft,INdrvRht,INdrvStrafe,INlift,INintk,INendType,INminTime,INmaxTime,INdelayPID);
+		writeDebugStreamLine("1 dtp=%d dl=%d dr=%d dtg=%d\n2 stp=%d ss=%d stg=%d3 \nl=%d i=%d et=%d min=%d max=%d pid=%d",
+			INdrvType, INdrvLft, INdrvRht, INdrvTarget,
+			INstrfType, INstrfSpeed, INstrfTarget,
+			INlift, INintk, INendType, INminTime, INmaxTime, INdelayPID);
 #endif
 		//--Initialize--//
 		outDrvL = 0;
@@ -115,102 +119,88 @@ void auto(int INdrvLft, int INdrvRht, int INdrvStrafe, int INlift, int INintk, i
 		//--Set Outputs--//
 		outLift = INlift;
 		if (abs(INlift)<=127)					autoLiftReady = true;
-		else if (abs(PIDLift.error) < PID_ZONE)	autoLiftReady = true;
+		else if (abs(PIDLiftL.error) < PID_ZONE
+			&& abs(PIDLiftR.error) < PID_ZONE)	autoLiftReady = true;
 		outIntk = INintk;
-		if (abs(INintk)<=127)					autoIntkReady = true;
-		else if (abs(PIDIntk.error) < PID_ZONE)	autoIntkReady = true;
+		/*if (abs(INintk)<=127)					autoIntkReady = true;
+		else if (abs(PIDIntk.error) < PID_ZONE)	autoIntkReady = true;*/
 
-		// INdrvType  is defined as INdrvLft
-		// INdrvSpeed is defined as INdrvRht
-		// INdrvType  is defined as INdrvLft
-		switch (INdrvType) 
+		switch (INdrvType) //Driving
 			{
-			case CNTR_LINE:											//Follow Line
+			case DT_IN_SPD:
+				outDrvL = INdrvLft;
+				outDrvR = INdrvRht;
+				autoDriveReady = true;
+				break;
+			case DT_IN_ENC:
+				updatePIDController(PIDDriveL,INdrvLft - diffStep(senLeftQSE));
+				updatePIDController(PIDDriveL,INdrvRht - diffStep(senRightQSE));
+				outDrvL = PIDDriveL.output;
+				outDrvR = PIDDriveR.output;
+				capValue(-abs(INdrvTarget),outDrvL,abs(INdrvTarget));
+				capValue(-abs(INdrvTarget),outDrvR,abs(INdrvTarget));
+				if (abs(PIDDriveL.error)<PID_ZONE && abs(PIDDriveR.error)<PID_ZONE) autoDriveReady = true;
+				break;
+			case DT_C_LINE:											//Follow Line
 				updatePIDController(PIDLineFollow,0); //Change 0 to (senLineCenter-LINE_TILE_AVG) or something
-				outDrvL = INdrvSpeed - PIDLineFollow.output;
-				outDrvR = INdrvSpeed + PIDLineFollow.output;
+				outDrvL = INdrvLft - PIDLineFollow.output;
+				outDrvR = INdrvRht + PIDLineFollow.output;
 				break;
-			case GYRO_BOTH:											//Gyro turn both
+			case DT_G_TURN:											//Gyro turn
 				updatePIDController(PIDGyro, INdrvTarget-diffStep(senGyro));
-				outDrvL = -PIDGyro.output; capValue(-INdrvSpeed,outDrvL,INdrvSpeed);
-				outDrvR =  PIDGyro.output; capValue(-abs(INdrvSpeed),outDrvR,abs(INdrvSpeed));
+				outDrvL = -PIDGyro.output;
+				outDrvR =  PIDGyro.output;
+				capValue(-abs(INdrvLft),outDrvL,abs(INdrvLft));
+				capValue(-abs(INdrvRht),outDrvR,abs(INdrvRht));
 				if (abs(PIDGyro.error) < PID_ZONE) autoDriveReady = true;
 				break;
-			case GYRO_LEFT:											//Gyro turn left
-				updatePIDController(PIDGyro, INdrvTarget-diffStep(senGyro));
-				outDrvL = PIDGyro.output; capValue(-abs(INdrvSpeed),outDrvL,abs(INdrvSpeed));
-				outDrvR = 0;
-				if (abs(PIDGyro.error) < PID_ZONE) autoDriveReady = true;
-				break;
-			case GYRO_RIHT:											//Gyro turn right
-				updatePIDController(PIDGyro, INdrvTarget-diffStep(senGyro));
-				outDrvL = 0;
-				outDrvR = PIDGyro.output; capValue(-abs(INdrvSpeed),outDrvR,abs(INdrvSpeed));
-				if (abs(PIDGyro.error) < PID_ZONE) autoDriveReady = true;
-				break;
-			case LEFT_WALL:											//Follow Left Wall
+			case DT_LEFT_W:											//Follow Left Wall
 				updatePIDController(PIDWallFollow, INdrvTarget-senLeftUS.curr);
-				outDrvL = INdrvSpeed - PIDWallFollow.output;
-				outDrvR = INdrvSpeed + PIDWallFollow.output;
+				outDrvL = INdrvLft - PIDWallFollow.output;
+				outDrvR = INdrvRht + PIDWallFollow.output;
 				break;
-			case RIHT_WALL:											//Follow Right Wall
+			case DT_RIHT_W:											//Follow Right Wall
 				updatePIDController(PIDWallFollow, INdrvTarget-senRightUS.curr);
-				outDrvL = INdrvSpeed - PIDWallFollow.output;
-				outDrvR = INdrvSpeed + PIDWallFollow.output;
+				outDrvL = INdrvLft - PIDWallFollow.output;
+				outDrvR = INdrvRht + PIDWallFollow.output;
 				break;
 			}
 
-		if (abs(INdrvLft)<=127 && abs(INdrvRht)<=127)				//DRIVE SPEED		INdrvType = INdrvLft
+		switch (INstrfType) //Strafing (with auto gyro align)
 			{
-			outDrvL = INdrvLft;
-			outDrvR = INdrvRht;
-			autoDriveReady = true;
-			}
-		else if (INdrvType>=MAX_TYPES || INdrvType<-127)			//DRIVE ENCODER		INdrvType = INdrvLft
-			{
-			updatePIDController(PIDDriveL,INdrvLft - diffStep(senLeftQSE));
-			updatePIDController(PIDDriveL,INdrvRht - diffStep(senRightQSE));
-			outDrvL = PIDDriveL.output;
-			outDrvR = PIDDriveR.output;
-			if (abs(PIDDriveL.error)<PID_ZONE && abs(PIDDriveR.error)<PID_ZONE) autoDriveReady = true;
+			case ST_IN_SPD:											//Speed
+				outDrvS = INstrfSpeed;
+				autoStrafeReady = true;
+				break;
+			case ST_IN_ENC:											//Encoder distance
+				outDrvS = updatePIDController(PIDStrafeEncod, INstrfTarget - diffStep(senLeftQSE));
+				capValue((-abs(INstrfSpeed)),outDrvS,abs(INstrfSpeed));
+				if (abs(PIDStrafeEncod.error)<PID_ZONE) autoStrafeReady = true;
+				break;
+			case ST_U_LEFT:											//L Ultra distance
+				outDrvS = updatePIDController(PIDStrafeUltra, INstrfTarget - senLeftUS.curr);
+				capValue((-abs(INstrfSpeed)),outDrvS,abs(INstrfSpeed));
+				if (abs(PIDStrafeUltra.error)<PID_ZONE) autoStrafeReady = true;
+				break;
+			case ST_U_RIHT:											//R Ultra distance
+				outDrvS = updatePIDController(PIDStrafeUltra, INstrfTarget - senRightUS.curr);
+				capValue((-abs(INstrfSpeed)),outDrvS,abs(INstrfSpeed));
+				if (abs(PIDStrafeUltra.error)<PID_ZONE) autoStrafeReady = true;
+				break;
 			}
 
-		if (INdrvStrafe!=0)											//Normal strafing (gyro)
+		if (outDrvS != 0)
 			{
-			
-			int tBit0 = (INdrvStrafe & (1 << 14)) != 0;	//Take the first and second bit
-			int tBit1 = (INdrvStrafe & (1 << 15)) != 0;
-			int tStrafeType = tBit0 * 2 + tBit1;		//Turn them into numbers 0-3
-			INdrvStrafe |= (1 << 14);					//Delete the extra data (otherwise it conflicts)
-			INdrvStrafe |= (1 << 15);
-			int tStrafeTarget;
-			if		(tStrafeType == STRF_ENC)	tStrafeTarget = INdrvStrafe - diffStep(senLeftQSE);
-			else if (tStrafeType == STRF_L_US)	tStrafeTarget = INdrvStrafe - senLeftUS.curr; 
-			else if (tStrafeType == STRF_R_US)	tStrafeTarget = INdrvStrafe - senRightUS.curr;
 			updatePIDController(PIDGyro, diffStep(senGyro));
 			outDrvL -= PIDGyro.output;
 			outDrvR += PIDGyro.output;
-			if (abs(INdrvStrafe)<=127)								//STRAFE SPEED
-				{
-				outDrvS = INdrvStrafe;
-				autoStrafeReady = true;
-				}
-			else													//STRAFE ENDPOINT
-				{
-				outDrvS = updatePIDController(PIDDriveStrafe,tStrafeTarget);
-				if (abs(PIDDriveStrafe.error)<PID_ZONE) autoStrafeReady = true;
-				}
 			}
-		else
-			{
-			outDrvS = 0;
-			autoStrafeReady = true;
-			}
+
 
 		if (senLeftEdge > EDGE_LINE_UP)		autoFoundLeft = true;	//Found Left Edge
 		if (senRightEdge > EDGE_LINE_UP)	autoFoundRight = true;	//Found Right Edge
 
-		if (INendType==TWO_EDG_LN)
+		if (INendType == ET_TWO_EDG_LN)
 			{
 			if (autoFoundLeft)	outDrvL = BRAKE;
 			if (autoFoundRight)	outDrvR = BRAKE;
@@ -223,27 +213,27 @@ void auto(int INdrvLft, int INdrvRht, int INdrvStrafe, int INlift, int INintk, i
 			ClearTimer(T2); //Timer for PID wait
 			switch(INendType) // This code asks what type of target condition are we looking for? Have we met it?
 				{
-				case TIME_LIMIT: if (time1(T1)>=INminTime)								autoHitTarget=INdelayPID;break;
-				case DRIV_READY: if (autoDriveReady && autoStrafeReady)					autoHitTarget=INdelayPID;break;
-				case LIFT_READY: if (autoLiftReady)										autoHitTarget=INdelayPID;break;
-				case FULL_READY: if (autoDriveReady && autoLiftReady && autoStrafeReady)autoHitTarget=INdelayPID;break;
-				case ONE_EDG_LN: if (autoFoundLeft || autoFoundRight)					autoHitTarget=INdelayPID;break;
-				case TWO_EDG_LN: if (autoFoundLeft && autoFoundRight)					autoHitTarget=INdelayPID;break;
-				case SCREEN_BTN: if (nLCDButtons)										autoHitTarget=INdelayPID;break;
-			//	case FRONT_LINE: if (SenRightLine>RightLineFolPosi)						autoHitTarget=INdelayPID;break;
+				case ET_TIME_LIMIT: if (time1(T1)>=INminTime)								autoHitTarget=INdelayPID;break;
+				case ET_DRIV_READY: if (autoDriveReady && autoStrafeReady)					autoHitTarget=INdelayPID;break;
+				case ET_LIFT_READY: if (autoLiftReady)										autoHitTarget=INdelayPID;break;
+				case ET_FULL_READY: if (autoDriveReady && autoLiftReady && autoStrafeReady)	autoHitTarget=INdelayPID;break;
+				case ET_ONE_EDG_LN: if (autoFoundLeft || autoFoundRight)					autoHitTarget=INdelayPID;break;
+				case ET_TWO_EDG_LN: if (autoFoundLeft && autoFoundRight)					autoHitTarget=INdelayPID;break;
+				case ET_SCREEN_BTN: if (nLCDButtons)										autoHitTarget=INdelayPID;break;
+			//	case ET_FRONT_LINE: if (SenRightLine>RightLineFolPosi)						autoHitTarget=INdelayPID;break;
 				default://nothing
 				}
 			}
-		if (autoHitTarget==PID   && time1(T2)>=PID_WAIT_MS)							{autoHitTarget=NEXT;} //PID timeout
-		if (time1(T1)>=INmaxTime && INmaxTime!=0)									{autoHitTarget=NEXT; autoStepStatus=MAX_TIMEOUT;} //Max Time timeout
-		if (time1(T1)<=INminTime && autoHitTarget==NEXT	&& INendType!=TIME_LIMIT)	{autoStepStatus=MIN_TIMEOUT;} //Min Time timeout
-		if (time1(T1)>=INminTime && autoHitTarget==NEXT)							{autoNextStep();} //Go to next step
+		if (autoHitTarget==PID   && time1(T2)>=PID_WAIT_MS)								{autoHitTarget=NEXT;} //PID timeout
+		if (time1(T1)>=INmaxTime && INmaxTime!=0)										{autoHitTarget=NEXT; autoStepStatus=MAX_TIMEOUT;} //Max Time timeout
+		if (time1(T1)<=INminTime && autoHitTarget==NEXT	&& INendType!=ET_TIME_LIMIT)	{autoStepStatus=MIN_TIMEOUT;} //Min Time timeout
+		if (time1(T1)>=INminTime && autoHitTarget==NEXT)								{autoNextStep();} //Go to next step
 		} // if (!RESET_AUTO)
 	autoStepCheck++;
 	}
 
 
-void processAutonomous()
+void processScripts()
 	{
 	if (sysError==ERR_NONE)
 		{
@@ -253,18 +243,24 @@ void processAutonomous()
 			case -2: scriptEmpty();		break;
 			case -1: scriptDescore();	break;
 			}
-		if (sysState.curr == AUTONOMOUS)
+		}
+	}
+
+
+void processAutonomous()
+	{
+	if (sysError==ERR_NONE)
+		{
+		autoStepCheck = 0;
+		switch (autoRoutine.curr) //Routines
 			{
-			switch (autoRoutine.curr) //Scripts
-				{
-				case 1: autoTest();	break; //2
-				case 2: scriptEmpty();	break;
-				case 3: scriptEmpty();	break;
-				}
+			case 1: autoTest();	break; //2
+			case 2: scriptEmpty();	break;
+			case 3: scriptEmpty();	break;
 			}
 #ifdef FULL_DEBUG_STREAM
-		if (autoRoutine.curr==0)
-			writeDebugStreamLine("no routine");
+		if (autoRoutine.curr==0 && changed(sysState))
+			writeDebugStreamLine("No Routine");
 #endif
 		}
 	else

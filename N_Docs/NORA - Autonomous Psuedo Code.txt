@@ -1,0 +1,42 @@
+How I (Joseph) want the autonomous to work
+
+autoreset_start
+	{
+	if auto_step==0
+		{
+		do whatever
+		}
+	auto_check++
+	}
+
+auto
+	{
+	if (auto_step==auto_check)
+		{
+		do whatever
+		if (time to end)
+			{auto_next_step}
+		}
+	auto_check++
+	}
+
+autoreset_end
+	{
+	if (auto_step==auto_check)
+		{
+		do whatever
+		}
+	}
+
+
+_
+
+
+
+auto_next_step
+
+
+
+
+
+what i want auto next step to do

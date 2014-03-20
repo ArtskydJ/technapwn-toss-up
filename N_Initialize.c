@@ -2,13 +2,17 @@ void initialize()
 	{
 	//--Structs--//
 	//PID Controllers
-	PIDLift.kp = 0.1;
-	PIDLift.ki = 0.00;
-	PIDLift.kd = 0.00;
+	PIDLiftL.kp = 0.1;
+	PIDLiftL.ki = 0.00;
+	PIDLiftL.kd = 0.00;
 
-	PIDIntk.kp = 0.1;
+	PIDLiftR.kp = 0.1;
+	PIDLiftR.ki = 0.00;
+	PIDLiftR.kd = 0.00;
+
+	/*PIDIntk.kp = 0.1;
 	PIDIntk.ki = 0.00;
-	PIDIntk.kd = 0.00;
+	PIDIntk.kd = 0.00;*/
 
 	PIDLineFollow.kp = 0.1;
 	PIDLineFollow.ki = 0.00;
@@ -26,9 +30,13 @@ void initialize()
 	PIDDriveR.ki = 0.00;
 	PIDDriveR.kd = 0.00;
 
-	PIDDriveStrafe.kp = 0.6;
-	PIDDriveStrafe.ki = 0.00;
-	PIDDriveStrafe.kd = 0.00;
+	PIDStrafeEncod.kp = 0.6;
+	PIDStrafeEncod.ki = 0.00;
+	PIDStrafeEncod.kd = 0.00;
+
+	PIDStrafeUltra.kp = 0.6;
+	PIDStrafeUltra.ki = 0.00;
+	PIDStrafeUltra.kd = 0.00;
 
 	PIDGyro.kp = 2;
 	PIDGyro.ki = 0.00;
@@ -43,8 +51,8 @@ void initialize()
 	motorName[DRIVE_BR2] = "Back R Dr2";
 	motorName[LIFT_L]    = "L Lift";
 	motorName[LIFT_R]    = "R Lift";
-	motorName[INTK_L]    = "L Intake";
-	motorName[INTK_R]    = "R Intake";
+	motorName[INTK_L]    = "Intake";
+	//motorName[INTK_R]    = "R Intake";
 
 	//--Motor Slew Constants--//
 	for (int j=0; j<10; j++)
@@ -59,22 +67,22 @@ void initialize()
 	slewConstants[OPERATOR][LIFT_L]    = OPER_LIFT_SLEW;
 	slewConstants[OPERATOR][LIFT_R]    = OPER_LIFT_SLEW;
 	slewConstants[OPERATOR][INTK_L]    = OPER_INTK_SLEW;
-	slewConstants[OPERATOR][INTK_R]    = OPER_INTK_SLEW;
+	//slewConstants[OPERATOR][INTK_R]    = OPER_INTK_SLEW;
 
-	slewConstants[AUTONOMOUS][DRIVE_FL]  = OPER_DRV_SLEW;		//AUTONOMOUS
-	slewConstants[AUTONOMOUS][DRIVE_BL1] = OPER_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_BL2] = OPER_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_FR]  = OPER_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_BR1] = OPER_DRV_SLEW;
-	slewConstants[AUTONOMOUS][DRIVE_BR2] = OPER_DRV_SLEW;
-	slewConstants[AUTONOMOUS][LIFT_L]    = OPER_LIFT_SLEW;
-	slewConstants[AUTONOMOUS][LIFT_R]    = OPER_LIFT_SLEW;
-	slewConstants[AUTONOMOUS][INTK_L]    = OPER_INTK_SLEW;
-	slewConstants[AUTONOMOUS][INTK_R]    = OPER_INTK_SLEW;
+	slewConstants[AUTONOMOUS][DRIVE_FL]  = AUTO_DRV_SLEW;		//AUTONOMOUS
+	slewConstants[AUTONOMOUS][DRIVE_BL1] = AUTO_DRV_SLEW;
+	slewConstants[AUTONOMOUS][DRIVE_BL2] = AUTO_DRV_SLEW;
+	slewConstants[AUTONOMOUS][DRIVE_FR]  = AUTO_DRV_SLEW;
+	slewConstants[AUTONOMOUS][DRIVE_BR1] = AUTO_DRV_SLEW;
+	slewConstants[AUTONOMOUS][DRIVE_BR2] = AUTO_DRV_SLEW;
+	slewConstants[AUTONOMOUS][LIFT_L]    = AUTO_LIFT_SLEW;
+	slewConstants[AUTONOMOUS][LIFT_R]    = AUTO_LIFT_SLEW;
+	slewConstants[AUTONOMOUS][INTK_L]    = AUTO_INTK_SLEW;
+	//slewConstants[AUTONOMOUS][INTK_R]    = AUTO_INTK_SLEW;
 
 	//--Encoders--//
-	SensorValue[QUAD_LEFT]=0;
-	SensorValue[QUAD_RIGHT]=0;
+	SensorValue[QUAD_LEFT] = 0;
+	SensorValue[QUAD_RIGHT] = 0;
 
 	//--Timers--//
 	ClearTimer(T1);

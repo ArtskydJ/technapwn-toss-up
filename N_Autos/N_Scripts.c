@@ -1,12 +1,12 @@
 #include "N_WrongCompile.c"
-
+/*
 void scriptEmpty() //Don't need???
 	{
-	sysVirtualAuto=false;
+	//sysVirtualAuto=false;
 	/*autoResetStart(0, SCRIPT, false, false, false);
 		//Left/Type,Rht/Spd,Straf/Targt,Lift,		Intake,	End Type,	Min time,Max time,Action
 	auto(0,			0,		0,			0,			0,		DRIV_READY,	0,		0,		0);
-	autoResetEnd();*/
+	autoResetEnd();		* /
 	}
 
 
@@ -30,3 +30,11 @@ void scriptDescore2()
 	auto(0,			0,		0,			L_STASH,	0,		LIFT_READY,	800,	2000,	NEXT);
 	autoResetEnd();
 	}
+*/
+
+
+
+
+void scriptEmpty()		{}
+void scriptDescore()	{}
+void scriptDescore2()	{}

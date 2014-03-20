@@ -152,11 +152,8 @@ void processErrors()
 #if (_TARGET=="Robot") //Gives the low battery error when emulated.
 	sysError = ERR_NONE;
 	//if (senPwrExpVoltage<7200)		sysError = ERR_LOW_POW_EX; //power expander voltage is not x1000
-	#ifdef PRACTICE //Practice
-		if (timerRobotIdle>=60000)		sysError = ERR_ROBOT_IDLE;
-	#else
-		if (nAvgBatteryLevel<7000)		sysError = ERR_LOW_CORTEX;
-	#endif
+	if (timerRobotIdle>=60000)		sysError = ERR_ROBOT_IDLE;
+	if (nAvgBatteryLevel<7000)		sysError = ERR_LOW_CORTEX;
 #endif
 	}
 
@@ -165,5 +162,29 @@ moved from their deadzones.
 */
 bool joystickIsMoved(bool checkStkZ)
 	{
-	return (stkDrvX+stkDrvY+(stkDrvZ*checkStkZ))!=0;
+	return (stkDrvX + stkDrvY + (stkDrvZ * checkStkZ)) != 0;
 	}
+
+
+/* This function returns the delta for the
+emulated quadrature shaft encoder with the given
+speed of a wheel.
+*/
+int emulateWheelQSE(int INspeed)
+	{
+	return ( (float) INspeed * timerMaster / (127 * 2) );
+	}
+
+
+/* This function returns the delta for the
+emulated potentiometer position with the given
+speed and gearing of a lift.
+ INgearing needs a 5 if the gearing is 1:5, a 7
+if the gearing is 1:7, etc.
+*/
+int emulateLiftPot(int INspeed, int INgearing)
+	{
+	return ( (float) INspeed * timerMaster / (25*INgearing) );
+	}
+
+

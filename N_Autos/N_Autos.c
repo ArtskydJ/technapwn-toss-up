@@ -3,24 +3,26 @@
 void autoTest()
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-		//Left/Type,Rht/Spd,Straf/Targt,Lift,		Intake,	End Type,	Min time,Max time,Action
-	auto(GYRO_BOTH,	FULL,	900,		0,			0,		DRIV_READY,	800,	1200,	PID);
-	auto(GYRO_BOTH,	FULL,	900,		0,			0,		DRIV_READY,	800,	1200,	PID);
-	auto(1450,		1450,	0,			L_STASH,	0,		FULL_READY,	2100,	3000,	PID);
-	auto(0,			0,		L_US(600),	L_STASH,	0,		FULL_READY,	2000,	3000,	PID);
-	auto(0,			0,		127,			0,			0,		TIME_LIMIT,	3000,	0,		NEXT);
+		//D Type,	Left,Right,D Target,	S Type,		Speed,		S Target,Lift,		Intake,	End Type,		Min time,Max time,Action
+	auto(DT_G_TURN,	FULL,	FULL,	900,	ST_IN_SPD,	FULL,		0,		0,			0,		ET_DRIV_READY,	800,	1200,	PID);
+	auto(DT_G_TURN,	FULL,	FULL,	900,	ST_IN_SPD,	FULL,		0,		0,			0,		ET_DRIV_READY,	800,	1200,	PID);
+	auto(DT_IN_ENC,	1450,	1450,	0,		ST_IN_SPD,	FULL,		0,		L_STSH,		0,		ET_FULL_READY,	2100,	3000,	PID);
+	auto(DT_IN_SPD,	0,		0,		0,		ST_U_LEFT,	FULL,		600,	L_STSH,		0,		ET_FULL_READY,	2000,	3000,	PID);
+	auto(DT_IN_SPD,	0,		0,		0,		ST_IN_SPD,	FULL,		0,		0,			0,		ET_TIME_LIMIT,	3000,	0,		NEXT);
 	autoResetEnd();
 	}
-
+/*
+INdrvType, INdrvLft, INdrvRht, INdrvTarget,		INstrfType, INstrfSpeed, INstrfTarget,			INlift, INintk, INendType, INminTime, INmaxTime, INdelayPID
+*/
 
 void autoTest2()
 	{
 	autoResetStart(0, AUTON, 0, 0, 0, 0);
-		//Left/Type,Rht/Spd,Straf/Targt,Lift,	Intake,	End Type,	Min time,Max time,Action
-	auto(-100,		-100,	20,		0,			0,		TIME_LIMIT,	500,	0,		NEXT);
-	auto(100,		100,	20,		0,			0,		TIME_LIMIT,	800,	0,		NEXT);
-	auto(1450,		1450,	0,		0,			0,		TIME_LIMIT,	2200,	0,		NEXT);
-	auto(10,		10,		40,		0,			0,		TIME_LIMIT,	2200,	0,		NEXT);
-	auto(0,			0,		127,	0,			0,		TIME_LIMIT,	3200,	0,		NEXT);
+		//D Type,	Left,Right,D Target,	S Type,		Speed,		S Target,Lift,		Intake,	End Type,		Min time,Max time,Action
+	auto(DT_IN_SPD,	-100,	-100,	0,		ST_IN_SPD,	20,			0,		0,			0,		ET_TIME_LIMIT,	500,	0,		NEXT);
+	auto(DT_IN_SPD,	100,	100,	0,		ST_IN_SPD,	20,			0,		0,			0,		ET_TIME_LIMIT,	800,	0,		NEXT);
+	auto(DT_IN_SPD,	1450,	1450,	0,		ST_IN_SPD,	0,			0,		0,			0,		ET_TIME_LIMIT,	2200,	0,		NEXT);
+	auto(DT_IN_SPD,	10,		10,		0,		ST_IN_SPD,	40,			0,		0,			0,		ET_TIME_LIMIT,	2200,	0,		NEXT);
+	auto(DT_IN_SPD,	0,		0,		0,		ST_IN_SPD,	127,		0,		0,			0,		ET_TIME_LIMIT,	3200,	0,		NEXT);
 	autoResetEnd();
 	}

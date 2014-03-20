@@ -19,7 +19,7 @@ last/curr structs (declared below).
 different sensors can be used.
  There are also constants for these functions.
 */
-#define checkTarget(cndtn,value)	(cndtn)?((value)>=INtarget):((value)<=INtarget)
+//#define checkTarget(cndtn,value)	(cndtn)?((value)>=INtarget):((value)<=INtarget)
 #define capValue(Min,Value,Max)		Value = (Value<Min)? (Min):(Value); Value = (Value>Max)? (Max):(Value)
 #define changed(INLC)				(INLC.last != INLC.curr)
 #define pressed(INLC)				(!INLC.last && INLC.curr)
@@ -28,7 +28,7 @@ different sensors can be used.
 #define setLast(INLC)				INLC.last = INLC.curr
 #define setStep(INLC)				INLC.stepStart = INLC.curr
 #define setToZero(INLC)				INLC.last=0; INLC.curr=0
-#define fixIrregularity(INLC,n)		slew(INLC.curr,INLC.last,n)
+#define fixIrregularity(INLC,n)		INLC.curr += slew(INLC.curr,INLC.last,n)
 #define INCH(n)						((float)n*360/(3.14*4))
 
 /*VALUES
@@ -58,9 +58,10 @@ time, slow and fast; LCD timeout (untouched).
 /*Preset Heights
  Heights for lift, etc.
 */
-#define L_GROUND	1000 //Make sure not to use LIFT_L or LIFT_R anywhere.
-#define L_BARRIER	2000
-#define L_STASH		3000
+#define L_GRND		1000 //Make sure not to re-define LIFT_L or LIFT_R anywhere.
+#define L_BARR		2000
+#define L_STSH		3000
+#define L_OFFSET	(-300)
 
 /*Drive Direction
  This is for which direction the robot is pointed
@@ -74,16 +75,16 @@ so that the drive can be translated correctly.
 /*Motor Speed Constants
  Shortcuts for autonomous writing.
 */
-#define UP		 127
-#define DOWN	-127
-#define FWD		 127
-#define REV		-127
-#define LEFT	-127
-#define RIGHT	 127
-#define FULL	 127
-#define HALF	 64
-#define FOLLOW	 100
-#define BRAKE	 5 //can also be used in -Action- column
+#define UP		 (127)
+#define DOWN	(-127)
+#define FWD		 (127)
+#define REV		(-127)
+#define LEFT	(-127)
+#define RIGHT	 (127)
+#define FULL	 (127)
+#define HALF	 (64)
+#define FOLLOW	 (100)
+#define BRAKE	 (5) //can also be used in -Action- column
 
 /*Motor Slew Constants
  Values for how much to add to each motor value
@@ -134,9 +135,9 @@ will add to the current controls. If you tell the
 drive to go backward when it is going forward, it
 will slow down the drive.
 */
-#define ST_NONE		0
-#define ST_TAKEOVER	1
-#define ST_ADD		2
+#define STO_NONE		0
+#define STO_TAKEOVER	1
+#define STO_ADD			2
 
 /*Errors
 1 Low Cortex battery
@@ -223,24 +224,28 @@ For example:
 2 Absolute Left Ultrasonic
 3 Lift Potentiometer
 */
+// Drive Types
+#define DT_IN_SPD	0	// Drive with input speeds
+#define DT_IN_ENC	1	// Drive with input encoder
+#define DT_C_LINE	2	// Follow the Center Line
+#define DT_G_TURN	3	// PID Gyroscope turn
+#define DT_LEFT_W	4	// Follow the Left  Wall
+#define DT_RIHT_W	5	// Follow the Right Wall
+
+// Strafe Types
+#define ST_IN_SPD	0
+#define ST_IN_ENC	1
+#define ST_U_LEFT	2
+#define ST_U_RIHT	3
+
 // End Types
-#define TIME_LIMIT	0	// Time Limit
-#define DRIV_READY	1	// Finished using Drive
-#define LIFT_READY	2	// Finished using Lift
-#define FULL_READY	3	// Finished using Drive and Lift
-#define ONE_EDG_LN	4	// Cross Line
-#define	TWO_EDG_LN	5	// Line up on white line
-#define SCREEN_BTN	6	// Screen Button
-// Drive Types [OBSOLETE]
-/*
-#define CNTR_LINE   128	// Follow the Center Line
-#define GYRO_BOTH	129	// PID Gyroscope turn both wheels
-#define GYRO_LEFT	130 // PID Gyroscope turn left wheels only
-#define GYRO_RIHT	131 // PID Gyroscope turn right wheels only
-#define LEFT_WALL	133	// Follow the Left  Wall
-#define RIHT_WALL	134	// Follow the Right Wall
-#define MAX_TYPES	135 // Maximum amount of allocated drive type numbers
-*/
+#define ET_TIME_LIMIT	0	// Time Limit
+#define ET_DRIV_READY	1	// Finished using Drive (including strafing)
+#define ET_LIFT_READY	2	// Finished using Lift
+#define ET_FULL_READY	3	// Finished using Drive and Lift
+#define ET_ONE_EDG_LN	4	// Cross Line
+#define	ET_TWO_EDG_LN	5	// Line up on white line
+#define ET_SCREEN_BTN	6	// Screen Button
 
 /*Miscellaneous defined values
  The joystick dead zone is so that small values
@@ -253,13 +258,6 @@ operator mode.
 #define outDrvL				outDrvX		//In autonomous, use X as Left
 #define outDrvR				outDrvY		//In autonomous, use Y as Right
 #define outDrvS				outDrvZ		//In autonomous, use Z as Strafe
-#define INdrvType			INdrvLft	//In autonomous, use Left input as drive type
-#define INdrvSpeed			INdrvRht	//In autonomous, use Right input as target speed
-#define INdrvTarget			INdrvStrafe	//In autonomous, use Strafe input as target distance/rotation.
-#define STRF_SPEED			0			//In autonomous, strafe input uses these...
-#define STRF_ENC			1			//...
-#define STRF_L_US			2			//...
-#define STRF_R_US			3			//...Until here
 
 //--Typedefs--//
 /*Structs
@@ -272,23 +270,20 @@ typedef struct
 	{
 	bool curr;
 	bool last;
-	}
-	T_LC_BOOL;
+	} T_LC_BOOL;
 
 typedef struct
 	{
 	int curr;
 	int last;
 	int stepStart;
-	}
-	T_LC_INT;
+	} T_LC_INT;
 
 typedef struct
 	{
 	string curr;
 	string last;
-	}
-	T_LC_STRING;
+	} T_LC_STRING;
 
 //**Other
 typedef struct
@@ -301,8 +296,7 @@ typedef struct
 	int derivative;
 	int lastError;
 	int output;
-	}
-	T_PID;
+	} T_PID;
 
 /*Function Prototypes
  This is so that functions that give errors that
@@ -310,4 +304,6 @@ say "undefined procedure" will not give errors.
 */
 void autoResetStart(int INgoToStep, int INautoType, int INscriptTakeoverType, bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
 void autoResetEnd();
-void auto(int INdrvLft, int INdrvRht, int INdrvStrafe, int INlift, int INintk, int INendType, int INminTime, int INmaxTime, int INdelayPID);
+void auto(int INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
+		int INstrfType, int INstrfSpeed, int INstrfTarget,
+		int INlift, int INintk, int INendType, int INminTime, int INmaxTime, int INdelayPID);

@@ -29,12 +29,11 @@ bool btnSubroutine1;
 bool btnSubroutine2;
 bool btnSubroutine3;
 bool btnSubroutine4;
-bool btnHalfSpeed;
 bool btnDisablePots;
 
 // SENSORS
-int senLiftPot;
-int senIntkPot;
+int senLiftLPot;
+int senLiftRPot;
 int senSelectorPot;
 int senPwrExpVoltage;
 int senAddToAbsGyro; //Not actually a sensor, but it helps with computation.
@@ -67,9 +66,7 @@ int timerMaster;
 unsigned int timerLCDScroll=0;
 unsigned int timerLCDBacklight=0;
 unsigned int timerAuto=0;
-#ifdef PRACTICE //Competition
-	unsigned int timerRobotIdle=0;
-#endif
+unsigned int timerRobotIdle=0;
 
 // LCD MENU
 T_LC_INT menuItem;
@@ -103,7 +100,7 @@ bool sysAutoMode = false;
 bool sysDisabledMode = false;
 int  sysError = ERR_NONE;
 int  sysLCDBacklight=LCD_ALWAYS_ON;
-bool sysVirtualAuto = false;
+//bool sysVirtualAuto = false;
 bool sysMotorTest = false;
 bool sysMotorsEnabled = true;
 char sysInvertDrive = false;
@@ -116,13 +113,15 @@ T_LC_STRING topLCDLine = "";
 T_LC_STRING bottomLCDLine = "";
 
 //PID
-T_PID PIDLift;
-T_PID PIDIntk;
+T_PID PIDLiftL;
+T_PID PIDLiftR;
+//T_PID PIDIntk; //Continuous intake; don't need.
 T_PID PIDLineFollow;
 T_PID PIDWallFollow;
 T_PID PIDDriveL;
 T_PID PIDDriveR;
-T_PID PIDDriveStrafe;
+T_PID PIDStrafeEncod;
+T_PID PIDStrafeUltra;
 T_PID PIDGyro;
 
 //--Arrays--//
