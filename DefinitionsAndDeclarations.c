@@ -5,8 +5,10 @@
  These flags are meant to be overall system
 toggles that are easily turned off and on.
 */
-#define AUTON_BEEP
-#define SOUND_EFFECTS
+//#define AUTON_BEEP
+//#define SOUND_EFFECTS
+//#define LIFT_SYNC
+
 //*
 #undef _TARGET			//This statement and the next go together. Uncomment both
 #define _TARGET "Robot"	//If you want the emulator to act like a real robot.
@@ -20,23 +22,25 @@ toggles that are easily turned off and on.
 #define L_STSH			2
 #define NO_LIFT_PRESETS	3
 
-#define LIFT_EIGHTEEN	500
-
 
 #define DISABLED	0
 #define OPERATOR	1
 #define AUTONOMOUS	2
 
+#define UP      127
+#define DOWN   -127
+#define FWD     127
+#define REV    -127
+#define IN     -127
+#define OUT     127
+#define LEFT   -127
+#define RIGHT   127
+#define FULL    127
+#define HALF    64
+#define FOLLOW  100
+#define BRAKE   5
 
-/*Miscellaneous defined values
- The joystick dead zone is so that small values
-on the joystick are ignored. This is so that the
-robot will not drift or "lock" the motors in
-operator mode.
-*/
-#define outDrvL				outDrvX		//In autonomous, use X as Left
-#define outDrvR				outDrvY		//In autonomous, use Y as Right
-#define outDrvS				outDrvZ		//In autonomous, use Z as Strafe
+#define NO_AUTO_ROUTINES 12
 
 //--Typedefs--//
 /*Structs
@@ -82,24 +86,24 @@ typedef struct
 */
 typedef enum
 	{
-	NOT_HIT,
-	NEXT,
-	PID
+	NOT_HIT = -1,
+	NEXT = 0,
+	PID = 1
 	} T_SENSOR_STATUS;
 
 typedef enum
 	{
-	IN_SPEED,		//Drive/Strafe with input Speeds
-	ENCODER,	//Drive/Strafe with input Encoder
-	LEFT_WALL,	//Drive following/Strafe to the Left  Wall
-	RIGHT_WALL,	//Drive following/Strafe to the Right Wall
-	//LINE_FOLLOW,	//Drive following the Center Line
-	GYRO_TURN	//Drive with a PID gyroscope turn
+	SPEED = 0,   //Drive/Strafe with input Speeds
+	ENCODER,    //Drive/Strafe with input Encoder
+	LEFT_WALL,  //Drive following/Strafe to the Left  Wall
+	RIGHT_WALL, //Drive following/Strafe to the Right Wall
+	//LINE_FOLLOW,  //Drive following the Center Line
+	GYRO_TURN   //Drive with a PID gyroscope turn
 	} T_DRIVE;
 
 typedef enum
 	{
-	TIME_LIMIT,	//Time Limit
+	TIME_LIMIT = 0,	//Time Limit
 	DRIV_READY,	//Finished using Drive (including strafing)
 	LIFT_READY,	//Finished using Lift
 	FULL_READY,	//Finished using Drive and Lift
@@ -110,21 +114,21 @@ typedef enum
 
 typedef enum
 	{
-	STO_NONE,
+	STO_NONE = 0,
 	STO_TAKEOVER,
 	STO_ADD
 	} T_SCRIPT_TAKEOVER;
 
 typedef enum
 	{
-	DRIVE,
+	DRIVE = 0,
 	LIFT,
 	INTK
 	} T_COMPONENT;
 
 typedef enum
 	{
-	ERR_NONE,
+	ERR_NONE = 0,
 	ERR_LOW_CORTEX,
 	ERR_LOW_POW_EX,
 	ERR_ROBOT_IDLE
@@ -132,7 +136,19 @@ typedef enum
 
 typedef enum
 	{
-	LCD_ALWAYS_OFF,
+	M_AUTON = 0,
+	M_CHECKLIST,
+	M_DIS_ENABLE_MTRS,
+	M_BATT_LEVELS,
+	M_MTR_TEST,
+	M_ANALOG_LEVELS,
+	M_DIGITAL_LEVELS,
+	NO_MENU_ITEMS
+	} T_MENU_ITEMS;
+
+typedef enum
+	{
+	LCD_ALWAYS_OFF = 0,
 	LCD_ALWAYS_ON,
 	LCD_BLINK_SLOW,
 	LCD_BLINK_FAST,
@@ -158,31 +174,28 @@ void autoResetEnd(void);
 		const T_DRIVE INstrfType, const int INstrfSpeed, const int INstrfTarget,
 		const int INlift, const int INintk, const T_END INendType,
 		const int INminTime, const int INmaxTime, const T_SENSOR_STATUS INdelayPID);*/
-void auto(T_DRIVE INdrvType, int INdrvLft, int INdrvRht, int INdrvTarget,
-		T_DRIVE INstrfType, int INstrfSpeed, int INstrfTarget,
-		int INlift, int INintk, T_END INendType,
-		int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
+void auto(T_DRIVE INdrvType, int INdrvSpd, int INdrvTarget,
+          T_DRIVE INstfType, int INstfSpd, int INstfTarget,
+          int INlift, int INintk, T_END INendType,
+          int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
 void zeroMotors(void);
-void setLCDLasts(void);
-void setOperatorLasts(void);
 void initializeAutonomous(void);
 void initializeLCD(void);
 void initializeOutput(void);
-void stateChangeLCD(void);
 void stateSwitchToAutonomous(void);
 void inputOperator(void);
-void inputAutonomous(void);
 void inputLCD(void);
-void inputEmulator(void); //In N_Output.c
 void inputSensors(void);
 void inputTimers(void);
-bool joystickIsMoved(bool checkStkZ);
+bool joystickIsMoved(bool checkStkTrn);
 void setLastInt(T_LC_INT *INLC);
 void setStepInt(T_LC_INT *INLC);
-void updateBatteryString(void);
 static int potReverse(int INpot);
 int joystickFilter(int INraw);
 int slew(int INtargetValue, int INlastValue, int INslew);
+int potPosition(int INMaxVal);
+int emulateLiftPot(int INspeed, int INgearing);
+int emulateWheelQSE(int INspeed);
 
 
 /* Declarations
@@ -190,18 +203,6 @@ int slew(int INtargetValue, int INlastValue, int INslew);
 */
 //Constants
 const int L_PRE[NO_LIFT_PRESETS] = {230,255,1680};
-const int UP = 127;
-const int DOWN = -127;
-const int FWD = 127;
-const int REV = -127;
-const int IN = -127;
-const int OUT = 127;
-const int LEFT = -127;
-const int RIGHT = 127;
-const int FULL = 127;
-const int HALF = 64;
-const int FOLLOW = 100;
-const int BRAKE = 5;
 
 //System Variables
 float sysLiftP = 0.7; //change to const, move to output.c, make static
@@ -220,24 +221,17 @@ int liftPresetIndex = L_DRIV;
 
 
 //Output Variables
-int outDrvX;
-int outDrvY;
-int outDrvZ;
+int outDrvL;
+int outDrvR;
+int outDrvS;
 int outLift;
 int outIntk;
+bool outBrake;
 
-//Fake Timer Variables
-unsigned int timerLCDScroll		= 0;
-unsigned int timerLCDBacklight	= 0;
-unsigned int timerAuto			= 0;
-unsigned int timerRobotIdle		= 0;
-unsigned int timerEmulateSpeed	= 0;
 
 //Sensor Variables
 int senSelectorPot;
 int senPwrExpVoltage;
-int senAddToAbsGyro; //Not actually a sensor, but it helps with computation.
-int senAbsGyro;
 int senLeftEdge;
 int senRightEdge;
 T_LC_INT senLiftLPot;

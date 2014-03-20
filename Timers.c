@@ -1,3 +1,10 @@
+//Variables
+unsigned int timerLCDScroll		= 0;
+unsigned int timerLCDBacklight	= 0;
+unsigned int timerAuto			= 0;
+unsigned int timerRobotIdle		= 0;
+unsigned int timerEmulateSpeed	= 0;
+
 //Functions
 void inputTimers()
 	{

@@ -1,4 +1,3 @@
-#include "WrongCompile.c"
 /*
 void scriptEmpty() //Don't need???
 	{

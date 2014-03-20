@@ -1,29 +1,17 @@
 //Constants
-static const int NO_AUTO_ROUTINES =		12;
 static const int NO_CHECKLIST_ITEMS =	9;
-static const int NEXT_CHAR_MS =			175;
 static const int LCD_BLINK_SLOW_MS =	500;
 static const int LCD_BLINK_FAST_MS =	200;
 static const int LCD_TIMEOUT_MS =		5000;
-static const int M_AUTON =				0;
-static const int M_CHECKLIST =			1;
-static const int M_DIS_ENABLE_MTRS =	2;
-static const int M_BATT_LEVELS =		3;
-static const int M_MTR_TEST =			4;
-static const int M_ANALOG_LEVELS =		5;
-static const int M_DIGITAL_LEVELS =		6;
-static const int M_EIGHTEEN =			7;
-static const int NO_MENU_ITEMS =		8;
 
 //Variables
-static T_LC_BOOL btnScreenLeft;//LCD Buttons
+static T_LC_BOOL btnScreenLeft; //LCD Buttons
 static T_LC_BOOL btnScreenCenter;
 static T_LC_BOOL btnScreenRight;
-static T_LC_INT  menuItem;//LCD Menu
-static int menuScrStr = 0;
-static int menuScrChar = 0;
+static T_MENU_ITEMS menuItemIndex; //LCD Menu
 static bool menuItemActivated=false;
 static int menuChecklistItem = 0;
+static int menuBatteryItem = 0;
 static T_LC_STRING topLCDLine = "";//LCD Screen
 static T_LC_STRING bottomLCDLine = "";
 
@@ -39,9 +27,9 @@ static string autoNames[NO_AUTO_ROUTINES] = { //make const? (gives error with sc
 	"NONE",
 	"NONE",
 	"NONE",
-	"NONE",
-	"NONE",
-	"NONE"};
+	"Test Things",
+	"Test Drive Time",
+	"Test Gyro Turn"};
 //static const char autonName[]="NONE | ";
 static string menuChecklist[NO_CHECKLIST_ITEMS*2] =
 	{
@@ -74,22 +62,11 @@ void initializeLCD(void)
 
 	menuItemName[M_AUTON] = "Time:";
 	menuItemName[M_CHECKLIST] = "Checklist:";
-	menuItemName[M_DIS_ENABLE_MTRS] = "Dis/Enable Mtrs";
+	menuItemName[M_DIS_ENABLE_MTRS] = "Disable Outputs";
 	menuItemName[M_BATT_LEVELS] = "Battery Levels:";
 	menuItemName[M_MTR_TEST] = "Motor Test:";
 	menuItemName[M_ANALOG_LEVELS] = "Analog Value:";
 	menuItemName[M_DIGITAL_LEVELS] = "Digital Value:";
-	}
-
-
-void setLCDLasts(void)
-	{
-	setLastBool(btnScreenLeft);
-	setLastBool(btnScreenCenter);
-	setLastBool(btnScreenRight);
-	setLastInt(menuItem);
-	setLastString(topLCDLine);
-	setLastString(bottomLCDLine);
 	}
 
 
@@ -102,9 +79,7 @@ depending on how far the potentiometer is turned.
 */
 int potPosition(int INMaxVal)
 	{
-	int n=(float)INMaxVal*senSelectorPot/4096;
-	capIntValue(0, n, INMaxVal-1);
-	return n;
+	return capIntValue(0, (float)INMaxVal*senSelectorPot/4096, INMaxVal-1);
 	}
 
 
@@ -122,71 +97,17 @@ int potCentered(int INMaxVal)
 
 void inputLCD(void)
 	{
+	//--Set Lasts--//
+	setLastBool(&btnScreenLeft);
+	setLastBool(&btnScreenCenter);
+	setLastBool(&btnScreenRight);
+	setLastString(&topLCDLine);
+	setLastString(&bottomLCDLine);
+
 	btnScreenLeft.curr =	(bool)(nLCDButtons & 1);
 	btnScreenCenter.curr =	(bool)(nLCDButtons & 2);
 	btnScreenRight.curr =	(bool)(nLCDButtons & 4);
-	if (sysState.curr != AUTONOMOUS)	//If not in autonomous
-		autoRoutine.curr = potPosition(NO_AUTO_ROUTINES)+1;
 	}
-
-
-void stateChangeLCD(void)
-	{
-	menuScrStr = 0;
-	menuScrChar = 0;
-	}
-
-
-/*void updateScrollingText(string &INapply, string INstr1, string INstr2, string INstr3) //3 input strings
-	{
-	string tStrs[3]={INstr1, INstr2, INstr3};
-	bool tScroll = timerLCDScroll >= NEXT_CHAR_MS;
-	if (changedInt(autoRoutine)) //If we change autonomous routines
-		{
-		menuScrStr = 0;
-		menuScrChar = 0;
-		}
-	string result;
-	strcpy(result,tStrs[menuScrStr]);
-	if(tScroll)
-		{
-		if (menuScrChar >= strlen(result))
-			{
-			menuScrChar=0;
-			menuScrStr = ((menuScrStr+1) % 3); //3 input strings
-			}
-		}
-	StringDelete(result,0,menuScrChar); //Delete the beginning
-	for (int t=menuScrStr+1; strlen(result)<20; t++)
-		strcat(result,tStrs[t%3]);
-	strcpy(INapply,result);
-	if (tScroll)
-		{
-		menuScrChar++; //Scroll the message
-		timerLCDScroll = 0; //Reset Timer
-		}
-	}
-
-void updateScrollingText2(char *INstr)
-	{
-	if (changedInt(autoRoutine)) //If we change autonomous routines
-		menuScrChar = 0;
-
-	if(timerLCDScroll >= NEXT_CHAR_MS) //If it is time to scroll message
-		{
-		string tString = "";
-		if (menuScrChar >= strlen(INstr))
-			menuScrChar=0;
-
-		StringFromChars(tString, INstr);
-		StringDelete(tString, 0, menuScrChar);	//Delete the beginning
-		while(strlen(tString)<20)				//While message is too short
-			strcat(tString, INstr);					//Add to the message
-		strcpy(bottomLCDLine.curr,tString);		//Assign message to bottomLCDLine
-		menuScrChar++; 							//Scroll the message
-		timerLCDScroll = 0;						//Reset Timer
-		}
-	}*/
 
 
 void updateBacklight()
@@ -227,7 +148,7 @@ void updateBacklight()
 void menuExecuteActivated()
 	{
 	menuItemActivated = false;
-	switch (menuItem.curr)
+	switch (menuItemIndex)
 		{
 		case M_AUTON:
 			sysAutoMode = true;
@@ -238,16 +159,14 @@ void menuExecuteActivated()
 		case M_DIS_ENABLE_MTRS:
 			sysMotorsEnabled = !sysMotorsEnabled;
 			break; //Enable / Disable motors
-		case M_BATT_LEVELS: break; //View battery Levels
+		case M_BATT_LEVELS:
+			menuBatteryItem = (menuBatteryItem+1)%3;
+			break; //View battery Levels
 		case M_MTR_TEST:
 			mtrTestEnabled[potPosition(10)] = (( mtrTestEnabled[potPosition(10)]+2 )%3)-1;
 			break; //Toggle Motors between -1, 0 and 1
-		case M_EIGHTEEN:
-			if (outLift==LIFT_EIGHTEEN)
-				outLift = 0;
-			else
-				outLift=LIFT_EIGHTEEN;
-			break; //View Analog Value
+		case M_ANALOG_LEVELS: break; //View Analog Value
+		case M_DIGITAL_LEVELS: break; //View Digital Value
 		default: break; //Execute nothing
 		}
 	}
@@ -257,23 +176,21 @@ void menuView()
 	{
 	string tString0="";				//Top Line
 	string tString1="",tString2="";	//Bottom Line
-	bool tScrollingValue=false;
 
 	sysMotorTest=false;
 
-	strcpy(tString0,menuItemName[menuItem.curr]);
-	switch (menuItem.curr) //BOTTOM LINE
+	strcpy(tString0,menuItemName[menuItemIndex]);
+	switch (menuItemIndex) //BOTTOM LINE
 		{
 		case M_AUTON:
 			switch (potCentered(NO_AUTO_ROUTINES))
 				{
-				case 0: StringFormat(tString0,"%s %.1f |>%d ",menuItemName[menuItem.curr],((float)timerAuto/1000),autoRoutine.curr); break;
-				case 1: StringFormat(tString0,"%s %.1f | %d ",menuItemName[menuItem.curr],((float)timerAuto/1000),autoRoutine.curr); break;
-				case 2: StringFormat(tString0,"%s %.1f | %d<",menuItemName[menuItem.curr],((float)timerAuto/1000),autoRoutine.curr); break;
+				case 0: StringFormat(tString0,"%s %.1f |>%d ",menuItemName[menuItemIndex],((float)timerAuto/1000),autoRoutine.curr); break;
+				case 1: StringFormat(tString0,"%s %.1f | %d ",menuItemName[menuItemIndex],((float)timerAuto/1000),autoRoutine.curr); break;
+				case 2: StringFormat(tString0,"%s %.1f | %d<",menuItemName[menuItemIndex],((float)timerAuto/1000),autoRoutine.curr); break;
 				}
 			int temp = autoRoutine.curr-1;
 			strcpy(tString1,autoNames[temp]);
-			//updateScrollingText(tString1,autoNames[temp][0],autoNames[temp][1],autoNames[temp][2]);
 			break; //Scrolling Autonomous Name
 
 		case M_CHECKLIST:
@@ -284,9 +201,12 @@ void menuView()
 			tString1 = (sysMotorsEnabled)?"Enabled":"Disabled";
 			break;
 		case M_BATT_LEVELS:
-			sprintf(tString1,"C%1.1f P%1.1f B%1.1f", (float)nAvgBatteryLevel/1000,
-					(float)senPwrExpVoltage/70,(float)BackupBatteryLevel/1000);
-			//updateScrollingText(tString1,batteryLevel[0],batteryLevel[1],"");
+			switch (menuBatteryItem)
+				{
+				case 0: sprintf(tString1,"Cortex: %1.3f", (float)nAvgBatteryLevel/1000);   break;
+				case 1: sprintf(tString1,"Pow Ex: %1.3f", (float)senPwrExpVoltage/70);     break;
+				case 2: sprintf(tString1,"Backup: %1.3f", (float)BackupBatteryLevel/1000); break;
+				}
 			break; //Scrolling Battery Levels
 		case M_MTR_TEST:
 			sysMotorTest = true;
@@ -305,9 +225,9 @@ void menuView()
 			break;
 		}
 
+	strcpy(topLCDLine.curr,tString0);
 	strcat(tString1,tString2);
 	strcpy(bottomLCDLine.curr,tString1);
-	strcpy(topLCDLine.curr,tString0);
 	}
 
 
@@ -336,22 +256,17 @@ void processLCD()
 		{
 		if (sysState.curr == DISABLED || sysState.curr == OPERATOR) //Show the menu
 			{
-			sysLCDBacklight=LCD_TIMEOUT;
+			sysLCDBacklight=LCD_ALWAYS_ON;
 
-			if (pressed(btnScreenLeft))		menuItem.curr--;
-			if (pressed(btnScreenRight))	menuItem.curr++;
-			capIntValue(0, menuItem.curr, NO_MENU_ITEMS-1);
-			//menuItem.curr = (menuItem.curr + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //ITEM = (ITEM + NUM) % NUM
+			if (pressed(btnScreenLeft))		menuItemIndex--;
+			if (pressed(btnScreenRight))	menuItemIndex++;
+			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, NO_MENU_ITEMS-1);
+			//menuItemIndex = (menuItemIndex + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //ITEM = (ITEM + NUM) % NUM
 
 			if (pressed(btnScreenCenter))	menuItemActivated = !menuItemActivated;
 			if (menuItemActivated)			menuExecuteActivated();
 
 			menuView();
-			if (changedInt(menuItem))
-				{
-				menuScrStr = 0;
-				menuScrChar = 0;
-				}
 			}
 		else if (sysState.curr == AUTONOMOUS)
 			{
@@ -378,7 +293,7 @@ void outputLCD()
 			displayLCDCenteredString(1,bottomLCDLine.curr);
 		else
 			{
-			if (menuItem.curr==0)
+			if (menuItemIndex==0)
 				displayLCDString(1,0,bottomLCDLine.curr);
 			else
 				displayLCDString(1,1,bottomLCDLine.curr);
@@ -386,7 +301,7 @@ void outputLCD()
 		}
 	if (sysState.curr != AUTONOMOUS && sysError==ERR_NONE)
 		{
-		if (menuItem.curr>0)				displayLCDString(1,0, "<"); //If not at the first item, show prev arrow
-		if (menuItem.curr<NO_MENU_ITEMS-1)	displayLCDString(1,15,">"); //If not at the last item, show next arrow
+		if (menuItemIndex>0)                    displayLCDString(1,0, "<"); //If not at the first item, show prev arrow
+		if (menuItemIndex<(int)NO_MENU_ITEMS-1) displayLCDString(1,15,">"); //If not at the last item, show next arrow
 		}
 	}

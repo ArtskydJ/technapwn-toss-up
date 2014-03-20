@@ -18,19 +18,7 @@ current-step values are overwritten.
 */
 void setAllLasts()
 	{
-	setLCDLasts();
-	setOperatorLasts();
-
-	//--Sensors--//
-	setLastInt(&senGyro);
-	setLastInt(&senLeftQSE);
-	setLastInt(&senRightQSE);
-	setLastInt(&senLeftUS);
-	setLastInt(&senRightUS);
-
 	//--System--//
-	setLastInt(&sysState);
-	setLastInt(&autoRoutine);
 	}
 
 /* This function keeps the loop time of the code
@@ -57,12 +45,11 @@ a pointer to a variable. The variable is changed
 so that it is no smaller than the min value, and
 no larger than the max value.
 */
-void capIntValue(int min,int &value,int max)
+int capIntValue(int min, int value, int max)
 	{
-	int temp = value;
-	temp = (temp<min) ? (min):(temp);
-	temp = (temp>max) ? (max):(temp);
-	value = temp;
+	if (value < min) value = min;
+	if (value > max) value = max;
+	return value;
 	}
 
 	
@@ -80,20 +67,4 @@ int updatePIDController(T_PID &INPID, int INerror)
 						+ (INPID.integral	* INPID.ki)
 						+ (INPID.derivative	* INPID.kd);
 	return (INPID.output);
-	}
-
-
-/* This function checks the voltage on the cortex
-and power expander. It also checks if the robot
-has been idle for over a minute. If one of these
-is true, then sysError is set.
-*/
-void processErrors()
-	{
-#if (_TARGET=="Robot") //Gives the low battery error when emulated.
-	sysError = ERR_NONE;
-	//if (senPwrExpVoltage<7200)		sysError = ERR_LOW_POW_EX; //power expander voltage is not x1000
-	//if (timerRobotIdle>=60000)		sysError = ERR_ROBOT_IDLE;
-	if (nAvgBatteryLevel<1000)		sysError = ERR_LOW_CORTEX;
-#endif
 	}

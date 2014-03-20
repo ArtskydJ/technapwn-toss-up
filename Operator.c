@@ -7,9 +7,9 @@ static const int DRV_RHT = 3;
 
 //Variables
 static int stkMtrTest;
-static int stkDrvX;
-static int stkDrvY;
-static int stkDrvZ;
+static int stkDrvFwd;
+static int stkDrvTrn;
+static int stkDrvStf;
 static T_LC_BOOL btnLiftUp;
 static T_LC_BOOL btnLiftDown;
 static T_LC_BOOL btnIntkUp;
@@ -34,11 +34,17 @@ static char sysInvertDriveOffset = 0;
 //Functions
 void inputOperator(void)
 	{
+	//Set Lasts
+	setLastBool(&btnLiftUp);
+	setLastBool(&btnLiftDown);
+	setLastBool(&btnIntkUp);
+	setLastBool(&btnIntkDown);
+
 #if (_TARGET=="Robot")
 	//Sticks
-	stkDrvX =			joystickFilter(vexRT[Ch4]);
-	stkDrvY =			joystickFilter(vexRT[Ch3]);
-	stkDrvZ =			joystickFilter(vexRT[Ch1]);
+	stkDrvFwd =			joystickFilter(vexRT[Ch3]);
+	stkDrvStf =			joystickFilter(vexRT[Ch4]);
+	stkDrvTrn =			joystickFilter(vexRT[Ch1]);
 	stkMtrTest =					  (vexRT[Ch2]);
 
 	//Normal Buttons
@@ -46,10 +52,10 @@ void inputOperator(void)
 	btnLiftDown.curr =			(bool)vexRT[Btn5D];
 	btnIntkUp.curr =			(bool)vexRT[Btn6U];
 	btnIntkDown.curr =			(bool)vexRT[Btn6D];
-	btnLiftUp2.curr =			(bool)vexRT[Btn5Uxmtr2];
-	btnLiftDown2.curr =			(bool)vexRT[Btn5Dxmtr2];
-	btnIntkUp2.curr =			(bool)vexRT[Btn6Uxmtr2];
-	btnIntkDown2.curr =			(bool)vexRT[Btn6Dxmtr2];
+	btnLiftUp2.curr =			(bool)vexRT[Btn5UXmtr2];
+	btnLiftDown2.curr =			(bool)vexRT[Btn5DXmtr2];
+	btnIntkUp2.curr =			(bool)vexRT[Btn6UXmtr2];
+	btnIntkDown2.curr =			(bool)vexRT[Btn6DXmtr2];
 
 	//Button Modifiers
 	btnDisablePots = 			(bool)vexRT[Btn7L];
@@ -69,21 +75,12 @@ void inputOperator(void)
 	}
 
 
-void setOperatorLasts(void)
-	{
-	setLastBool(btnLiftUp);
-	setLastBool(btnLiftDown);
-	setLastBool(btnIntkUp);
-	setLastBool(btnIntkDown);
-	}
-
-
 /* This function checks if the joysticks are
 moved from their deadzones.
 */
-bool joystickIsMoved(bool checkStkZ)
+bool joystickIsMoved(bool checkStkTrn)
 	{
-	return (stkDrvX + stkDrvY + (stkDrvZ * checkStkZ)) != 0;
+	return (stkDrvStf + stkDrvFwd + (stkDrvTrn * checkStkTrn)) != 0;
 	}
 
 
@@ -94,8 +91,7 @@ int joystickFilter(int INraw)
 	{
 	if (abs(INraw) < JOYSTICK_DEAD_ZONE)	//Dead Zone
 		INraw=0;
-	INraw = (float)INraw*abs(INraw)/127;	//Exponential function
-	capIntValue(-127, INraw, 127);				//Make sure the numbers are within desired range
+	INraw = capIntValue(REV, (float)INraw*abs(INraw)/FWD, FWD);	//Exponential function
 	return (INraw);
 	}
 
@@ -127,66 +123,87 @@ void processOperator()
 		switch(sysInvertDrive)
 			{
 			case DRV_RHT: //Rotated 0°   (Robot faces driver's right)
-				outDrvX = stkDrvY;
-				outDrvY = stkDrvX; break;
+				outDrvFwd = stkDrvStf;
+				outDrvStf = stkDrvFwd;
+				break;
 			case DRV_FWD: //Rotated 90°  (Robot faces away from driver)
-				outDrvX = stkDrvX;
-				outDrvY = stkDrvY; break;
+				outDrvFwd = stkDrvFwd;
+				outDrvStf = stkDrvStf;
+				break;
 			case DRV_LFT: //Rotated 180° (Robot faces driver's left)
-				outDrvX = -stkDrvY;
-				outDrvY = -stkDrvX; break;
+				outDrvFwd = -stkDrvStf;
+				outDrvStf = -stkDrvFwd;
+				break;
 			case DRV_REV: //Rotated 270° (Robot faces driver)
-				outDrvX = -stkDrvX;
-				outDrvY = -stkDrvY; break;
+				outDrvFwd = -stkDrvFwd;
+				outDrvStf = -stkDrvStf;
+				break;
 			}
-		outDrvZ = stkDrvZ;
+		outDrvTrn = stkDrvTrn;
 		//--Drive--//
 		if (joystickIsMoved(0))
 			if (autoScriptTakeover[DRIVE] == STO_TAKEOVER)
 				autoRoutine.curr = 0; //Disable script
 
 		//--Lift--//
-		if (btnLiftUp.curr || btnLiftDown.curr)
+		static bool tLastLiftPressed=0;
+		if (btnLiftUp.curr || btnLiftDown.curr || btnLiftUp2.curr || btnLiftDown2.curr)
 			{
 			if (autoScriptTakeover[LIFT] == STO_TAKEOVER)
 				autoRoutine.curr = 0; //Disable script
 			}
-		if (btnDisablePots)
+		if (1) //(btnDisablePots)
 			{
-			outLift = 0;					//Lift Motors Off
+			if (tLastLiftPressed)
+				outLift = 15;
+			else
+				outLift = 0;
+			if (btnDisablePots)
+				{
+				tLastLiftPressed = false;
+				outLift = 0;				//Lift Motors Off
+				}
 			if (btnLiftUp.curr)				//If Lift Up Pressed
+				{
+				tLastLiftPressed = true;
 				outLift = FWD;					//Lift Motors Reverse
+				}
 			else if (btnLiftDown.curr)		//If Lift Down Pressed
+				{
 				outLift = REV;					//Lift Motors Forward
+				tLastLiftPressed = false;
+				}
 			else if (btnLiftUp2.curr)				//If Lift Up Pressed
+				{
+				tLastLiftPressed = true;
 				outLift = FWD;					//Lift Motors Reverse
+				}
 			else if (btnLiftDown2.curr)		//If Lift Down Pressed
+				{
+				tLastLiftPressed = false;
 				outLift = REV;					//Lift Motors Forward
+				}
 			}
 		else
 			{
 			if (pressed(btnLiftDown))		//If Lift Down Pressed
 				{
-				liftPresetIndex--;
-				capIntValue(0,liftPresetIndex,NO_LIFT_PRESETS-1);
+				liftPresetIndex = capIntValue(0, liftPresetIndex-1, NO_LIFT_PRESETS-1);
 				outLift = L_PRE[liftPresetIndex];
 				}
 			else if (pressed(btnLiftUp))	//If Lift Up Pressed
 				{
-				liftPresetIndex++;
-				capIntValue(0,liftPresetIndex,NO_LIFT_PRESETS-1);
+				liftPresetIndex = capIntValue(0,liftPresetIndex+1, NO_LIFT_PRESETS-1);
 				outLift = L_PRE[liftPresetIndex];
 				}
 			else if (pressed(btnLiftDown2))		//If Lift Down Pressed
 				{
-				liftPresetIndex--;
-				capIntValue(0,liftPresetIndex,NO_LIFT_PRESETS-1);
+				liftPresetIndex = capIntValue(0, liftPresetIndex-1, NO_LIFT_PRESETS-1);
 				outLift = L_PRE[liftPresetIndex];
 				}
 			else if (pressed(btnLiftUp2))	//If Lift Up Pressed
 				{
-				liftPresetIndex++;
-				capIntValue(0,liftPresetIndex,NO_LIFT_PRESETS-1);
+				liftPresetIndex = capIntValue(0, liftPresetIndex+1, NO_LIFT_PRESETS-1);
 				outLift = L_PRE[liftPresetIndex];
 				}
 			}
@@ -194,7 +211,7 @@ void processOperator()
 
 
 		//--Intake--//
-		if (btnIntkUp.curr || btnIntkDown.curr)
+		if (btnIntkUp.curr || btnIntkDown.curr || btnIntkUp2.curr || btnIntkDown2.curr)
 			{
 			if (autoScriptTakeover[INTK] == STO_TAKEOVER)
 				autoRoutine.curr = 0; //Disable script

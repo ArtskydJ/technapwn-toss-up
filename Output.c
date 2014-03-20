@@ -1,6 +1,4 @@
 //Constants
-static const int LEFT_CAP = 127; //yes left, not lift
-static const int RIHT_CAP = 127;
 static const int DISABLE_RANGE = 50;
 
 //Variables
@@ -42,10 +40,11 @@ void initializeOutput()
 */
 void zeroMotors(void)
 	{
+	outDrvFwd = 0;
+	outDrvTrn = 0;
+	outDrvStf = 0;
 	outLift = 0;
-	outDrvX = 0;
-	outDrvY = 0;
-	outDrvZ = 0;
+	outIntk = 0;
 	for (int j=0; j<10; j++)
 		mtrTarget[j] = 0;
 	}
@@ -63,15 +62,15 @@ void outputMotion(void)
 			mtrTarget[j] = (mtrTestEnabled[j]*stkMtrTest);
 	else
 		{
-		if (sysState.curr == OPERATOR)
-			{					 // Y=FWD  Z=TURN  X=STRAFE
-			mtrTarget[DRIVE_FL]  = outDrvY + outDrvZ + outDrvX;
-			mtrTarget[DRIVE_BL1] = outDrvY + outDrvZ - outDrvX;
-			mtrTarget[DRIVE_BL2] = outDrvY + outDrvZ - outDrvX;
-			mtrTarget[DRIVE_FR]  = outDrvY - outDrvZ - outDrvX;
-			mtrTarget[DRIVE_BR1] = outDrvY - outDrvZ + outDrvX;
-			mtrTarget[DRIVE_BR2] = outDrvY - outDrvZ + outDrvX;
-			}
+		//if (sysState.curr == OPERATOR)
+		//	{					 // Y=FWD  Z=TURN  X=STRAFE
+			mtrTarget[DRIVE_FL]  = outDrvFwd + outDrvTrn + outDrvStf;
+			mtrTarget[DRIVE_BL1] = outDrvFwd + outDrvTrn - outDrvStf;
+			mtrTarget[DRIVE_BL2] = outDrvFwd + outDrvTrn - outDrvStf;
+			mtrTarget[DRIVE_FR]  = outDrvFwd - outDrvTrn - outDrvStf;
+			mtrTarget[DRIVE_BR1] = outDrvFwd - outDrvTrn + outDrvStf;
+			mtrTarget[DRIVE_BR2] = outDrvFwd - outDrvTrn + outDrvStf;
+		/*	}
 		else if (sysState.curr == AUTONOMOUS)
 			{			 // L=LEFT R=RIGHT S=STRAFE
 			mtrTarget[DRIVE_FL]  = outDrvL + outDrvS;
@@ -80,23 +79,22 @@ void outputMotion(void)
 			mtrTarget[DRIVE_FR]  = outDrvR - outDrvS;
 			mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
 			mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
-			}
+			}*/
 
 		int tLLift, tRLift, tLLiftAdd, tRLiftAdd, tTarget;
 		bool tDisableLift=false;
 		tTarget = 0;
 		if (abs(outLift) > 127)
-			{updatePIDController(PIDLift, outLift*2 - (senLiftLPot.curr+senLiftRPot.curr));
-			tLLift = PIDLift.output;
-			tRLift = PIDLift.output;
-			capIntValue(REV, tLLift, FWD);
-			capIntValue(REV, tRLift, FWD);
+			{
+			updatePIDController(PIDLift, outLift*2 - (senLiftLPot.curr+senLiftRPot.curr));
+			tLLift = capIntValue(REV, PIDLift.output, FWD);
+			tRLift = capIntValue(REV, PIDLift.output, FWD);
 			tTarget = outLift;
 
-			if (senLiftLPot.curr<outLift+DISABLE_RANGE
-				&& senLiftLPot.curr>outLift-DISABLE_RANGE
-				&& senLiftRPot.curr<outLift+DISABLE_RANGE
-				&& senLiftRPot.curr>outLift-DISABLE_RANGE)
+			if (senLiftLPot.curr < outLift + DISABLE_RANGE &&
+			    senLiftLPot.curr > outLift - DISABLE_RANGE &&
+			    senLiftRPot.curr < outLift + DISABLE_RANGE &&
+			    senLiftRPot.curr > outLift - DISABLE_RANGE)
 				tDisableLift=true;
 			}
 		else
@@ -105,18 +103,21 @@ void outputMotion(void)
 			tRLift = outLift;
 			}
 
+#ifdef LIFT_SYNC
 		if (!btnDisablePots)
+#else
+		if (0)
+#endif
 			{
-			tLLiftAdd = (senLiftRPot.curr-senLiftLPot.curr)*sysLiftP;
-			tRLiftAdd = (senLiftLPot.curr-senLiftRPot.curr)*sysLiftP;
-			capIntValue(REV*2, tLLiftAdd, FWD*2);
-			capIntValue(REV*2, tRLiftAdd, FWD*2);
+			tLLiftAdd = capIntValue(REV*2, (senLiftRPot.curr-senLiftLPot.curr)*sysLiftP, FWD*2);
+			tRLiftAdd = capIntValue(REV*2, (senLiftLPot.curr-senLiftRPot.curr)*sysLiftP, FWD*2);
 			}
 		else
 			{
 			tLLiftAdd = 0;
 			tRLiftAdd = 0;
 			}
+
 		if (tDisableLift)
 			{
 			mtrTarget[LIFT_L]=0;
@@ -127,18 +128,22 @@ void outputMotion(void)
 			mtrTarget[LIFT_L] = tLLift + tLLiftAdd;
 			mtrTarget[LIFT_R] = tRLift + tRLiftAdd;
 			}
-		capIntValue(-LEFT_CAP, mtrTarget[LIFT_L], LEFT_CAP);
-		capIntValue(-RIHT_CAP, mtrTarget[LIFT_R], RIHT_CAP);
+		mtrTarget[LIFT_L] = mtrTarget[LIFT_L];
+		mtrTarget[LIFT_R] = mtrTarget[LIFT_R];
 
 
 		mtrTarget[INTK_L] = outIntk;
 		//mtrTarget[INTK_R] = outIntk;
+		if (sysMotorsEnabled)
+			{
+			SensorValue[BRAKE] = outBrake;
+			}
 		}
 
 	for (int j=0; j<10; j++)
 		{
 		mtrSlewed[j] += slew(mtrTarget[j], mtrSlewed[j], slewConstants[sysState.curr][j]); //SLEW CONTROLLERS
-		capIntValue(-127, mtrSlewed[j], 127); //CAP ALL MOTORS
+		mtrSlewed[j] = capIntValue(-127, mtrSlewed[j], 127); //CAP ALL MOTORS
 		motor[j] = mtrSlewed[j]*sysMotorsEnabled; //ASSIGN MOTORS
 		}
 	}
@@ -149,9 +154,7 @@ previously assigned motor value, and the slew.
 */
 int slew(int INtargetValue, int INlastValue, int INslew)
 	{
-	int diff = INtargetValue-INlastValue;
-	capIntValue(-INslew, diff, INslew);
-	return diff;
+	return capIntValue(-INslew, INtargetValue-INlastValue, INslew);
 	}
 
 
@@ -174,18 +177,4 @@ if the gearing is 1:7, etc.
 int emulateLiftPot(int INspeed, int INgearing)
 	{
 	return ( (float) INspeed * timerEmulateSpeed / (25*INgearing) );
-	}
-
-
-/* This function emulates sensor values based on
-motor values.
-*/
-void inputEmulator(void)
-	{
-#if (_TARGET!="Robot")
-	senLeftQSE.curr  +=	emulateWheelQSE(mtrSlewed[DRIVE_BL1]);
-	senRightQSE.curr +=	emulateWheelQSE(mtrSlewed[DRIVE_BR1]);
-	senLiftLPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_L], 15);
-	senLiftRPot.curr +=	emulateLiftPot(mtrSlewed[LIFT_R], 15);
-#endif
 	}

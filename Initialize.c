@@ -21,5 +21,5 @@ void initializeOther()
 
 	//--Other--//
 	writeDebugStreamLine("================");
-	sysState.curr=OPERATOR;
+	sysState.curr=DISABLED; //Should change to operator later
 	}

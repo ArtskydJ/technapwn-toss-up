@@ -1,6 +1,8 @@
 //Functions
-void inputState()
+void inputProcessState()
 	{
+	setLastInt(&sysState);
+	
 	//--Decide what state the robot is in--//
 	if (nVexRCReceiveState & vrCompetitionSwitch)	//If the Competition switch is plugged in...
 		{
@@ -14,16 +16,10 @@ void inputState()
 		else if (sysAutoMode)	sysState.curr = AUTONOMOUS;
 		else					sysState.curr = OPERATOR;
 		}
-	}
-
-
-void processState(void)
-	{
+	
 	if (changedInt(sysState))
 		{
 		//--Execute whenever the state changes--//
-		stateChangeLCD();
-
 		timerLCDScroll=0;
 		timerLCDBacklight=0;
 
