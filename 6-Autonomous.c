@@ -146,8 +146,8 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 		outLoader = INload;
 		if (outDrvS != 0 && outDrvL==outDrvR)
 			{
-			outDrvL += (diffStepInt(senGyro)) * GYRO_P;
-			outDrvR -= (diffStepInt(senGyro)) * GYRO_P;
+			outDrvL += (diffStepInt(senGyro)) * GYRO_P; // + outDrvS/6;
+			outDrvR -= (diffStepInt(senGyro)) * GYRO_P; // - outDrvS/6;
 			}
 		if (abs(outDrvL) < P_DEAD_ZONE &&
 			abs(outDrvR) < P_DEAD_ZONE &&

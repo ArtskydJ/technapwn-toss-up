@@ -1,16 +1,7 @@
 //AutoRedMiddle.c
 //500 = 1 tile (2 ft)
-void autoRedMid1(void)
-	{
-	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
-	auto(stopped(),		0,		0,			0,	0,	0,	TIME_LIMIT,	25000);	//wait 1
-	auto(stopped(),		0,		0,			0,	0,	0,	TIME_LIMIT,	25000);	//wait 2
-	auto(stopped(),		0,		0,			0,	0,	0,	TIME_LIMIT,	25000);	//wait 3
-	autoResetEnd();
-	}
 
-void autoRedMid1_RENAME(void)
+void autoRedMid1(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other

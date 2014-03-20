@@ -6,9 +6,11 @@ void autoRedProgSkills(void)
 	{
 	//SUBJECT TO CHANGE:
 	//0 = beginning
+	//7 = first stash
 	//14 = into wall by ladder (if LONG)
+	//16 = long strafe ultra right
 	//34 = stash (if LONG)
-	autoResetStart(0, AUTON, 0, 0, 0);
+	autoResetStart(14, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
 //From Hanging Zone, grab easy 2
 	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward + in
@@ -16,68 +18,66 @@ void autoRedProgSkills(void)
 	auto(enc1(1400),	0,		lPre(BMP),	IN,	0,	0,	DRIV_READY,	NEXT);	//Forward over bump
 	auto(enc1(1300),	0,		lPre(GND),	IN,	0,	0,	DRIV_READY,	NEXT);	//Forward, drop lift
 
-//STASH - (can this be done more effectively in the same amount of time?)
-	auto(stopped(),usStrfL(72),	lPre(STS),	0,	0,	0,	DRIV_READY,	PID);	//strafe
-	auto(straight(FWD),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	800);	//Forward
-	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	1300);	//dump
-	auto(straight(FWD),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	300);	//Forward, align
+//STASH
+	auto(stopped(),usStrfL(73),	lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//strafe
+	auto(straight(FWD),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	600);	//Forward
+	auto(straight(-60),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	150);	//Reverse
+	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	1150);	//dump
 	auto(gyroR(45),		0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//turn away from stash
-	auto(enc1(-510),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 
 #ifdef LONG
-	auto(gyro2(135),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//turn
+	auto(enc1(-510),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(135),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//turn, WAS 135
 	auto(straight(FWD),	0,		lPre(GND),	0,	0,	0,	TIME_LIMIT,	600);	//Forward under bar
 	auto(enc1(2150),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	NEXT);	//Forward over bump
-	auto(straight(HALF),0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	1000);	//Forward into wall
-	auto(straight(REV),	0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	350);	//Reverse from wall
+	auto(straight(HALF),0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	1100);	//Forward into wall
+	auto(spd(REV,-95),	0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	350);	//Reverse from wall
 
 //From Hanging Zone, grab 3
-	auto(stopped(),usStrfR(123),lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//strafe, was 120
+	auto(stopped(),usStrfR(124),lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//strafe, was 120, 123
+//	auto(stopped(),		0,		0,			0,	0,	0,	TIME_LIMIT,	2000);	//DELETE THIS
 	auto(straight(FWD),	0,		0,			IN,	0,	0,	TIME_LIMIT,	200);	//fwd
 	auto(straight(-100),LEFT,	0,			IN,	0,	0,	TIME_LIMIT,	650);	//rev, strafe
 	auto(straight(FWD),	0,		0,			IN,	0,	0,	TIME_LIMIT,	400);	//fwd
-	auto(straight(-100),LEFT,	0,			IN,	0,	0,	TIME_LIMIT,	650);	//rev, strafe
+	auto(straight(-100),LEFT,	0,			IN,	0,	0,	TIME_LIMIT,	680);	//rev, strafe
 	auto(straight(FWD),	0,		0,			IN,	0,	0,	TIME_LIMIT,	400);	//fwd
-	auto(straight(-100),LEFT,	0,			IN,	0,	0,	TIME_LIMIT,	650);	//rev, strafe
-	auto(enc1(-1300),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	NEXT);	//rev
-	auto(enc1(-1300),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//rev
+	auto(straight(-100),LEFT,	0,			IN,	0,	0,	TIME_LIMIT,	680);	//rev, strafe
+	auto(enc1(-1400),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	NEXT);	//rev
+	auto(enc1(-1400),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//rev
 	auto(gyro2(90),		0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn 90
-	auto(enc1(920),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd
-	auto(gyro2(90),		0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn 90
+	auto(enc1(1050),	0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd, WAS 920
+	auto(gyro2(90),		0,		lPre(STS),	0,	0,	0,	DRIV_READY,	PID);	//turn 90
 
 //STASH - (can this be done more effectively in the same amount of time?)
-	auto(stopped(),usStrfL(72),	lPre(STS),	0,	0,	0,	DRIV_READY,	PID);	//strafe
-	auto(straight(FWD),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	800);	//Forward
-	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	1300);	//dump
-	auto(straight(FWD),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	300);	//Forward, align
+	auto(straight(FWD),usStrfL(72),lPre(STS),0,	0,	0,	TIME_LIMIT,	1000);	//fwd, strafe
+	auto(straight(REV),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	150);	//Reverse
+	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	1150);	//dump
 	auto(gyroR(45),		0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//turn away from stash
-	auto(enc1(-510),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 
 #endif //ifdef LONG, line 25
 
+	auto(enc1(-510),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(gyro2(-45),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//turn
 	auto(enc1(-1100),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//reverse past bar
 //From Middle Zone, hit 4 larges
-	auto(stopped(),		0,		lPre(BAR),	0,	0,	0,	LIFT_READY,	NEXT);	//lift
-	auto(enc1(400),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd to ball 1
-	auto(straight(80),	0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	500);	//fwd, WAS 100spd, 350ms
-	auto(enc1(-200),	0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//rev, WAS -200, -300
+	auto(stopped(),		0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	200);	//lift
+	auto(straight(FWD),	0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	700);	//HIT BARRIER, ball 1
+	auto(enc1(-180),	0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//rev
 	auto(gyro2(97),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	PID);	//turn
-	auto(enc1(600),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd to ball 2, 700
+	auto(enc1(500),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd to ball 2
 	auto(straight(FWD),	LEFT,	lPre(BAR),	0,	0,	0,	TIME_LIMIT,	600);	//strafe in
 	auto(straight(FWD),	RIGHT,	lPre(BAR),	0,	0,	0,	TIME_LIMIT,	600);	//strafe out
-	auto(enc1(760),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd to ball 3, 1200
+	auto(enc1(860),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd to ball 3
 	auto(straight(FWD),	LEFT,	lPre(BAR),	0,	0,	0,	TIME_LIMIT,	800);	//strafe in
 	auto(straight(FWD),	RIGHT,	lPre(BAR),	0,	0,	0,	TIME_LIMIT,	1000);	//strafe out
-	auto(enc1(400),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//fwd to ball 4, 1050
 
 //From Middle Zone, grab 3
-	auto(straight(HALF),0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	600);	//fwd into wall
-	auto(enc1(-40),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//rev, WAS -60
-	auto(gyro2(85),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//turn, WAS 80
-	auto(straight(REV),	0,		0,			0,	0,	0,	TIME_LIMIT,	600);	//rev, hit ball
+	auto(straight(FWD),0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	800);	//fwd to wall
+	auto(enc1(-40),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//rev from wall
+	auto(gyro2(85),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//turn
+	auto(straight(REV),	0,		0,			0,	0,	0,	TIME_LIMIT,	600);	//rev to ball 4
 	auto(straight(FWD),	0,		0,			0,	0,	0,	TIME_LIMIT,	200);	//fwd from bar
-	auto(enc1(2210),	0,		lPre(GND),	IN,	0,	0,	DRIV_READY,	NEXT);	//fwd + intake
+	auto(enc1(2210),	0,		lPre(GND),	IN,	0,	0,	DRIV_READY,	PID);	//fwd + intake
 	auto(straight(-100),RIGHT,	0,			IN,	0,	0,	TIME_LIMIT,	500);	//rev
 	auto(enc1(-3080),	0,		lPre(GND),	IN,	0,	0,	DRIV_READY,	NEXT);	//rev to goal zone
 	auto(gyro2(180),	0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//turn + lift

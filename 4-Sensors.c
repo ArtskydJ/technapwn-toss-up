@@ -54,7 +54,7 @@ void inputSensors(void)
 	if (autoClockRunning && sysState.curr==AUTONOMOUS)
 		{
 		timerTemp +=				tTimerMaster;
-		if (timerTemp>=1000) //every second...
+		if (timerTemp>=3000) //every 3 seconds...
 			{
 			timerAutoTimeAdd += timerTemp/10;
 			timerTemp = 0;

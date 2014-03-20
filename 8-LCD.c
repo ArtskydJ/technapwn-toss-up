@@ -246,7 +246,6 @@ void processLCD()
 
 			sysLCDBacklight=LCD_ALWAYS_ON;
 			StringFormat(topLCDLine.curr,"%s %3.1f | %d ",menuItemName[(int)M_AUTON],((float)timerAuto/100),autoRoutine.curr);
-			writeDebugStreamLine("%3.1f %d %u", ((float)timerAuto/100), timerAuto, timerAuto);
 			StringFormat(bottomLCDLine.curr, "Step: %d", autoStep);	//Show step
 			}
 		}
