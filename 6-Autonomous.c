@@ -142,7 +142,7 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 		outIntk = INintk;
 		outCatapult = INcata;
 		outLoader = INload;
-		if (outDrvS != 0)
+		if (outDrvS != 0 && outDrvL==outDrvR)
 			{
 			outDrvL += (diffStepInt(senGyro)) * GYRO_P;
 			outDrvR -= (diffStepInt(senGyro)) * GYRO_P;
@@ -181,7 +181,7 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 				autoHitTarget = (INextra == (short)PID) ? PID : NEXT;
 			}
 		if (autoHitTarget==PID && time1(T2)>=PID_WAIT_MS) autoHitTarget=NEXT;
-		if (INendType!=TIME_LIMIT && time1(T1)>=TIMEOUT_MS) autoHitTarget=NEXT;
+		if (INendType!=TIME_LIMIT && INendType!=SCREEN_BTN && time1(T1)>=TIMEOUT_MS) autoHitTarget=NEXT;
 		if (autoHitTarget==NEXT) autoNextStep();
 		}
 	autoStepCheck++;

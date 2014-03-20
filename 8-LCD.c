@@ -17,7 +17,7 @@ static const string autoNames[NO_AUTO_ROUTINES] = {
 	"None",
 	"None",
 	"Current Test",
-	"L Red Mid Prog 1"};
+	"L Red Hng Prog 1"};
 static const string menuChecklist[NO_CHECKLIST_ITEMS] = {
 	"Cortex on",
 	"Power Expandr on",

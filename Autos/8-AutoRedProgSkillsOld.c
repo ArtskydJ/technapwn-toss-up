@@ -65,3 +65,14 @@ void autoRedProgSkillsOld2(void)
 
 	autoResetEnd();
 	}
+
+
+/*INVERTED STASH
+	auto(gyroL(-18),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//turn
+	auto(enc1(1100),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//Forward
+	auto(enc1(400),		0,		lPre(STS),	0,	0,	0,	DRIV_READY,	PID);	//Forward + lift
+	auto(straight(FWD),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	500);	//Forward
+	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	1300);	//dump
+//	auto(enc1(-150),	0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+//	auto(enc1(-1150),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse + drop
+//	auto(gyro2(18),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//turn				*/

@@ -53,7 +53,7 @@
 #define BRAKE   5  //Drive brake power
 
 //Output - Slew
-#define DRV_SLEW     5
+#define DRV_SLEW     8  //was 5
 #define LIFT_SLEW    12
 #define INTK_SLEW    20
 
@@ -169,7 +169,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {1645,3220,1900,2420}; //bmp was 1820
+const int sysLiftPresets[NO_LIFT_PRESETS] = {1690,3220,1900,2420}; //gnd was 1645
 
 //System Variables
 bool sysDisableLift = true;

@@ -25,12 +25,15 @@ void autoRedMid2(void)
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
 	auto(enc1(600),		0,		lPre(BAR),	IN,	0,	0,	DRIV_READY,	PID);	//Intake pre, Hit ball 1
-	auto(enc1(-400),	0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
-	auto(stopped(),usStrfL(100),lPre(BAR),	0,	0,	0,	DRIV_READY,	PID);	//strafe
-	auto(straight(HALF),0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	1100);	//Forward
+	auto(enc1(-400),	0,		30,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(stopped(),usStrfL(100),30,			0,	0,	0,	DRIV_READY,	PID);	//strafe
+	auto(straight(HALF),0,		30,			0,	0,	0,	TIME_LIMIT,	1100);	//Forward
 	auto(enc1(-500),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//Reverse
 	auto(stopped(),usStrfL(67),	lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//strafe + drop
-	auto(enc1(1100),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//Forward
+	auto(enc1(500),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Forward
+	auto(stopped(),		RIGHT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	350);	//strafe into tower
+	auto(spd(HALF,0),	LEFT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	350);	//strafe away
+	auto(enc1(600),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	PID);	//Forward
 	auto(stopped(),		0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1000);	//Lift
 	auto(straight(FWD),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	600);	//fwd
 	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	800);	//fwd + dump
