@@ -22,14 +22,14 @@ static string autoNames[NO_AUTO_ROUTINES] = { //make const? (gives error with sc
 	"R M | P 2L | 12",
 	"B H | P 2B | 9",
 	"R H | P 2B | 9",
-	"B M | Prog",
 	"NONE",
 	"NONE",
 	"NONE",
 	"NONE",
 	"Test Things",
 	"Test Drive Time",
-	"Test Gyro Turn"};
+	"Test Gyro Turn",
+	"B M | Prog"};
 //static const char autonName[]="NONE | ";
 static string menuChecklist[NO_CHECKLIST_ITEMS*2] =
 	{
@@ -90,8 +90,7 @@ borders, while 1 is centered.
 */
 int potCentered(int INMaxVal)
 	{
-	int n=(float)3*INMaxVal*senSelectorPot/4096;
-	return n%3;
+	return ((float)3*INMaxVal*senSelectorPot/4096)%3;
 	}
 
 
@@ -270,6 +269,9 @@ void processLCD()
 			}
 		else if (sysState.curr == AUTONOMOUS)
 			{
+			if (btnScreenLeft.curr && btnScreenRight.curr)
+				sysAutoMode = false;
+
 			sysLCDBacklight=LCD_ALWAYS_ON;
 			StringFormat(topLCDLine.curr,"Time:%.1f | %d ",((float)timerAuto/1000),autoRoutine.curr);
 			StringFormat(bottomLCDLine.curr, "Step: %d", autoStep);	//Show step

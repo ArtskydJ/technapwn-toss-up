@@ -9,16 +9,43 @@ toggles that are easily turned off and on.
 //#define SOUND_EFFECTS
 //#define LIFT_SYNC
 
+
+#if (_TARGET=="Robot")
+	#define PHYSICAL_ROBOT_TARGET
+#endif
+
+//#define PHYSICAL_ROBOT_TARGET //Fake a physical robot to the emulator
+
+/*Automonous - Advanced functionality
+ These #define's make the autonomous commands
+easier to read and remake.
+*/
+#define straight(n)    (n),  (n)
+#define turn2(n)       (n),  -(n)
+#define turnL(n)       (n),  0
+#define turnR(n)       0,    -(n)
+#define gyro2(n)       ((n)-senGyro.curr), (-(n)+senGyro.curr)
+#define strafe(n)      0,    0,    (n)
+#define stopped()      0,    0,    0
+#define enc(n,m)       (n)-senLeftQSE.curr, (m)-senRightQSE.curr
+#define usL(n)         (n)-senLeftUS.curr
+#define usR(n)         (n)-senRightUS.curr
 /*
-#undef _TARGET			//This statement and the next go together. Uncomment both
-#define _TARGET "Robot"	//If you want the emulator to act like a real robot.
-// */
+SPEED       //Drive/Strafe with input Speeds
+ENCODER     //Drive/Strafe with input Encoder
+LEFT_WALL   //Drive following/Strafe to the Left  Wall
+RIGHT_WALL  //Drive following/Strafe to the Right Wall
+LINE_FOLLOW //Drive following the Center Line
+GYRO_TURN   //Drive with a PID gyroscope turn
+*/
 
 //Operator, Autonomous - Lift Presets
-#define L_GRND			0 //Make sure not to re-define LIFT_L or LIFT_R anywhere.
-#define L_DRIV			1
-#define L_STSH			2
-#define NO_LIFT_PRESETS	3
+#define L_PRE_START      128
+#define L_GRND			 128 //Make sure not to re-define LIFT_L or LIFT_R anywhere.
+#define L_DRIV			 129
+#define L_STSH			 130
+#define L_PRE_END        130
+#define NO_LIFT_PRESETS	 (L_PRE_END-L_PRE_START+1)
 
 //State
 #define DISABLED	0
@@ -108,6 +135,7 @@ typedef enum {
 	PID = 1
 	} T_SENSOR_STATUS;
 
+#ifndef NEW_AUTO
 typedef enum {
 	SPEED = 0,   //Drive/Strafe with input Speeds
 	ENCODER,    //Drive/Strafe with input Encoder
@@ -116,6 +144,7 @@ typedef enum {
 	//LINE_FOLLOW,  //Drive following the Center Line
 	GYRO_TURN   //Drive with a PID gyroscope turn
 	} T_DRIVE;
+#endif
 
 typedef enum {
 	TIME_LIMIT = 0,	//Time Limit
@@ -179,14 +208,15 @@ typedef enum {
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType, T_SCRIPT_TAKEOVER INstoType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
 void autoResetEnd(void);
-/*void auto(const T_DRIVE INdrvType, const int INdrvLft, const int INdrvRht, const int INdrvTarget,
-		const T_DRIVE INstrfType, const int INstrfSpeed, const int INstrfTarget,
-		const int INlift, const int INintk, const T_END INendType,
-		const int INminTime, const int INmaxTime, const T_SENSOR_STATUS INdelayPID);*/
+#ifdef NEW_AUTO
+void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
+		T_END INendType, int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
+#else
 void auto(T_DRIVE INdrvType, int INdrvSpd, int INdrvTarget,
           T_DRIVE INstfType, int INstfSpd, int INstfTarget,
           int INlift, int INintk, T_END INendType,
           int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID);
+#endif
 void zeroMotors(void);
 void initializeAutonomous(void);
 void initializeLCD(void);
@@ -195,7 +225,6 @@ void stateSwitchToAutonomous(void);
 void inputOperator(void);
 void inputLCD(void);
 void inputSensors(void);
-void inputTimers(void);
 bool joystickIsMoved(bool checkStkTrn);
 void setLastInt(T_LC_INT *INLC);
 void setStepInt(T_LC_INT *INLC);
@@ -221,7 +250,6 @@ bool sysDisabledMode = false;
 bool autoClockRunning = false;
 bool sysMotorTest = false;
 bool sysMotorsEnabled = true;
-int  sysLooptime;	//Global for viewing in debug window
 int  sysLCDBacklight=LCD_ALWAYS_ON;
 T_ERROR sysError = ERR_NONE;
 T_LC_INT autoRoutine;
@@ -253,11 +281,11 @@ T_LC_INT senLeftQSE;
 T_LC_INT senRightQSE;
 
 //Timer Variables
+unsigned int timerElapsedTime	= 0;
 unsigned int timerLCDScroll		= 0;
 unsigned int timerLCDBacklight	= 0;
 unsigned int timerAuto			= 0;
 unsigned int timerRobotIdle		= 0;
-unsigned int timerEmulateSpeed	= 0;
 
 //Other
 bool autoScriptTakeover[3]={0,0,0};

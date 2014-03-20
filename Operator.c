@@ -40,7 +40,7 @@ void inputOperator(void)
 	setLastBool(&btnIntkUp);
 	setLastBool(&btnIntkDown);
 
-#if (_TARGET=="Robot")
+#ifdef PHYSICAL_ROBOT_TARGET
 	//Sticks
 	stkDrvFwd =			joystickFilter(vexRT[Ch3]);
 	stkDrvStf =			joystickFilter(vexRT[Ch4]);
@@ -193,23 +193,23 @@ void processOperator()
 			{
 			if (pressed(btnLiftDown))		//If Lift Down Pressed
 				{
-				liftPresetIndex = capIntValue(0, liftPresetIndex-1, NO_LIFT_PRESETS-1);
-				outLift = L_PRE[liftPresetIndex];
+				liftPresetIndex = capIntValue(128, liftPresetIndex-1, 128+(NO_LIFT_PRESETS-1));
+				outLift = liftPresetIndex;
 				}
 			else if (pressed(btnLiftUp))	//If Lift Up Pressed
 				{
-				liftPresetIndex = capIntValue(0,liftPresetIndex+1, NO_LIFT_PRESETS-1);
-				outLift = L_PRE[liftPresetIndex];
+				liftPresetIndex = capIntValue(128, liftPresetIndex+1, 128+(NO_LIFT_PRESETS-1));
+				outLift = liftPresetIndex;
 				}
 			else if (pressed(btnLiftDown2))		//If Lift Down Pressed
 				{
-				liftPresetIndex = capIntValue(0, liftPresetIndex-1, NO_LIFT_PRESETS-1);
-				outLift = L_PRE[liftPresetIndex];
+				liftPresetIndex = capIntValue(128, liftPresetIndex-1, 128+(NO_LIFT_PRESETS-1));
+				outLift = liftPresetIndex;
 				}
 			else if (pressed(btnLiftUp2))	//If Lift Up Pressed
 				{
-				liftPresetIndex = capIntValue(0, liftPresetIndex+1, NO_LIFT_PRESETS-1);
-				outLift = L_PRE[liftPresetIndex];
+				liftPresetIndex = capIntValue(128, liftPresetIndex+1, 128+(NO_LIFT_PRESETS-1));
+				outLift = liftPresetIndex;
 				}
 			}
 

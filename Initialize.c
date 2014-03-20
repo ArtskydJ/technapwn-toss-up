@@ -14,6 +14,11 @@ void initializeOther()
 	ClearTimer(T4);
 
 	//--Other--//
-	writeDebugStreamLine("================");
+	writeDebugStreamLine("\n================");
+#ifdef PHYSICAL_ROBOT_TARGET
+	writeDebugStreamLine("-Physical Robot-");
+#else
+	writeDebugStreamLine("----Emulator----");
+#endif
 	sysState.curr=DISABLED; //Should change to operator later
 	}

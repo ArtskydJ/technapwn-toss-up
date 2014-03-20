@@ -11,7 +11,23 @@ void inputSensors(void)
 	setLastInt(&senLiftLPot);
 	setLastInt(&senLiftRPot);
 
-#if (_TARGET=="Robot")
+	//--Timers--//
+	int tTimerMaster = time1(T3);
+	ClearTimer(T3);
+	if (autoClockRunning && sysState.curr==AUTONOMOUS)
+		timerAuto +=		tTimerMaster;
+	timerLCDScroll +=		tTimerMaster;
+	timerLCDBacklight +=	tTimerMaster;
+	timerElapsedTime =		tTimerMaster; //Yes, it is supposed to be =, not +=
+
+	if (timerLCDScroll>62000)      timerLCDScroll =    62000; //Prevent wrapping
+	if (timerLCDBacklight>62000)   timerLCDBacklight = 62000; //Prevent wrapping
+	if (timerRobotIdle>62000)      timerRobotIdle =    62000; //Prevent wrapping
+	//if (joystickIsMoved(true) && LCD_TIMEOUT) timerLCDBacklight = 0; //!!!!!!!!!!!!!!!!!!!!!!!!!1backlight mode!!!!!!!!!!!!!!!!!!!!!!!!
+
+#ifdef PHYSICAL_ROBOT_TARGET
+	timerRobotIdle +=		tTimerMaster;
+	if (joystickIsMoved(true) || nLCDButtons>0)	timerRobotIdle = 0;
 
 	//--Robot Sensors--//
 	static int addToGyro=0;
@@ -49,24 +65,6 @@ void inputSensors(void)
 #else
 	//--Emulated Sensors--//
 	emulateSensors();
-#endif
-
-	//--Timers--//
-	int tTimerMaster = time1(T3);
-	ClearTimer(T3);
-	if (autoClockRunning && sysState.curr==AUTONOMOUS)
-		timerAuto +=		tTimerMaster;
-	timerLCDScroll +=		tTimerMaster;
-	timerLCDBacklight +=	tTimerMaster;
-	timerEmulateSpeed =		tTimerMaster; //Yes, it is supposed to be =, not +=
-
-	if (timerLCDScroll>62000)					timerLCDScroll = 62000; //Prevent wrapping
-	if (timerLCDBacklight>62000)				timerLCDBacklight = 62000; //Prevent wrapping
-	if (joystickIsMoved(true))					timerLCDBacklight = 0;
-#if (_TARGET=="Robot")
-	timerRobotIdle +=		tTimerMaster;
-	if (joystickIsMoved(true) || nLCDButtons>0)	timerRobotIdle = 0;
-	if (timerRobotIdle>62000)					timerRobotIdle = 62000; //Prevent wrapping
 #endif
 
 	//--Autonomous Routine--//

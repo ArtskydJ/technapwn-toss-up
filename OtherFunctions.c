@@ -11,7 +11,6 @@ watch sysLooptime.
 */
 void constantLoopTime()
 	{
-	sysLooptime=time1[T4];
 	while (time1[T4] < MIN_LOOP_MS)
 		{}
 	ClearTimer(T4);

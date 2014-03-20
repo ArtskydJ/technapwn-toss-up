@@ -153,7 +153,7 @@ speed of a wheel.
 int emulateWheelQSE(int INspeed)
 	{
 	//127 * 5 /
-	return ( (float) INspeed * timerEmulateSpeed / (127 * 2) );
+	return ( (float) INspeed * timerElapsedTime / (127 * 2) );
 	}
 
 
@@ -167,7 +167,7 @@ int emulateLiftPot(int INspeed, int INgearing)
 	{
 	//127 * 5 / 10
 	//50rpm*elapsedMS/gearing
-	return ( (float) INspeed * timerEmulateSpeed / (25*INgearing) );
+	return ( (float) INspeed * timerElapsedTime / (25*INgearing) );
 	}
 
 void emulateSensors(void)
