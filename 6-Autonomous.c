@@ -95,6 +95,8 @@ void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 			writeDebugStreamLine("Skip to\t|%d\t|",INgoToStep);
 			}
 		timerAuto = 0;
+		timerAutoTimeAdd = 0;
+		timerTemp = 0;
 		autoClockRunning = true;
 		}
 	autoStepCheck++;

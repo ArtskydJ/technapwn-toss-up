@@ -213,9 +213,11 @@ T_LC_BOOL btnScreenRight;
 
 //Timer Variables
 unsigned int timerElapsedTime	= 0;
+unsigned int timerAutoTimeAdd	= 0; //Helps with timerAuto
+unsigned int timerTemp			= 0; //Helps with timerAuto
+unsigned int timerAuto			= 0;
 unsigned int timerLCDScroll		= 0;
 unsigned int timerLCDBacklight	= 0;
-unsigned int timerAuto			= 0;
 unsigned int timerRobotIdle		= 0;
 
 //Other

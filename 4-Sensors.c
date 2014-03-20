@@ -52,7 +52,15 @@ void inputSensors(void)
 	int tTimerMaster = time1(T3);
 	ClearTimer(T3);
 	if (autoClockRunning && sysState.curr==AUTONOMOUS)
-		timerAuto +=		tTimerMaster/MIN_LOOP_MS;
+		{
+		timerTemp +=				tTimerMaster;
+		if (timerTemp>=1000) //every second...
+			{
+			timerAutoTimeAdd += timerTemp/10;
+			timerTemp = 0;
+			}
+		timerAuto =			timerAutoTimeAdd + (timerTemp/10);
+		}
 	timerLCDScroll +=		tTimerMaster;
 	timerLCDBacklight +=	tTimerMaster;
 	timerElapsedTime =		tTimerMaster; //Yes, '='
