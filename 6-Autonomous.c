@@ -217,7 +217,7 @@ void processAutonomous(void)
 			case 08: 						break;
 			case 09: 						break;
 			case 10: 						break;
-			case 11: autoTestEncStrafe();	break;
+			case 11: autoCurrentTest();		break;
 			case 12: autoRedProgSkills();	break;
 			}
 #ifdef FULL_DEBUG_STREAM

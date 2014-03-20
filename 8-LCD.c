@@ -150,7 +150,7 @@ void menuView()
 	switch (menuItemIndex) //BOTTOM LINE
 		{
 		case M_AUTON:
-			StringFormat(tString0,"%s %3.1f | %d ",menuItemName[menuItemIndex],(float)timerAuto/1000,autoRoutine.curr);
+			StringFormat(tString0,"%s %3.1f | %d ",menuItemName[menuItemIndex],((float)timerAuto/(1000/MIN_LOOP_MS)),autoRoutine.curr);
 			int temp = autoRoutine.curr-1;
 			strcpy(tString1,autoNames[temp]);
 			break; //Autonomous Name
@@ -245,7 +245,7 @@ void processLCD()
 				sysAutoMode = false; //Only works when competition switch is unplugged (see State.c)
 
 			sysLCDBacklight=LCD_ALWAYS_ON;
-			StringFormat(topLCDLine.curr,"Time: %3.1f | %d ",((float)timerAuto/1000),autoRoutine.curr);
+			StringFormat(topLCDLine.curr,"%s %3.1f | %d ",menuItemName[(int)M_AUTON],((float)timerAuto/(1000/MIN_LOOP_MS)),autoRoutine.curr);
 			StringFormat(bottomLCDLine.curr, "Step: %d", autoStep);	//Show step
 			}
 		}

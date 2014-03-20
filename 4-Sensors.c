@@ -52,10 +52,10 @@ void inputSensors(void)
 	int tTimerMaster = time1(T3);
 	ClearTimer(T3);
 	if (autoClockRunning && sysState.curr==AUTONOMOUS)
-		timerAuto +=		tTimerMaster;
+		timerAuto +=		tTimerMaster/MIN_LOOP_MS;
 	timerLCDScroll +=		tTimerMaster;
 	timerLCDBacklight +=	tTimerMaster;
-	timerElapsedTime =		tTimerMaster; //Yes, it is supposed to be =, not +=
+	timerElapsedTime =		tTimerMaster; //Yes, '='
 
 	//--LCD Buttons--//
 	btnScreenLeft.curr =	(nLCDButtons & 1)>0;

@@ -164,7 +164,7 @@ void processOperator()
 			outLift = lPre(liftPresetIndex);
 
 			if (liftPresetIndex == (short)GND)
-				if (abs(outLift) < LIFT_DISABLE_RANGE) //outLift was abs(outLift)
+				if (-outLift < LIFT_DISABLE_RANGE) //outLift was abs(outLift)
 					outLift = 0; //sysDisableLift = true;
 			}
 		if (sysDisableLift)
