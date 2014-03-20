@@ -25,7 +25,7 @@
 #define AUTONOMOUS   2
 
 //Proportional Constants
-#define LIFT_P        (float)0.45
+#define LIFT_P        (float)0.23 //45
 #define LINE_P        (float)0.1
 #define WALL_P        (float)0.1
 #define ENCODER_P     (float)1.0
@@ -174,7 +174,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {1645,3120,1820,2405};
+const int sysLiftPresets[NO_LIFT_PRESETS] = {1645,3220,1820,2420};
 
 //System Variables
 bool sysDisableLift = true;

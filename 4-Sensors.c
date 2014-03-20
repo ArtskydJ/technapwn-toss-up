@@ -8,7 +8,7 @@ void initializeSensors()
 	{
 	//--Sensors--//
 	SensorValue[QUAD_LEFT] = 0;
-	SensorValue[QUAD_RIGHT] = 0;
+	//SensorValue[QUAD_RIGHT] = 0;
 	SensorValue[GYRO] = 0;
 	SensorValue[CATAPULT] = 0;
 	outCatapult = false;
@@ -74,9 +74,9 @@ void inputSensors(void)
 	//--Robot Sensors--//
 	senGyro.curr =     SensorValue[GYRO];
 	senLeftQSE.curr =  SensorValue[QUAD_LEFT];
-	senRightQSE.curr = SensorValue[QUAD_RIGHT];
-	senLeftUS.curr =   SensorValue[ULTRA_LEFT];
-	senRightUS.curr =  SensorValue[ULTRA_RIGHT];
+	//senRightQSE.curr = SensorValue[QUAD_RIGHT];
+	//senLeftUS.curr =   SensorValue[ULTRA_LEFT];
+	//senRightUS.curr =  SensorValue[ULTRA_RIGHT];
 	senSelectorPot =   SensorValue[POT_SELECTOR];
 	//senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];
 	senLiftPot.curr =  SensorValue[POT_LIFT];

@@ -50,7 +50,7 @@ void autoNextStep(void)
 	setToZeroInt(&senRightQSE);
 	SensorValue[GYRO] = 0;
 	SensorValue[QUAD_LEFT] = 0;
-	SensorValue[QUAD_RIGHT] = 0;
+	//SensorValue[QUAD_RIGHT] = 0;
 
 	//--Sensor Step Starts--//
 	setStepInt(&senGyro);
@@ -125,7 +125,7 @@ void autoResetEnd(void)
 	}
 
 
-//This function is used in autonomous routines 
+//This function is used in autonomous routines
 void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcata, T_END INendType, int INextra)
 	{
 	if (autoStepCheck==autoStep)

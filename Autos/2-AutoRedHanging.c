@@ -8,7 +8,7 @@ void autoRedHang1(void)
 	auto(straight(-30),	0,		0,			IN,	0,	TIME_LIMIT,	300);	//intake more
 	auto(gyro2(-180),	0,		0,			IN,	0,	DRIV_READY,	PID);	//turn 180
 	auto(straight(FWD),	0,		lPre(BAR),	0,	0,	TIME_LIMIT,	500);	//Forward
-	auto(stopped(),				lPre(BAR),	OUT,0,	TIME_LIMIT,	1000);	//dump
+	auto(stopped(),				lPre(BAR),	OUT,0,	TIME_LIMIT,	2000);	//dump
 	auto(straight(REV),	0,		lPre(BAR),	0,	0,	TIME_LIMIT,	750);	//Backward
 	auto(gyro2(90),		0,		lPre(GND),	0,	0,	DRIV_READY,	PID);	//turn
 	auto(straight(FWD),	0,		lPre(GND),	0,	0,	TIME_LIMIT,	500);	//Forward

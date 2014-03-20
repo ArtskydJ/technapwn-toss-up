@@ -25,7 +25,7 @@ void autoRedMid2(void)
 		//L,	R,		S,		Lift,		Intk,Cata,End Type,	Other
 	auto(straight(FWD),	0,		0,			IN,	1,	TIME_LIMIT,	950);	//Intake pre, Hit ball 1
 	auto(straight(REV),	0,		0,			0,	0,	TIME_LIMIT,	600);	//Reverse
-	auto(gyro2(35),		0,		0,			0,	0,	DRIV_READY,	PID);	//turn right
+	auto(gyro2(30),		0,		0,			0,	0,	DRIV_READY,	PID);	//turn right
 	auto(straight(FWD),	0,		0,			0,	0,	TIME_LIMIT,	1000);	//Forward
 	auto(straight(HALF),0,		lPre(STS),	0,	0,	TIME_LIMIT,	600);	//Forward + Lift
 	auto(stopped(),				lPre(STS),	0,	0,	TIME_LIMIT,	1000);	//Lift
