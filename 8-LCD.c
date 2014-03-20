@@ -12,10 +12,10 @@ static const string autoNames[NO_AUTO_ROUTINES] = {
 	"Blu Hng 1  S  11",
 	"Red Mid 2  N  15",
 	"Blu Mid 2  N  15",
-	"NONE",
-	"NONE",
+	"Red Mid 3  S  26",
+	"Test Ultra Fllw2",
 	"Test Things",
-	"Test Drive-Time",
+	"Test Ultra Fllw",
 	"Test Gyro-Turn",
 	"Red-Mid Skills 1"};
 static const string menuChecklist[NO_CHECKLIST_ITEMS] = {

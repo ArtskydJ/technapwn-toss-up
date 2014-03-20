@@ -73,10 +73,12 @@ void inputSensors(void)
 
 	//--Robot Sensors--//
 	senGyro.curr =     SensorValue[GYRO];
-	senLeftQSE.curr =  SensorValue[QUAD_LEFT];
+	senLeftQSE.curr =  -SensorValue[QUAD_LEFT]; //reversed
 	//senRightQSE.curr = SensorValue[QUAD_RIGHT];
-	//senLeftUS.curr =   SensorValue[ULTRA_LEFT];
-	//senRightUS.curr =  SensorValue[ULTRA_RIGHT];
+	if (SensorValue[ULTRA_LEFT]>US_DEAD_ZONE)
+		senLeftUS.curr =   SensorValue[ULTRA_LEFT];
+	if (SensorValue[ULTRA_RIGHT]>US_DEAD_ZONE)
+		senRightUS.curr =  SensorValue[ULTRA_RIGHT];
 	senSelectorPot =   SensorValue[POT_SELECTOR];
 	//senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];
 	senLiftPot.curr =  SensorValue[POT_LIFT];

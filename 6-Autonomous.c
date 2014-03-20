@@ -206,17 +206,17 @@ void processAutonomous(void)
 		autoStepCheck = 0;
 		switch (autoRoutine.curr) //Routines
 			{
-			case 01: autoRedMid1();		break;
-			case 02: autoBlueMid1();	break;
-			case 03: autoRedHang1();	break;
-			case 04: autoBlueHang1();	break;
-			case 05: autoRedMid2();		break;
-			case 06: autoBlueMid2();	break;
-			case 07:					break;
-			case 08:					break;
-			case 09: autoTestThings();	break;
-			case 10: autoTestDrive();	break;
-			case 11: autoTestGyro();	break;
+			case 01: autoRedMid1();			break;
+			case 02: autoBlueMid1();		break;
+			case 03: autoRedHang1();		break;
+			case 04: autoBlueHang1();		break;
+			case 05: autoRedMid2();			break;
+			case 06: autoBlueMid2();		break;
+			case 07: autoRedMid3();			break;
+			case 08: autoTestUltraFollow2();break;
+			case 09: autoTestThings();		break;
+			case 10: autoTestUltraFollow();	break;
+			case 11: autoTestGyro();		break;
 			case 12: autoRedProgSkills();	break;
 			}
 #ifdef FULL_DEBUG_STREAM

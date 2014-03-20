@@ -164,8 +164,8 @@ void processOperator()
 			outLift = lPre(liftPresetIndex);
 
 			if (liftPresetIndex == (short)GND)
-				if (abs(outLift) < LIFT_DISABLE_RANGE) //if close enough to target, stop motors
-					outLift = 0;
+				if (outLift < LIFT_DISABLE_RANGE) //outLift was abs(outLift)
+					sysDisableLift = true; //outLift = 0;
 			}
 		if (sysDisableLift)
 			outLift = 0;

@@ -5,7 +5,7 @@ void autoTestThings(void)
 	auto(gyro2(90),		0,		0,			0,	0,	DRIV_READY,	PID);
 	auto(gyro2(90),		0,		0,			0,	0,	DRIV_READY,	PID);
 	auto(enc(1450,1450),0,		lPre(STS),	0,	0,	FULL_READY,	PID);
-	auto(straight(0),	usL(18),lPre(STS),	0,	0,	FULL_READY,	PID);
+	auto(0,		0,	usStrfL(18),lPre(STS),	0,	0,	FULL_READY,	PID);
 	auto(straight(0),	FWD,	0,			0,	0,	TIME_LIMIT,	3000);
 	autoResetEnd();
 	}
@@ -31,5 +31,31 @@ void autoTestGyro(void)
 	auto(gyro2(-90),	0,		0,			0,	0,	DRIV_READY,	PID);
 	auto(straight(FWD),	0,		0,			0,	0,	TIME_LIMIT,	200);
 	//auto(stopped(),				0,			0,	0,	TIME_LIMIT,	1000,	0,	PID);	//	auto(gyro2(900),	0,		0,			0,	0,	DRIV_READY,	0,		0,	PID);
+	autoResetEnd();
+	}
+
+
+void autoTestUltraFollow(void)
+	{
+	autoResetStart(0, AUTON, 0, 0, 0);
+		//L,	R,		S,		Lift,		Intk,Cata,End Type,	Other
+	auto(usFllwL(60, 70),0,		0,			0,	0,	TIME_LIMIT,	2000);	//80 spd, 70 cm
+	auto(stopped(),				lPre(STS),	0,	0,	TIME_LIMIT,	1200);
+	auto(usFllwL(60, 70),0,		lPre(STS),	0,	0,	TIME_LIMIT,	1700);	//80 spd, 70 cm
+	auto(stopped(),				lPre(STS),	0,	0,	TIME_LIMIT,	1200);
+	autoResetEnd();
+	}
+
+
+void autoTestUltraFollow2(void)
+	{
+	autoResetStart(0, AUTON, 0, 0, 0);
+		//L,	R,		S,		Lift,		Intk,Cata,End Type,	Other
+	auto(straight(0),usStrfL(70),0,			0,	0,	DRIV_READY,	PID);	//yeah
+//	auto(usFllwR(45,35),0,		0,			0,	0,	TIME_LIMIT,	5500);	//40 spd, 30 cm
+//	auto(usFllwNowR(80),0,		0,			0,	0,	TIME_LIMIT,	3500);	//40 spd, x cm
+//	auto(straight(5),	0,		0,			0,	0,	TIME_LIMIT,	200);	//pause
+//	auto(usFllwR(90, 70),0,		0,			0,	0,	TIME_LIMIT,	3000);	//90 spd, 30 cm
+
 	autoResetEnd();
 	}

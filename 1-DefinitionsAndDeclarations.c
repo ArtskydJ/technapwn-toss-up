@@ -25,11 +25,12 @@
 #define AUTONOMOUS   2
 
 //Proportional Constants
-#define LIFT_P        (float)0.23 //45
+#define LIFT_P        (float)0.30 //45
 #define LINE_P        (float)0.1
 #define WALL_P        (float)0.1
-#define ENCODER_P     (float)1.0
-#define SONAR_P       (float)0.6
+#define ENCODER_P     (float)0.3
+#define US_STRF_P     (float)7.0
+#define US_FLLW_P     (float)2.0 //works ok at 2 at 40 target power
 #define GYRO_P        (float)0.45 //34
 
 //Autonomous - Functions
@@ -38,11 +39,18 @@
 #define turnL(n)      (n),  0
 #define turnR(n)      0,    (n)
 #define gyro2(n)      ((n)*10-senGyro.curr)*GYRO_P, (-(n)*10+senGyro.curr)*GYRO_P
+#define gyroL(n)      ((n)*10-senGyro.curr)*GYRO_P, 0
+#define gyroR(n)      0, (-(n)*10+senGyro.curr)*GYRO_P
 #define strafe(n)     0,    0,    (n)
 #define stopped()     0,    0,    0
 #define enc(n,m)      (n-senLeftQSE.curr)*ENCODER_P, ((m)-senRightQSE.curr)*ENCODER_P
-#define usL(n)        (n-senLeftUS.curr)*SONAR_P
-#define usR(n)        (n-senRightUS.curr)*SONAR_P
+#define enc1(n)       (n-senLeftQSE.curr)*ENCODER_P, ((n)-senLeftQSE.curr)*ENCODER_P
+#define usStrfL(n)    (n-senLeftUS.curr)*US_STRF_P
+#define usStrfR(n)    (senRightUS.curr-n)*US_STRF_P
+#define usFllwL(n,m)  (n - ((float)senLeftUS.curr-m)* US_FLLW_P), (n + ((float)senLeftUS.curr-m)* US_FLLW_P)
+#define usFllwR(n,m)  (n + ((float)senRightUS.curr-m)*US_FLLW_P), (n - ((float)senRightUS.curr-m)*US_FLLW_P)
+#define usFllwNowL(n) (n - ((float)diffStepInt(senLeftUS))* US_FLLW_P), (n + ((float)diffStepInt(senLeftUS))* US_FLLW_P)
+#define usFllwNowR(n) (n + ((float)diffStepInt(senRightUS))*US_FLLW_P), (n - ((float)diffStepInt(senRightUS))*US_FLLW_P)
 #define lPos(n)       (n-senLiftPot.curr)*LIFT_P
 #define lPre(n)       (sysLiftPresets[n]-senLiftPot.curr)*LIFT_P
 
@@ -73,6 +81,9 @@
 #define NO_AUTO_ROUTINES  12
 #define MIN_LOOP_MS       10
 
+//Other
+#define US_DEAD_ZONE 15 //anything nearer will not register
+
 ////////////////////////////////////////////////////////////////////////////////
 
 //Structs
@@ -95,7 +106,7 @@ typedef struct
 	string last;
 	} T_LC_STRING;
 
-typedef struct
+/*typedef struct
 	{
 	float kp;
 	float ki;
@@ -104,7 +115,7 @@ typedef struct
 	int integral;
 	int derivative;
 	int output;
-	} T_PID;
+	} T_PID;*/
 
 //Enums
 typedef enum {
@@ -174,7 +185,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {1645,3220,1820,2420};
+const int sysLiftPresets[NO_LIFT_PRESETS] = {1645,3220,1900,2420}; //bmp was 1820
 
 //System Variables
 bool sysDisableLift = true;
