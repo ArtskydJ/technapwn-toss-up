@@ -126,17 +126,17 @@ void autoResetEnd(void)
 
 
 //This function is used in autonomous routines
-void auto(long INspeeds, int INspdS, int INlift, int INintk, bool INcata, bool INload, T_END INendType, int INextra)
+void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcata, bool INload, T_END INendType, int INextra)
 	{
 	if (autoStepCheck==autoStep)
 		{
 #ifdef FULL_DEBUG_STREAM
-		writeDebugStreamLine("1 lft=%d rht=%d stf=%d lift=%d intk=%d cata=%d end=%d pid=%d",
-			decodeL(INspeeds), decodeR(INspeeds), INspdS, INlift, INintk, INcata, INload, INendType, INextra));
+		writeDebugStreamLine("1 lft=%d rht=%d str=%d lift=%d intk=%d cata=%d end=%d pid=%d",
+			INspdL, INspdR, INspdS, INlift, INintk, INcata, INload, INendType, INextra));
 #endif
 		//--Set Outputs--//
-		outDrvL = decodeL(INspeeds);
-		outDrvR = decodeR(INspeeds);
+		outDrvL = INspdL;
+		outDrvR = INspdR;
 		outDrvS = INspdS;
 		outLift = INlift;
 		outIntk = INintk;
