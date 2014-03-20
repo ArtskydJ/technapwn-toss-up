@@ -4,7 +4,7 @@
 void inputProcessState()
 	{
 	setLastInt(&sysState);
-	
+
 	//--Decide what state the robot is in--//
 	if (nVexRCReceiveState & vrCompetitionSwitch)	//If the Competition switch is plugged in...
 		{
@@ -18,14 +18,14 @@ void inputProcessState()
 		else if (sysAutoMode)	sysState.curr = AUTONOMOUS;
 		else					sysState.curr = OPERATOR;
 		}
-	
+
 	if (changedInt(sysState))
 		{
 		//--Execute whenever the state changes--//
 		timerLCDScroll=0;
 		timerLCDBacklight=0;
 
-		liftPresetIndex = L_DRIV;
+		liftPresetIndex = L_BARR;
 
 		zeroMotors();
 

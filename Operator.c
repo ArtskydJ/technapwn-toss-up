@@ -21,6 +21,7 @@ static T_LC_BOOL btnRhtU;
 static T_LC_BOOL btnRhtL;
 static T_LC_BOOL btnRhtR;
 static T_LC_BOOL btnRhtD;
+static bool disableLift = true;
 
 //Functions
 void inputOperator(void)
@@ -74,9 +75,7 @@ void inputOperator(void)
 moved from their deadzones.
 */
 bool joystickIsMoved(bool checkStkTrn)
-	{
-	return (stkDrvStf + stkDrvFwd + (stkDrvTrn * checkStkTrn)) != 0;
-	}
+	{ return (stkDrvStf + stkDrvFwd + (stkDrvTrn * checkStkTrn)) != 0; }
 
 
 /* This function takes the raw joystick value and
@@ -97,7 +96,6 @@ void processOperator()
 		sysMotorTest = !joystickIsMoved(0);
 	else
 		{
-		int tDrvL, tDrvR, tDrvS, tLift, tIntk;
 		//--Settings--//
 		if (btnSubroutineModifier)
 			{						//Negative values are for driver autos
@@ -108,113 +106,53 @@ void processOperator()
 			}
 
 		//--Drive--//
-		tDrvL = stkDrvFwd + stkDrvTrn;
-		tDrvR = stkDrvFwd - stkDrvTrn;
-		tDrvS = stkDrvStf;
+		outDrvL = stkDrvFwd + stkDrvTrn;
+		outDrvR = stkDrvFwd - stkDrvTrn;
+		outDrvS = stkDrvStf;
 
 		//--Lift--//
-		if (1)				//Replace from here...
+		if (btnDisablePots || autoScriptTakeover[LIFT])
 			{
-			if (btnDisablePots)
-				tLift = 0;	//...To here...
-
-//		if (btnDisablePots || autoScriptTakeover[LIFT]==STO_ADD)
-//			{				//...With these! (when the lift gets a potentiometer)
-			if (btnLiftUp.curr)				//If lift up is pressed
-				tLift = UP;						//Run lift motors up
-			else if (btnLiftDown.curr)		//If lift down is pressed
-				tLift = DOWN;					//Run lift motors down
-			else if (btnLiftUp2.curr)		//If lift up is pressed
-				tLift = UP;						//Run lift motors up
-			else if (btnLiftDown2.curr)		//If lift down is pressed
-				tLift = DOWN;					//Run lift motors down
-			else							//If no lift buttons are pressed
-				tLift = (tLift>0) ? HOLD : 0;	//Run lift motors at hold or 0
+			if		(btnLiftUp.curr)	outLift = UP;		//If lift up is pressed, run lift motors up
+			else if (btnLiftDown.curr)	outLift = DOWN;		//If lift down is pressed, run lift motors down
+			else if (btnLiftUp2.curr)	outLift = UP;		//If lift up is pressed, run lift motors up
+			else if (btnLiftDown2.curr)	outLift = DOWN;		//If lift down is pressed, run lift motors down
+			else						disableLift = true;	//If no lift buttons are pressed, shut off lift motors
 			}
 		else
 			{
-			if (pressed(btnLiftDown))		//If Lift Down Pressed
-				liftPresetIndex--;				//Previous preset
-			else if (pressed(btnLiftUp))	//If Lift Up Pressed
-				liftPresetIndex++;				//Next preset
-			else if (pressed(btnLiftDown2))	//If Lift Down Pressed
-				liftPresetIndex--;				//Previous preset
-			else if (pressed(btnLiftUp2))	//If Lift Up Pressed
-				liftPresetIndex++;				//Next preset
+			bool tBtnPressed = true;
+			if		(pressed(btnLiftDown))	liftPresetIndex--; //If Lift Down 1 pressed, previous preset
+			else if (pressed(btnLiftUp))	liftPresetIndex++; //If Lift Up   1 pressed, next preset
+			else if (pressed(btnLiftDown2))	liftPresetIndex--; //If Lift Down 2 pressed, previous preset
+			else if (pressed(btnLiftUp2))	liftPresetIndex++; //If Lift Up   2 pressed, next preset
+			else							tBtnPressed=false; //If no buttons are pressed, set variable
+			if (tBtnPressed)
+				disableLift = false;
 
-			liftPresetIndex = capIntValue(L_PRE_START, liftPresetIndex, L_PRE_END);
-			tLift = liftPresetIndex;
+			liftPresetIndex = capIntValue(0, liftPresetIndex, NO_LIFT_PRESETS);
+			outLift = L_PRE(liftPresetIndex);
 			}
+		if (disableLift)					outLift = 0;
 
 		//--Intake--//
-		if (btnIntkOut.curr)			//If intake out 1 pressed
-			tIntk = OUT;					//Intake motors dump out
-		else if (btnIntkIn.curr)		//If intake in 1 pressed
-			tIntk = IN;						//Intake motors intake in
-		else if (btnIntkOut2.curr)		//If intake out 2 pressed
-			tIntk = OUT;					//Intake motors dump out
-		else if (btnIntkIn2.curr)		//If intake in 2 pressed
-			tIntk = IN;						//Intake motors intake in
-		else if (outIntkExtend)			//If no intake buttons are pressed and jaw is up
-			tIntk = IN*3/4;					//Intake motors slow intake in
-		else							//If no intake buttons pressed and jaw is down
-			tIntk = 0;						//Intake motors off
-
+		if		(btnIntkOut.curr)	outIntk = OUT; //If intake out 1 pressed, intake motors dump out
+		else if (btnIntkIn.curr)	outIntk = IN;  //If intake in  1 pressed, intake motors intake in
+		else if (btnIntkOut2.curr)	outIntk = OUT; //If intake out 2 pressed, intake motors dump out
+		else if (btnIntkIn2.curr)	outIntk = IN;  //If intake in  2 pressed, intake motors intake in
+		else						outIntk = 0;   //If no intake buttons pressed and jaw is down, intake motors off
 
 		//--Pneumatics--//
-		if (pressed(btnRhtR))
-			outIntkExtend = !outIntkExtend;
-
+		outCatapult = btnRhtR.curr
 
 		//--Script Takeover Checking and Applying Outputs--//
-		if (tDrvL != 0 || tDrvR != 0 || tDrvS != 0) //If drive is being moved manually
-			{
-			switch (autoScriptTakeover[DRIVE])
-				{
-				case STO_ADD:	//Add to outputs
-					outDrvL += tDrvL;
-					outDrvR += tDrvR;
-					outDrvS += tDrvS;
-					break;
-				case STO_TAKEOVER:
-					autoRoutine.curr = 0; //Disable script
-					//No break statement (purposeful)
-				case STO_NONE:
-					outDrvL = tDrvL;
-					outDrvR = tDrvR;
-					outDrvS = tDrvS;
-					break;
-				}
-			}
-		if (tLift != 0 && tLift != HOLD) //If lift is being moved manually
-			{
-			switch (autoScriptTakeover[LIFT])
-				{
-				case STO_ADD:	//Add to outputs
-					//outLift += tLift; //Will not work with target positions
-					break;
-				case STO_TAKEOVER:
-					autoRoutine.curr = 0; //Disable script
-					//No break statement (purposeful)
-				case STO_NONE:
-					outLift = tLift;
-					break;
-				}
-			}
-		if (tIntk != 0) //If intake is being moved manually
-			{
-			switch (autoScriptTakeover[INTK])
-				{
-				case STO_ADD:	//Add to outputs
-					outIntk += tIntk;
-					break;
-				case STO_TAKEOVER:
-					autoRoutine.curr = 0; //Disable script
-					//No break statement (purposeful)
-				case STO_NONE:
-					outIntk = tIntk;
-					break;
-				}
-			}
+		if (autoScriptTakeover[DRIVE] && (outDrvL != 0 || outDrvR != 0 || outDrvS != 0) )
+			autoRoutine.curr = 0; //If drive is being moved manually, Disable script
+
+		if (autoScriptTakeover[LIFT] && outLift != 0) 
+			autoRoutine.curr = 0; //If lift is being moved manually, Disable script
+
+		if (autoScriptTakeover[INTK] && outIntk != 0) 
+			autoRoutine.curr = 0; //If intake is being moved manually, Disable script
 		}
 	}

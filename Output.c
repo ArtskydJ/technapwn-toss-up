@@ -1,11 +1,11 @@
 //Output.c
 
 //Constants
-static const int LIFT_DISABLE_RANGE = 50;
+static const int LIFT_DISABLE_RANGE = 10;
 
 //Variables
-static int mtrTarget[10]={0,0,0,0,0,0,0,0,0,0};
-static int mtrSlewed[10]={0,0,0,0,0,0,0,0,0,0};
+static int mtrTarget[10] = {0,0,0,0,0,0,0,0,0,0};
+static int mtrSlewed[10] = {0,0,0,0,0,0,0,0,0,0};
 static int slewConstants[3][10];
 
 //Functions
@@ -24,7 +24,7 @@ void initializeOutput()
 	slewConstants[OPERATOR][LIFT_L2]   = OPER_LIFT_SLEW;
 	slewConstants[OPERATOR][LIFT_R]    = OPER_LIFT_SLEW;
 	slewConstants[OPERATOR][INTK_L]    = OPER_INTK_SLEW;
-	//slewConstants[OPERATOR][INTK_R]    = OPER_INTK_SLEW;
+//	slewConstants[OPERATOR][INTK_R]    = OPER_INTK_SLEW;
 
 	slewConstants[AUTONOMOUS][DRIVE_FL]  = AUTO_DRV_SLEW;		//AUTONOMOUS
 	slewConstants[AUTONOMOUS][DRIVE_BL1] = AUTO_DRV_SLEW;
@@ -35,7 +35,8 @@ void initializeOutput()
 	slewConstants[AUTONOMOUS][LIFT_L]    = AUTO_LIFT_SLEW;
 	slewConstants[AUTONOMOUS][LIFT_R]    = AUTO_LIFT_SLEW;
 	slewConstants[AUTONOMOUS][INTK_L]    = AUTO_INTK_SLEW;
-	//slewConstants[AUTONOMOUS][INTK_R]    = AUTO_INTK_SLEW;
+//	slewConstants[AUTONOMOUS][INTK_R]    = AUTO_INTK_SLEW;
+
 	zeroMotors();
 	}
 
@@ -62,7 +63,7 @@ void outputMotion(void)
 		{
 		zeroMotors();
 		}
-	else if (sysMotorTest)             //Enabled, Motor mode
+	else if (sysMotorTest)             //Enabled, Motor test mode
 		{
 		for (int j=0; j<10; j++)
 			mtrTarget[j] = (mtrTestEnabled[j]*stkMtrTest);
@@ -76,31 +77,17 @@ void outputMotion(void)
 		mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
 		mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
 
-		if (outLift >= L_PRE_START && outLift <= L_PRE_END)     //preset position
-			{
-			outLift = L_PRESETS[outLift-L_PRE_START];
-			}
-
-		if (abs(outLift) > 127)                                 //position
-			{
-			if (senLiftLPot.curr < outLift + LIFT_DISABLE_RANGE &&
-			    senLiftLPot.curr > outLift - LIFT_DISABLE_RANGE &&
-			    senLiftRPot.curr < outLift + LIFT_DISABLE_RANGE &&
-			    senLiftRPot.curr > outLift - LIFT_DISABLE_RANGE)  //if close to target, neutralize lift
-					outLift = 0;
-			else
-				outLift = outLift*2 - (senLiftLPot.curr+senLiftRPot.curr); //otherwise, target potentiometers
-			}
-
+		if (abs(outLift) < LIFT_DISABLE_RANGE) //if close enough to target, stop motors
+			outLift = 0;
 		mtrTarget[LIFT_L] =  outLift;
 		mtrTarget[LIFT_L2] = outLift;
 		mtrTarget[LIFT_R] =  outLift;
 
 		mtrTarget[INTK_L] = outIntk;
 
-		if (sysMotorsEnabled) //Pneumatics
+		if (sysOutputsEnabled) //Pneumatics
 			{
-			SensorValue[INTK_EXTEND] = outIntkExtend;
+			SensorValue[CATAPULT] = outCatapult;
 			}
 		}
 
@@ -108,6 +95,6 @@ void outputMotion(void)
 		{
 		mtrSlewed[j] += slew(mtrTarget[j], mtrSlewed[j], slewConstants[sysState.curr][j]); //SLEW CONTROLLERS
 		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD); //CAP ALL MOTORS
-		motor[j] = mtrSlewed[j]*sysMotorsEnabled; //ASSIGN MOTORS
+		motor[j] = mtrSlewed[j]*sysOutputsEnabled; //ASSIGN MOTORS
 		}
 	}

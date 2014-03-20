@@ -10,7 +10,6 @@ static bool autoLiftReady;
 static bool autoIntkReady;
 static int autoStep;
 static int autoStepCheck;
-static int autoStepStatus;
 
 //Functions
 void stateSwitchToAutonomous()
@@ -26,7 +25,7 @@ void autoNextStep(void)
 #ifdef FULL_DEBUG_STREAM
 	writeDebugStreamLine("autoNextStep");
 #endif
-	string msg1,msg2="";
+	string msg1;
 	if (autoStep < NO_TIME_RECORDS)
 		autoTimeRecord[autoStep] = time1(T1);
 	if (autoStep)
@@ -40,10 +39,8 @@ void autoNextStep(void)
 		{
 		sprintf(msg1,"|Reset\t",autoStep);
 		}
-	if		(autoStepStatus==MIN_TIMEOUT)	sprintf(msg2,"Min");
-	else if	(autoStepStatus==MAX_TIMEOUT)	sprintf(msg2,"Max");
-	writeDebugStreamLine("%s%s\t|%d\t|",msg1,msg2,autoStep);
-	
+	writeDebugStreamLine("%s\t|%d\t|",msg1,autoStep);
+
 	//--Autonomous Variables--//
 	autoFoundLeft = false;
 	autoFoundRight = false;
@@ -51,29 +48,28 @@ void autoNextStep(void)
 	autoLiftReady = false;
 	autoIntkReady = false;
 	autoHitTarget = NOT_HIT;
-	autoStepStatus = SENSOR_HIT;
 	autoStep++;
-	
+
 	setToZeroInt(&senGyro);
 	setToZeroInt(&senLeftQSE);
 	setToZeroInt(&senRightQSE);
 	SensorValue[GYRO] = 0;
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
-	
+
 	//--Sensor Step Starts--//
 	setStepInt(&senGyro);
 	setStepInt(&senLeftQSE);
 	setStepInt(&senRightQSE);
 	setStepInt(&senLeftUS);
 	setStepInt(&senRightUS);
-	
+
 	ClearTimer(T1);
 	//beep
 	}
 
 
-void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType, T_SCRIPT_TAKEOVER INstoType,
+void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake)
 	{
 	if (autoStepCheck==autoStep)
@@ -88,13 +84,13 @@ void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType, T_SCRIPT_TAKEOVER IN
 			{
 			if (INasType==SCRIPT)
 				{
-				autoScriptTakeover[DRIVE] = (bool)(INstoType * INscriptDrive);
-				autoScriptTakeover[LIFT]  = (bool)(INstoType * INscriptLift);
-				autoScriptTakeover[INTK]  = (bool)(INstoType * INscriptIntake);
+				autoScriptTakeover[DRIVE] = INscriptDrive;
+				autoScriptTakeover[LIFT]  = INscriptLift;
+				autoScriptTakeover[INTK]  = INscriptIntake;
 				}
 			else
 				for (int i=0; i<3; i++)
-					autoScriptTakeover[i] = (bool)STO_NONE;
+					autoScriptTakeover[i] = false;
 			}
 		autoNextStep();
 		if (INgoToStep>=2)
@@ -132,14 +128,13 @@ void autoResetEnd(void)
 	}
 
 
-void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
-		T_END INendType, int INminTime, int INmaxTime, T_SENSOR_STATUS INdelayPID)
+void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk, bool INcata, T_END INendType, int INextra)
 	{
 	if (autoStepCheck==autoStep)
 		{
 #ifdef FULL_DEBUG_STREAM
-		writeDebugStreamLine("1 lft=%d rht=%d str=%d lift=%d intk=%d end=%d min=%d max=%d pid=%d",
-			INspdL, INspdR, INspdS, INlift, INintk, INendType, INminTime, INmaxTime, INdelayPID);
+		writeDebugStreamLine("1 lft=%d rht=%d str=%d lift=%d intk=%d cata=%d end=%d pid=%d",
+			INspdL, INspdR, INspdS, INlift, INintk, INcata, INendType, INextra));
 #endif
 		//--Set Outputs--//
 		outDrvL = INspdL;
@@ -147,17 +142,17 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
 		outDrvS = INspdS;
 		outLift = INlift;
 		outIntk = INintk;
+		outCatapult = INcata;
 		if (outDrvS != 0)
 			{
 			outDrvL += (diffStepInt(senGyro)) * GYRO_P;
 			outDrvR -= (diffStepInt(senGyro)) * GYRO_P;
 			}
-		if (abs(outDrvL)<PID_ZONE && abs(outDrvR)<PID_ZONE && abs(outDrvS)<PID_ZONE)
-			autoDriveReady=true;
-		if (abs(INlift)<=127)							autoLiftReady = true;
-		//else if (abs(PIDLift.error.curr) < PID_ZONE)	autoLiftReady = true; //Will not be able to sense lift height finish...
-		if (abs(INintk)<=127)							autoIntkReady = true;
-		//else if (abs(PIDIntk.error.curr) < PID_ZONE)	autoIntkReady = true;
+		if (abs(outDrvL)<P_DEAD_ZONE &&
+			abs(outDrvR)<P_DEAD_ZONE &&
+			abs(outDrvS)<P_DEAD_ZONE)	autoDriveReady= true;
+		if (abs(INlift) < P_DEAD_ZONE)	autoLiftReady = true;
+		if (abs(INintk) < P_DEAD_ZONE)	autoIntkReady = true;
 
 
 		if (senLeftEdge > LINE_EDGE)  autoFoundLeft = true;  //Found Left Edge
@@ -165,39 +160,28 @@ void auto(int INspdL, int INspdR, int INspdS, int INlift, int INintk,
 
 		if (INendType == TWO_EDG_LN)
 			{
-			if (autoFoundLeft)  outDrvL=0;
+			if (autoFoundLeft)  outDrvL = 0;
 			if (autoFoundRight) outDrvR = 0;
 			}
 
 		if (autoHitTarget==NOT_HIT)
 			{
+			bool tHitTarget = false;
 			ClearTimer(T2); //Timer for PID wait
 			switch(INendType) // This code asks "What type of target condition are we looking for? Have we met it?"
 				{
-				case TIME_LIMIT: if (time1(T1)>=INminTime)				autoHitTarget = INdelayPID; break;
-				case DRIV_READY: if (autoDriveReady)					autoHitTarget = INdelayPID; break;
-				case LIFT_READY: if (autoLiftReady)						autoHitTarget = INdelayPID; break;
-				case FULL_READY: if (autoDriveReady && autoLiftReady)	autoHitTarget = INdelayPID; break;
-				case ONE_EDG_LN: if (autoFoundLeft || autoFoundRight)	autoHitTarget = INdelayPID; break;
-				case TWO_EDG_LN: if (autoFoundLeft && autoFoundRight)	autoHitTarget = INdelayPID; break;
-				case SCREEN_BTN: if (changedBool(btnScreenCenter))		autoHitTarget = INdelayPID; break;
-				default://nothing
+				case TIME_LIMIT: if (time1(T1)>=INextra) autoHitTarget = NEXT; break;
+				case DRIV_READY: tHitTarget = autoDriveReady; break;
+				case LIFT_READY: tHitTarget = autoLiftReady; break;
+				case FULL_READY: tHitTarget = (autoDriveReady && autoLiftReady); break;
+				case ONE_EDG_LN: tHitTarget = (autoFoundLeft || autoFoundRight); break;
+				case TWO_EDG_LN: tHitTarget = (autoFoundLeft && autoFoundRight); break;
+				case SCREEN_BTN: tHitTarget = (changedBool(btnScreenCenter)); break;
 				}
+			if (tHitTarget) autoHitTarget = (INextra == (short)NEXT) ? NEXT : PID;
 			}
-		if (autoHitTarget==PID   && time1(T2)>=PID_WAIT_MS) //PID timeout
-			autoHitTarget=NEXT;
-
-		if (time1(T1)>=INmaxTime && INmaxTime!=0 && INendType!=TIME_LIMIT) //Max Time timeout
-			{
-			autoHitTarget=NEXT;
-			autoStepStatus=MAX_TIMEOUT;
-			}
-		if (time1(T1)<=INminTime && autoHitTarget==NEXT	&& INendType!=TIME_LIMIT) //Min Time timeout
-			autoStepStatus=MIN_TIMEOUT;
-
-		if (time1(T1)>=INminTime && autoHitTarget==NEXT) //Go to next step
-			autoNextStep();
-
+		if (autoHitTarget==PID && time1(T2)>=PID_WAIT_MS) autoHitTarget=NEXT;
+		if (autoHitTarget==NEXT) autoNextStep();
 		}
 	autoStepCheck++;
 	}
@@ -223,18 +207,18 @@ void processAutonomous(void)
 		autoStepCheck = 0;
 		switch (autoRoutine.curr) //Routines
 			{
-			case 01: autoRedMid1();   break;
-			case 02: autoBlueMid1();  break;
-			case 03: autoRedHang1();  break;
-			case 04: autoBlueHang1(); break;
-			case 05:                          break;
-			case 06:                          break;
-			case 07:                          break;
-			case 08:                          break;
-			case 09: autoTestThings();        break;
-			case 10: autoTestDrive();         break;
-			case 11: autoTestGyro();          break;
-			case 12: autoBlueProgSkills();    break;
+			case 01: autoRedMid1();		break;
+			case 02: autoBlueMid1();	break;
+			case 03: autoRedHang1();	break;
+			case 04: autoBlueHang1();	break;
+			case 05: autoRedMid2();		break;
+			case 06:					break;
+			case 07:					break;
+			case 08:					break;
+			case 09: autoTestThings();	break;
+			case 10: autoTestDrive();	break;
+			case 11: autoTestGyro();	break;
+			case 12: autoRedProgSkills();	break;
 			}
 #ifdef FULL_DEBUG_STREAM
 		if (autoRoutine.curr==0 && changed(sysState))
@@ -249,9 +233,7 @@ void processAutonomous(void)
 
 
 /* This function takes a number of inches and
-converts.
+converts it.
 */
 int InchesToTicks(int n)
-	{
-	return ((float)n*360/(3.14*4));
-	}
+	{ return ((float)n*360/(3.14*4)); }

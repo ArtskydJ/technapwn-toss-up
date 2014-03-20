@@ -7,6 +7,8 @@ void initializeSensors()
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
 	SensorValue[GYRO] = 0;
+	SensorValue[CATAPULT] = 0;
+	outCatapult = 0;
 
 	//--Timers--//
 	ClearTimer(T1);
@@ -35,8 +37,7 @@ void inputSensors(void)
 	setLastInt(&senLeftUS);
 	setLastInt(&senRightUS);
 	setLastInt(&autoRoutine);
-	setLastInt(&senLiftLPot);
-	setLastInt(&senLiftRPot);
+	setLastInt(&senLiftPot);
 	setLastBool(&btnScreenLeft);
 	setLastBool(&btnScreenCenter);
 	setLastBool(&btnScreenRight);
@@ -74,9 +75,8 @@ void inputSensors(void)
 	senLeftUS.curr =   SensorValue[ULTRA_LEFT];
 	senRightUS.curr =  SensorValue[ULTRA_RIGHT];
 	senSelectorPot =   SensorValue[POT_SELECTOR];
-	senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];
-	senLiftLPot.curr = SensorValue[POT_LIFTL];
-	senLiftRPot.curr = SensorValue[POT_LIFTR];
+	//senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];
+	senLiftPot.curr =  SensorValue[POT_LIFT];
 
 	//--Errors--//
 	sysError = ERR_NONE;
@@ -84,23 +84,16 @@ void inputSensors(void)
 	//if (timerRobotIdle>=60000)	sysError = ERR_ROBOT_IDLE;
 	if (nAvgBatteryLevel<6400)		sysError = ERR_LOW_CORTEX;
 
-	//--Sensor Irregularity Fixer--//
-	/*slewLCInt(senGyro,3);		//Estimated .5
-	slewLCInt(senLeftQSE,2);	//Estimated .33
-	slewLCInt(senRightQSE,2);	//Estimated .33
-	slewLCInt(senLeftUS,6);		//Estimated 2.5
-	slewLCInt(senRightUS,6);	//Estimated 2.5*/
 #else
 	//--Emulated Sensors--//
 	static int combinedTime=0;
 	combinedTime += timerElapsedTime;
 	if (combinedTime >= 100) //If 1/10th of a second or more has passed
 		{
-		senLeftQSE.curr  +=	emulateWheelQSE(combinedTime, outDrvL);
-		senRightQSE.curr +=	emulateWheelQSE(combinedTime, outDrvR);
-		senLiftLPot.curr +=	emulateLiftPot(combinedTime, outDrvL, 10);
-		senLiftRPot.curr +=	emulateLiftPot(combinedTime, outDrvR, 10);
-		senGyro.curr += emulateGyro(combinedTime, outDrvL, outDrvR);
+		senLeftQSE.curr +=  emulateWheelQSE(combinedTime, outDrvL);
+		senRightQSE.curr += emulateWheelQSE(combinedTime, outDrvR);
+		senLiftPot.curr +=  emulateLiftPot(combinedTime, outLift, 10);
+		senGyro.curr +=     emulateGyro(combinedTime, outDrvL, outDrvR);
 		combinedTime = 0;
 		}
 #endif
