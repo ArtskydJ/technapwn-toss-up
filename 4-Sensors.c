@@ -42,6 +42,7 @@ void inputSensors(void)
 	setLastInt(&senLeftUS);
 	setLastInt(&senRightUS);
 	setLastInt(&senCenterUS);
+	setLastInt(&senLineFollow);
 	setLastInt(&autoRoutine);
 	setLastInt(&senLiftPot);
 	setLastBool(&btnScreenLeft);
@@ -83,18 +84,19 @@ void inputSensors(void)
 	if (joystickIsMoved(true) || nLCDButtons>0)	timerRobotIdle = 0;
 
 	//--Robot Sensors--//
-	senGyro.curr =     SensorValue[GYRO];
-	senLeftQSE.curr =  SensorValue[QUAD_LEFT]; //reversed
-	senRightQSE.curr = SensorValue[QUAD_RIGHT];
+	senGyro.curr =        SensorValue[GYRO];
+	senLeftQSE.curr =     SensorValue[QUAD_LEFT]; //reversed
+	senRightQSE.curr =    SensorValue[QUAD_RIGHT];
 	if (SensorValue[ULTRA_LEFT]>US_DEAD_ZONE)
-		senLeftUS.curr =   SensorValue[ULTRA_LEFT];
+		senLeftUS.curr =  SensorValue[ULTRA_LEFT];
 	if (SensorValue[ULTRA_RIGHT]>US_DEAD_ZONE)
-		senRightUS.curr =  SensorValue[ULTRA_RIGHT];
+		senRightUS.curr = SensorValue[ULTRA_RIGHT];
 	/*if (SensorValue[ULTRA_CENTER]>US_DEAD_ZONE)
 		senRightUS.curr =  SensorValue[ULTRA_RIGHT];*/
-	senSelectorPot =   SensorValue[POT_SELECTOR];
+	senLineFollow.curr =  SensorValue[LINE_FOLLOWER];
+	senSelectorPot =      SensorValue[POT_SELECTOR];
 	//senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];
-	senLiftPot.curr =  potReverse(SensorValue[POT_LIFT]);
+	senLiftPot.curr =  (SensorValue[POT_LIFT]<650)? senLiftPot.curr : potReverse(SensorValue[POT_LIFT]);
 
 	//--Errors--//
 	sysError = ERR_NONE;
@@ -114,6 +116,7 @@ void inputSensors(void)
 		senGyro.curr +=     emulateGyro(combinedTime, outDrvL, outDrvR);
 		combinedTime = 0;
 		}
+	senLineFollow = LINE_LOW;
 #endif
 
 	//--Autonomous Routine--//

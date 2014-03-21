@@ -180,8 +180,8 @@ void processOperator()
 		else						outIntk = 0;   //If no intake buttons pressed, intake motors off
 
 		//--Descorer--//
-		if (pressed(btnLftD2))	outDescorer = (outDescorer==0)? FWD : 0;
-		
+		if (pressed(btnRhtL1) || pressed(btnRhtL2))	outDescorer = (outDescorer==0)? FWD : 0;
+
 		//--Pneumatics--//
 		outCatapult = btnRhtR1.curr || btnRhtR2.curr;
 		outLoader = btnRhtD1.curr || btnRhtD2.curr;

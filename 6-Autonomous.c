@@ -58,6 +58,7 @@ void autoNextStep(void)
 	setStepInt(&senRightQSE);
 	setStepInt(&senLeftUS);
 	setStepInt(&senRightUS);
+	setStepInt(&senLineFollow);
 
 	ClearTimer(T1);
 	//beep
@@ -144,6 +145,7 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 		outIntk = INintk;
 		outCatapult = INcata;
 		outLoader = INload;
+		//outDescorer = INdescorer;
 		if (outDrvS != 0 && outDrvL==outDrvR)
 			{
 			outDrvL += (diffStepInt(senGyro)) * GYRO_P; // + outDrvS/6;

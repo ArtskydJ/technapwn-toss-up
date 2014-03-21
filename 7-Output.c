@@ -35,6 +35,7 @@ void zeroMotors(void)
 	outDrvS = 0;
 	outLift = 0;
 	outIntk = 0;
+	outDescorer = 0;
 	for (int j=0; j<10; j++)
 		mtrTarget[j] = 0;
 	}

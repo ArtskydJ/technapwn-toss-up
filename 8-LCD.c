@@ -51,9 +51,9 @@ void initializeLCD(void)
 	motorName[DRIVE_BR1] = "R Drv Back 1";
 	motorName[DRIVE_BR2] = "R Drv Back 2";
 	motorName[LIFT_L]    = "L Lift 1";
-	motorName[LIFT_L2]   = "L Lift 2";
 	motorName[LIFT_R]    = "R Lift";
 	motorName[INTK_L]    = "Intake";
+	motorName[DESCORER]  = "Descorer";
 	menuItemName[M_AUTON] =      "Time:";
 	menuItemName[M_CHECKLIST] =  "Checklist:";
 	menuItemName[M_ENABLE_OUT] = "Outputs are:";

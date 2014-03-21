@@ -205,6 +205,7 @@ T_LC_INT senGyro;
 T_LC_INT senLeftUS;
 T_LC_INT senRightUS;
 T_LC_INT senCenterUS;
+T_LC_INT senLineFollow;
 T_LC_INT senLeftQSE;
 T_LC_INT senRightQSE;
 
