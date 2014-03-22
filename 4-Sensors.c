@@ -96,7 +96,7 @@ void inputSensors(void)
 	senLineFollow.curr =  SensorValue[LINE_FOLLOWER];
 	senSelectorPot =      SensorValue[POT_SELECTOR];
 	//senPwrExpVoltage = SensorValue[PWR_EXP_VLTG];
-	senLiftPot.curr =  (SensorValue[POT_LIFT]<650)? senLiftPot.curr : potReverse(SensorValue[POT_LIFT]);
+	senLiftPot.curr =  (SensorValue[POT_LIFT]<650)? senLiftPot.curr : SensorValue[POT_LIFT];
 
 	//--Errors--//
 	sysError = ERR_NONE;

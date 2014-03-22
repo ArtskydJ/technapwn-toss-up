@@ -69,11 +69,11 @@ void autoTestEncStrafe(void)
 	autoResetEnd();
 	}
 
+
 void autoCurrentTest(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
-	auto(stopped(),		0,		 0,			0,	1,	0,	TIME_LIMIT,	500);	//catapult
-	auto(enc1(1480),	0,		 0,			IN,	0,	0,	DRIV_READY,	PID);	//drive
+	auto(lineFollow(80, LEFT),	0,		 0,			IN,	0,	0,	DRIV_READY,	PID);	//drive
 	autoResetEnd();
 	}

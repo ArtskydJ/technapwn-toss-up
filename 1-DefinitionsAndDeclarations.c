@@ -14,9 +14,9 @@
 
 //Line Following
 #define LINE_EDGE     2500   //For edge sensors
-#define LINE_PERCENT  0.2    //0=tile 1=tape
-#define LINE_LO       1200   //Left Tile
-#define LINE_HI       1960   //Left Tape
+float LINE_PERCENT = 0.85;   //0=tape 1=floor
+#define LINE_LO       1535   //TAPE
+#define LINE_HI       2800   //FLOOR
 #define LINE_TARGET   LINE_LO + ((float)LINE_PERCENT * (LINE_HI - LINE_LO))
 
 //State
@@ -25,8 +25,8 @@
 #define AUTONOMOUS   2
 
 //Proportional Constants
-#define LIFT_P        (float)0.30 //45
-#define LINE_P        (float)0.1
+#define LIFT_P        (float)0.4 //45
+float LINE_P = 0.01;
 #define WALL_P        (float)0.1
 #define ENC_DRV_P     (float)0.3
 #define ENC_STRF_P    (float)2.0
@@ -54,7 +54,7 @@
 
 //Output - Slew
 #define DRV_SLEW   8  //was 5
-#define LIFT_SLEW  12
+#define LIFT_SLEW  8  //was 12
 #define INTK_SLEW  20
 #define DSCR_SLEW  12
 
@@ -170,8 +170,8 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {1680,3180,1880,2450}; //bar was 2420
-
+const int sysLiftPresets[NO_LIFT_PRESETS] = {2080,3700,2300,2850}; //bar was 2420
+										//  {1680,3180,1880,2450}
 //System Variables
 bool sysDisableLift = true;
 bool sysAutoMode = false;

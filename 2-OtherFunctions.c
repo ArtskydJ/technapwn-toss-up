@@ -184,9 +184,8 @@ unsigned int enc1Spd(int dist, int spd) //Both sides, one target, two encoders, 
 //--Line Following--//
 unsigned int lineFollow(int spd, int side)
 	{ return encode(
-		spd + sgn(side) * (senLineFollow.curr-LINE_TARGET),
-		spd - sgn(side) * (senLineFollow.curr-LINE_TARGET)
-	); }
+		spd - ( sgn(side) * (senLineFollow.curr-LINE_TARGET) * LINE_P ),
+		spd + ( sgn(side) * (senLineFollow.curr-LINE_TARGET) * LINE_P )); }
 
 //----------ULTRASONIC FOLLOW----------
 unsigned int usFllwL(int spd, int dist) //Follow left wall a set distance with left ultrasonic
