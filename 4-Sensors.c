@@ -64,9 +64,14 @@ void inputSensors(void)
 		}
 	timerLCDScroll +=		tTimerMaster;
 	timerLCDBacklight +=	tTimerMaster;
+	if (driverSkillsRunning)
+		timerDriverSkills +=tTimerMaster;
+	else
+		timerDriverSkills = 0;
 	timerElapsedTime =		tTimerMaster; //Yes, '='
 
 	//--LCD Buttons--//
+	btnScreenAny.curr =		nLCDButtons>0;
 	btnScreenLeft.curr =	(nLCDButtons & 1)>0;
 	btnScreenCenter.curr =	(nLCDButtons & 2)>0;
 	btnScreenRight.curr =	(nLCDButtons & 4)>0;
@@ -74,6 +79,7 @@ void inputSensors(void)
 	//--Timers--//
 	if (timerLCDScroll>62000)      timerLCDScroll =    62000; //Prevent wrapping
 	if (timerLCDBacklight>62000)   timerLCDBacklight = 62000; //Prevent wrapping
+	if (timerDriverSkills>62000)   timerLCDBacklight = 62000; //Prevent wrapping
 	if (timerRobotIdle>62000)      timerRobotIdle =    62000; //Prevent wrapping
 	if ((joystickIsMoved(true) || nLCDButtons != 0)
 		&& sysLCDBacklight==(T_BACKLIGHT)LCD_TIMEOUT)
