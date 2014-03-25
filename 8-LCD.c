@@ -218,7 +218,7 @@ void processLCD()
 				bottomLCDLine.curr = " Robotics  Nora ";
 				break;
 			}
-		if (nLCDButtons != 0)
+		if (screenButtonIsPressed())
 			errorDismissed = true;
 		}
 	else

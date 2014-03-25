@@ -4,7 +4,7 @@
 //This function is run at the beginning of the program only. It is for resetting
 //the robot the it's starting state. All sensors and timers are reset, and a
 //hint is printed into the debug stream.
-void initializeSensors()
+void initializeSensors(void)
 	{
 	//--Sensors--//
 	SensorValue[QUAD_LEFT] = 0;
@@ -64,30 +64,29 @@ void inputSensors(void)
 		}
 	timerLCDScroll +=		tTimerMaster;
 	timerLCDBacklight +=	tTimerMaster;
-	if (driverSkillsRunning)
+	if (sysDriverSkillsRunning)
 		timerDriverSkills +=tTimerMaster;
 	else
 		timerDriverSkills = 0;
 	timerElapsedTime =		tTimerMaster; //Yes, '='
 
 	//--LCD Buttons--//
-	btnScreenAny.curr =		nLCDButtons>0;
-	btnScreenLeft.curr =	(nLCDButtons & 1)>0;
-	btnScreenCenter.curr =	(nLCDButtons & 2)>0;
-	btnScreenRight.curr =	(nLCDButtons & 4)>0;
+	btnScreenLeft.curr =	(nLCDButtons & 1) > 0;
+	btnScreenCenter.curr =	(nLCDButtons & 2) > 0;
+	btnScreenRight.curr =	(nLCDButtons & 4) > 0;
 
 	//--Timers--//
-	if (timerLCDScroll>62000)      timerLCDScroll =    62000; //Prevent wrapping
-	if (timerLCDBacklight>62000)   timerLCDBacklight = 62000; //Prevent wrapping
-	if (timerDriverSkills>62000)   timerLCDBacklight = 62000; //Prevent wrapping
-	if (timerRobotIdle>62000)      timerRobotIdle =    62000; //Prevent wrapping
-	if ((joystickIsMoved(true) || nLCDButtons != 0)
+	if (timerLCDScroll > 62000)    timerLCDScroll =    62000; //Prevent wrapping
+	if (timerLCDBacklight > 62000) timerLCDBacklight = 62000; //Prevent wrapping
+	if (timerDriverSkills > 62000) timerLCDBacklight = 62000; //Prevent wrapping
+	if (timerRobotIdle > 62000)    timerRobotIdle =    62000; //Prevent wrapping
+	if ((joystickIsMoved(true) || screenButtonIsPressed())
 		&& sysLCDBacklight==(T_BACKLIGHT)LCD_TIMEOUT)
-                                   timerLCDBacklight = 0;     //Reset
+	                               timerLCDBacklight = 0;     //Reset
 
 #ifdef PHYSICAL_ROBOT_TARGET
 	timerRobotIdle +=		tTimerMaster;
-	if (joystickIsMoved(true) || nLCDButtons>0)	timerRobotIdle = 0;
+	if (joystickIsMoved(true) || screenButtonIsPressed())	timerRobotIdle = 0;
 
 	//--Robot Sensors--//
 	senGyro.curr =        SensorValue[GYRO];
@@ -128,4 +127,9 @@ void inputSensors(void)
 	//--Autonomous Routine--//
 	if (sysState.curr != AUTONOMOUS) //If not in autonomous
 		autoRoutine.curr = potPosition(NO_AUTO_ROUTINES)+1; //Update autoRoutine variable
+	}
+
+bool screenButtonIsPressed(void)
+	{
+	return (btnScreenLeft.curr || btnScreenCenter.curr || btnScreenRight.curr);
 	}
