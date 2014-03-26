@@ -90,8 +90,8 @@ void inputSensors(void)
 
 	//--Robot Sensors--//
 	senGyro.curr =        SensorValue[GYRO];
-	senLeftQSE.curr =     SensorValue[QUAD_LEFT]; //reversed
-	senRightQSE.curr =    SensorValue[QUAD_RIGHT];
+	senLeftQSE.curr =     SensorValue[QUAD_LEFT];
+	senRightQSE.curr =   -SensorValue[QUAD_RIGHT];
 	if (SensorValue[ULTRA_LEFT]>US_DEAD_ZONE)
 		senLeftUS.curr =  SensorValue[ULTRA_LEFT];
 	if (SensorValue[ULTRA_RIGHT]>US_DEAD_ZONE)

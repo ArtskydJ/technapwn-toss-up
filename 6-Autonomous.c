@@ -115,7 +115,7 @@ void autoResetEnd(void)
 		setToZeroInt(&senRightQSE);
 
 		writeDebugStreamLine("+-----------+---+");
-		writeDebugStreamLine("|Time: %.1f\t\t|",((float)timerAuto/1000));
+		writeDebugStreamLine("|Time: %.1f\t\t|",((float)timerAuto/100));
 		writeDebugStreamLine("+---------------+");
 		sysLCDBacklight = LCD_BLINK_SLOW;
 		autoClockRunning = false;

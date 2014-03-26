@@ -1,7 +1,7 @@
 //AutoRedHanging.c
 //500 = 1 tile (2 ft)
 
-void autoRedHang1(void)
+void autoRedHang1(void) //Working as of the Iowa State Championship
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
@@ -10,17 +10,39 @@ void autoRedHang1(void)
 	auto(gyro2(-90),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn 90
 	auto(enc1(1020),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//Forward, push
 	auto(gyro2(-90),	0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	PID);	//Turn 90
-	/*auto(straight(30),	0,		lPre(BAR),	OUT,0,	0,	TIME_LIMIT,	1800);	//Dump
+	auto(straight(30),	0,		lPre(BAR),	OUT,0,	0,	TIME_LIMIT,	1800);	//Dump
 	auto(enc1(1500),	0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//Forward
 	auto(straight(HALF),0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	500);	//Forward
 	auto(enc1(-550),	0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(gyro2(35),		0,		lPre(GND),	0,	0,	0,	FULL_READY,	PID);	//Drop lift, turn
-	auto(enc1(1100),	0,		lPre(GND),	OUT,0,	0,	DRIV_READY,	NEXT);	//Forward*/
+	auto(enc1(1100),	0,		lPre(GND),	OUT,0,	0,	DRIV_READY,	NEXT);	//Forward
 	autoResetEnd();
 	}
 
 
-void autoRedHang2(void)
+void autoRedHang2(void) //Working as of 2014-03-25
+	{
+	autoResetStart(0, AUTON, 0, 0, 0);
+		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
+	auto(enc1(-300),	0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(60),		0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn 90
+	auto(enc1(-650),	0,		0,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(120),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//Turn 90
+	auto(enc1(1950),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
+	auto(stopped(),		RIGHT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	850);	//strafe into tower
+	auto(spd(80,0),		LEFT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	400);	//strafe away
+	auto(enc1(300),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd
+	auto(straight(80),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1300);	//Fwd + lift
+	auto(straight(-100),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
+	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	2000);	//Dump
+
+	//usStrfL(100)
+	autoResetEnd();
+	}
+
+
+void autoRedHang3(void) //Not working as of the Iowa State Championship
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
