@@ -30,10 +30,10 @@ void autoBlueHang2(void) //Not yet tested (should work; this is a mirror of the 
 	auto(enc1(-650),	0,		0,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(gyro2(-120),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//Turn 90
 	auto(enc1(1950),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
-	auto(stopped(),		LEFT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	850);	//strafe into tower
-	auto(spd(0,80),		RIGHT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	400);	//strafe away
+	auto(stopped(),		LEFT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	900);	//strafe into tower
+	auto(spd(0,80),		RIGHT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	300);	//strafe away
 	auto(enc1(300),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd
-	auto(straight(80),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1300);	//Fwd + lift
+	auto(straight(HALF),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1500);	//Fwd + lift
 	auto(straight(-100),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
 	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	2000);	//Dump
 

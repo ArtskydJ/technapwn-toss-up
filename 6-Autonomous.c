@@ -218,7 +218,7 @@ void processAutonomous(void)
 			case 05: autoRedMid2();			break;
 			case 06: autoBlueMid2();		break;
 			case 07: autoRedHang2();		break;
-			case 08: 						break;
+			case 08: autoBlueHang2();		break;
 			case 09: 						break;
 			case 10: 						break;
 			case 11: autoCurrentTest();		break;
