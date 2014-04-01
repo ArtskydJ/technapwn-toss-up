@@ -10,10 +10,15 @@ void initializeSensors(void)
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
 	SensorValue[GYRO] = 0;
-	SensorValue[CATAPULT] = 0;
+	
+	SensorValue[TRANNY] = 0;
 	SensorValue[LOADER] = 0;
-	outCatapult = false;
+	SensorValue[BRAKE] = 0;
+	SensorValue[CATAPULT] = 0;
+	outTranny = false;
 	outLoader = false;
+	outBrake = false;
+	outCatapult = false;
 
 	//--Timers--//
 	ClearTimer(T1);

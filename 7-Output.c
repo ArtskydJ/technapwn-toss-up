@@ -67,8 +67,10 @@ void outputMotion(void)
 		mtrTarget[DESCORER] = outDescorer;
 		
 		//Pneumatics
-		SensorValue[CATAPULT] = outCatapult;
+		SensorValue[TRANNY] = outTranny;
 		SensorValue[LOADER] = outLoader;
+		SensorVaule[BRAKE] = outBrake;
+		SensorValue[CATAPULT] = outCatapult;
 		}
 
 	for (int j=0; j<10; j++) //Assign motors (with slew control)

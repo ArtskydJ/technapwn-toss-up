@@ -170,8 +170,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {2080,3700,2300,2880}; //bar was 2420
-										//  {1680,3180,1880,2450}
+const int sysLiftPresets[NO_LIFT_PRESETS] = {2080,3700,2300,2880};
 //System Variables
 bool sysDisableLift = true;
 bool sysAutoMode = false;
@@ -192,9 +191,10 @@ int outDrvS;
 int outLift;
 int outIntk;
 int outDescorer;
-bool outCatapult;
+bool outTranny;
 bool outLoader;
-//bool outBrake;
+bool outBrake;
+bool outCatapult;
 
 //Sensor Variables
 int senSelectorPot;
@@ -236,7 +236,7 @@ void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
 void autoResetEnd(void);
 void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk,
-			bool INcata, bool INload, T_END INendType, int INextra);
+			bool INcata, bool INtranny, T_END INendType, int INextra);
 void zeroMotors(void);
 void stateSwitchToAutonomous(void);
 void inputOperator(void);

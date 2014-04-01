@@ -129,13 +129,13 @@ void autoResetEnd(void)
 
 
 //This function is used in autonomous routines
-void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcata, bool INload, T_END INendType, int INextra)
+void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcata, bool INtranny, T_END INendType, int INextra)
 	{
 	if (autoStepCheck==autoStep)
 		{
 #ifdef FULL_DEBUG_STREAM
 		writeDebugStreamLine("1 lft=%d rht=%d stf=%d lift=%d intk=%d cata=%d end=%d pid=%d",
-			decodeL(INspeeds), decodeR(INspeeds), INspdS, INlift, INintk, INcata, INload, INendType, INextra);
+			decodeL(INspeeds), decodeR(INspeeds), INspdS, INlift, INintk, INcata, INtranny, INendType, INextra);
 #endif
 		//--Set Outputs--//
 		outDrvL = decodeL(INspeeds);
@@ -143,9 +143,13 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 		outDrvS = INspdS;
 		outLift = INlift;
 		outIntk = INintk;
-		outCatapult = INcata;
-		outLoader = INload;
 		//outDescorer = INdescorer;
+		
+		outTranny = INtranny;
+		//outLoader = INload;
+		//outBrake = INbrake;
+		outCatapult = INcata;
+		
 		if (outDrvS != 0 && outDrvL==outDrvR)
 			{
 			outDrvL += (diffStepInt(senGyro)) * GYRO_P; // + outDrvS/6;
