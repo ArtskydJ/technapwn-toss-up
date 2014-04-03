@@ -183,8 +183,10 @@ void processOperator()
 		if (pressed(btnRhtL1) || pressed(btnRhtL2))	outDescorer = (outDescorer==0)? FWD : 0;
 
 		//--Pneumatics--//
-		outCatapult = btnRhtR1.curr || btnRhtR2.curr;
-		outLoader = btnRhtD1.curr || btnRhtD2.curr;
+		outTranny =   btnRhtU1.curr || btnRhtU2.curr; //Up    W
+		outLoader =   btnRhtL1.curr || btnRhtL2.curr; //Left  A
+		outBrake =    btnRhtD1.curr || btnRhtD2.curr; //Down  S
+		outCatapult = btnRhtR1.curr || btnRhtR2.curr; //Right D
 
 		//--Script Takeover Checking and Applying Outputs--//
 		if (autoScriptTakeover[DRIVE] && (outDrvL != 0 || outDrvR != 0 || outDrvS != 0) )
