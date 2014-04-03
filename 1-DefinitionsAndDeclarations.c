@@ -221,6 +221,7 @@ unsigned int timerTemp			= 0; //Helps with timerAuto
 unsigned int timerAuto			= 0;
 unsigned int timerLCDScroll		= 0;
 unsigned int timerLCDBacklight	= 0;
+unsigned int timerDriverSkills	= 0;
 unsigned int timerRobotIdle		= 0;
 
 //Other
