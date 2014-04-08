@@ -65,11 +65,11 @@ void outputMotion(void)
 		mtrTarget[LIFT_R] =  outLift;
 		mtrTarget[INTK_L] = outIntk;
 		mtrTarget[DESCORER] = outDescorer;
-		
+
 		//Pneumatics
 		SensorValue[TRANNY] = outTranny;
 		SensorValue[LOADER] = outLoader;
-		SensorVaule[BRAKE] = outBrake;
+		SensorValue[BRAKE] = outBrake;
 		SensorValue[CATAPULT] = outCatapult;
 		}
 
