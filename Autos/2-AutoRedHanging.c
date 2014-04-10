@@ -24,21 +24,20 @@ void autoRedHang2(void) //Working as of 2014-03-31
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
+	auto(straight(50),0,		0,			IN,	0,	0,	TIME_LIMIT,	150);	//fwd
 	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
 	auto(enc1(-180),	0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Reverse
-	auto(gyro2(45),		0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn
-	auto(enc1(-760),	0,		0,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
-	auto(gyro2(135),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	PID);	//Turn
+	auto(gyro2(55),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//turn
+	auto(enc1(-700),	0,		0,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(130),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	PID);	//Turn
 	auto(enc1(1000),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
 	auto(enc1(1000),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
-	auto(stopped(),		RIGHT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	850);	//strafe into tower
-	auto(spd(85,0),		LEFT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	380);	//strafe away
-	auto(enc1(300),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd
-	auto(straight(HALF),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1600);	//Fwd + lift
-	auto(straight(-100),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
+	auto(stopped(),		RIGHT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	650);	//strafe into tower
+	auto(spd(85,0),		LEFT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	210);	//strafe away
+	auto(enc1(250),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd
+	auto(straight(50),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1800);	//Fwd + lift
+	auto(straight(-90),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
 	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	2000);	//Dump
-
-	//usStrfL(100)
 	autoResetEnd();
 	}
 

@@ -6,18 +6,18 @@ static const int LCD_BLINK_SLOW_MS =	500;
 static const int LCD_BLINK_FAST_MS =	200;
 static const int LCD_TIMEOUT_MS =		5000;
 static const string autoNames[NO_AUTO_ROUTINES] = {
-	"Red Mid 1 12pt",
-	"Blu Mid 1 12pt",
-	"Red Hng 1 12pt",
-	"Blu Hng 1 12pt",
-	"Red Mid 2 15pt",
-	"Blu Mid 2 15pt",
-	"Red Hng 2 17pt",
-	"Blu Hng 2 17pt",
+	"Red Mid 1 - 12pt",
+	"Blu Mid 1 - 12pt",
+	"Red Hng 1 - 12pt",
+	"Blu Hng 1 - 12pt",
+	"Red Mid 2 - 15pt",
+	"Blu Mid 2 - 15pt",
+	"Red Hng 2 - 17pt",
+	"Blu Hng 2 - 17pt",
 	"None",
 	"Hang script",
 	"Current Test",
-	"L Red Hng Prog 1"};
+	"Red Hng Prog 1"};
 static const string menuChecklist[NO_CHECKLIST_ITEMS] = {
 	"Batts chrgd+plgd",
 	"Pneumatics pumpd",
