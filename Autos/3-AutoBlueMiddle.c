@@ -4,7 +4,7 @@
 void autoBlueMid1(void) //Tested and working on 2014-03-25
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(straight(HALF),0,		0,			IN,	0,	0,	TIME_LIMIT,	250);	//Intake pre
 	auto(stopped(),		0,		lPre(BAR),	IN,	0,	0,	TIME_LIMIT,	1200);	//Lift Up
 	auto(straight(HALF),0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	800);	//Lift Up + hit ball 1
@@ -23,7 +23,7 @@ void autoBlueMid1(void) //Tested and working on 2014-03-25
 void autoBlueMid2(void) //Tested and working on 2014-03-25
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(enc1(600),		0,		lPre(BAR),	IN,	0,	0,	DRIV_READY,	PID);	//Intake pre, Hit ball 1
 	auto(enc1(-400),	0,		30,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(stopped(),usStrfR(100),30,			0,	0,	0,	DRIV_READY,	PID);	//strafe

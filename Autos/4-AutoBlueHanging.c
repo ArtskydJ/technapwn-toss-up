@@ -4,7 +4,7 @@
 void autoBlueHang1(void) //Working as of the Iowa State Championship
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
 	auto(enc1(-500),	0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Reverse
 	auto(gyro2(90),		0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn 90
@@ -23,7 +23,7 @@ void autoBlueHang1(void) //Working as of the Iowa State Championship
 void autoBlueHang2(void) //Not yet tested (should work; this is a mirror of the red version)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
 	auto(enc1(-180),	0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(gyro2(-45),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn

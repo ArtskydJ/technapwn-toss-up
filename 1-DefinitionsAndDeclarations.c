@@ -135,13 +135,13 @@ typedef enum {
 
 typedef enum {
 	M_AUTON = 0,
-	M_ENABLE_OUT,
 	M_CHECKLIST,
+	M_ENABLE_OUT,
 	M_BATTERY,
-	M_MTR_TEST,
 	M_ANALOG,
 	M_DIGITAL,
 	M_MOTOR,
+	M_MTR_TEST,
 	M_NO_ITEMS
 	} T_MENU_ITEMS;
 

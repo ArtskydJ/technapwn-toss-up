@@ -1,31 +1,9 @@
-
-void scriptEmpty() //Don't need???
+void scriptHang()
 	{
-	//sysVirtualAuto=false;
-	/*autoResetStart(0, SCRIPT, false, false, false);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
-	auto(0,		0,		0,		0,			0,	0,	0,	DRIV_READY,	NEXT);
-	autoResetEnd();		*/
-	}
-
-
-void scriptDescore()
-	{
-	autoResetStart(0, SCRIPT, false, true, false);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
-	auto(spd(0, 0),		0,		lPre(STS),	0,	0,	0,	LIFT_READY,	NEXT);
-	auto(spd(0, 0),		0,		lPre(GND),	0,	0,	0,	LIFT_READY,	NEXT);
-	auto(spd(0, 0),		0,		lPre(STS),	0,	0,	0,	LIFT_READY,	NEXT);
-	autoResetEnd();
-	}
-
-
-void scriptDescore2()
-	{
-	autoResetStart(0, SCRIPT, false, true, false);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
-	auto(spd(0, 0),		0,		lPre(STS),	0,	0,	0,	LIFT_READY,	NEXT);
-	auto(spd(0, 0),		0,		lPre(GND),	0,	0,	0,	LIFT_READY,	NEXT);
-	auto(spd(0, 0),		0,		lPre(STS),	0,	0,	0,	LIFT_READY,	NEXT);
+	autoResetStart(0, SCRIPT, true, true, false);
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
+	//auto(straight(HALF),0,	lPre(STS),	0,	0,	0,	TIME_LIMIT,	100);
+	//auto(straight(REV),	0,	lPre(GND),	0,	0,	1,	TIME_LIMIT,	5000);
+	auto(straight(REV),	0,		0,			0,	0,	1,	TIME_LIMIT,	5000);
 	autoResetEnd();
 	}

@@ -7,7 +7,7 @@ void autoRedProgSkills(void)
 	//13 = first stash
 	//17 = get large
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 //From Hanging Zone, grab easy 2, stash them
 	auto(enc1(500),		0,		lPre(GND),	IN,	0,	0,	DRIV_READY,	PID);	//Forward, INTAKE 2 RED
 	auto(straight(-100),LEFT,	lPre(GND),	IN,	0,	0,	TIME_LIMIT,	300);	//Rev + strafe

@@ -4,7 +4,7 @@
 void autoRedHang1(void) //Working as of the Iowa State Championship
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
 	auto(enc1(-500),	0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Reverse
 	auto(gyro2(-90),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn 90
@@ -23,7 +23,7 @@ void autoRedHang1(void) //Working as of the Iowa State Championship
 void autoRedHang2(void) //Working as of 2014-03-31
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
 	auto(enc1(-180),	0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(gyro2(45),		0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn
@@ -46,7 +46,7 @@ void autoRedHang2(void) //Working as of 2014-03-31
 void autoRedHang3(void) //Not working as of the Iowa State Championship
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
 	auto(enc1(-150),	0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(gyro2(-90),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//turn 90

@@ -97,7 +97,7 @@ void inputOperator(void)
 
 //This function returns true if the joysticks are moved from their deadzones.
 bool joystickIsMoved(bool checkStkTrn)
-	{ return (stkDrvStf1 + stkDrvFwd1 + (stkDrvTrn1 * checkStkTrn)) != 0; }
+	{ return (stkDrvStf1 || stkDrvFwd1 || (stkDrvTrn1 && checkStkTrn)); }
 
 
 //This function takes the raw joystick value and returns a scaled down
@@ -114,9 +114,7 @@ int joystickFilter(int INraw)
 //variables accordingly.
 void processOperator()
 	{
-	if (sysMotorTest)
-		sysMotorTest = !joystickIsMoved(0);
-	else
+	if (!sysMotorTest)
 		{
 		//--Settings--//
 		if (btnSubroutineModifier1)
@@ -133,7 +131,7 @@ void processOperator()
 		outDrvS = stkDrvStf1;
 
 		//--Lift--//
-		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT] || outDescorer!=0)
+		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT] || outDescorer)
 			{
 			sysDisableLift = false;
 			if		(btnLiftU1.curr)	outLift =  UP;		//If lift up is pressed, run lift motors up
@@ -189,13 +187,13 @@ void processOperator()
 		outCatapult = btnRhtR1.curr || btnRhtR2.curr; //Right D
 
 		//--Script Takeover Checking and Applying Outputs--//
-		if (autoScriptTakeover[DRIVE] && (outDrvL != 0 || outDrvR != 0 || outDrvS != 0) )
+		if (autoScriptTakeover[DRIVE] && (outDrvL || outDrvR || outDrvS) )
 			autoRoutine.curr = 0; //If drive is being moved manually, disable script
 
-		if (autoScriptTakeover[LIFT] && outLift != 0)
+		if (autoScriptTakeover[LIFT] && outLift)
 			autoRoutine.curr = 0; //If lift is being moved manually, disable script
 
-		if (autoScriptTakeover[INTK] && outIntk != 0)
+		if (autoScriptTakeover[INTK] && outIntk)
 			autoRoutine.curr = 0; //If intake is being moved manually, disable script
 		}
 	}

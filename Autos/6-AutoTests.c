@@ -1,7 +1,7 @@
 void autoTestThings(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(gyro2(90),		0,		0,			0,	0,	0,	DRIV_READY,	PID);
 	auto(gyro2(90),		0,		0,			0,	0,	0,	DRIV_READY,	PID);
 	auto(enc(1450,1450),0,		lPre(STS),	0,	0,	0,	FULL_READY,	PID);
@@ -14,7 +14,7 @@ void autoTestThings(void)
 void autoTestDrive(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(straight(FWD),	0,		0,			0,	0,	0,	TIME_LIMIT,	2000);
 	/*auto(straight(100),	20,		0,			0,	0,	0,	TIME_LIMIT,	800);
 	auto(enc1(1450),	0,		0,			0,	0,	0,	TIME_LIMIT,	2200);
@@ -27,7 +27,7 @@ void autoTestDrive(void)
 void autoTestGyro(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(gyro2(-90),	0,		0,			0,	0,	0,	DRIV_READY,	PID);
 	auto(straight(FWD),	0,		0,			0,	0,	0,	TIME_LIMIT,	200);
 	//auto(stopped(),				0,			0,	0,	0,	TIME_LIMIT,	1000,	0,	PID);
@@ -39,7 +39,7 @@ void autoTestGyro(void)
 void autoTestUltraFollow(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(usFllwL(60,70),0,		0,			0,	0,	0,	TIME_LIMIT,	2000);	//80 spd, 70 cm
 	auto(stopped(),		0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1200);
 	auto(usFllwL(60,70),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1700);	//80 spd, 70 cm
@@ -51,7 +51,7 @@ void autoTestUltraFollow(void)
 void autoTestUltraFollow2(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(straight(0),usStrfL(70),0,			0,	0,	0,	DRIV_READY,	PID);	//yeah
 //	auto(usFllwR(45,35),0,		0,			0,	0,	0,	TIME_LIMIT,	5500);	//40 spd, 30 cm
 //	auto(usFllwNowR(80),0,		0,			0,	0,	0,	TIME_LIMIT,	3500);	//40 spd, x cm
@@ -64,7 +64,7 @@ void autoTestUltraFollow2(void)
 void autoTestEncStrafe(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(spd(0,0), encStrf1(700), 0,			0,	0,	0,	DRIV_READY,	PID);	//strafe enc
 	autoResetEnd();
 	}
@@ -73,7 +73,7 @@ void autoTestEncStrafe(void)
 void autoCurrentTest(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
-		//L,	R,		S,		Lift,	Intk,Cata,Load,End Type,	Other
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
 	auto(lineFollow(80, LEFT),	0,		 0,			IN,	0,	0,	DRIV_READY,	PID);	//drive
 	autoResetEnd();
 	}

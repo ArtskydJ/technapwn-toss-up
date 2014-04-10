@@ -144,12 +144,12 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 		outLift = INlift;
 		outIntk = INintk;
 		//outDescorer = INdescorer;
-		
+
 		outTranny = INtranny;
 		//outLoader = INload;
 		//outBrake = INbrake;
 		outCatapult = INcata;
-		
+
 		if (outDrvS != 0 && outDrvL==outDrvR)
 			{
 			outDrvL += (diffStepInt(senGyro)) * GYRO_P; // + outDrvS/6;
@@ -202,7 +202,7 @@ void processScripts(void)
 	autoStepCheck = 0;
 	switch (autoRoutine.curr) //Scripts
 		{
-		case -1: scriptDescore();	break;
+		case -1: scriptHang();	break;
 		}
 	}
 
@@ -224,7 +224,7 @@ void processAutonomous(void)
 			case 07: autoRedHang2();		break;
 			case 08: autoBlueHang2();		break;
 			case 09: 						break;
-			case 10: 						break;
+			case 10: scriptHang();			break;
 			case 11: autoCurrentTest();		break;
 			case 12: autoRedProgSkills();	break;
 			}

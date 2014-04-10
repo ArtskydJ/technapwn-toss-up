@@ -55,10 +55,10 @@ void outputMotion(void)
 		}
 	else                               //Enabled, Normal mode
 		{
-		mtrTarget[DRIVE_FL] =  outDrvL + outDrvS;
+		mtrTarget[DRIVE_FL] =  (outDrvL + outDrvS)*(!outTranny); //Disable front motors if tranny engaged
 		mtrTarget[DRIVE_BL1] = outDrvL - outDrvS;
 		mtrTarget[DRIVE_BL2] = outDrvL - outDrvS;
-		mtrTarget[DRIVE_FR] =  outDrvR - outDrvS;
+		mtrTarget[DRIVE_FR] =  (outDrvR - outDrvS)*(!outTranny); //Disable front motors if tranny engaged
 		mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
 		mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
 		mtrTarget[LIFT_L] =  outLift;
