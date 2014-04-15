@@ -43,24 +43,24 @@ static string menuItemName[M_NO_ITEMS];
 //This function sets string variables for use in the menu.
 void initializeLCD(void)
 	{
-	motorName[DRIVE_FL]  = "L Drv Front";
-	motorName[DRIVE_BL1] = "L Drv Back 1";
-	motorName[DRIVE_BL2] = "L Drv Back 2";
-	motorName[DRIVE_FR]  = "R Drv Front";
-	motorName[DRIVE_BR1] = "R Drv Back 1";
-	motorName[DRIVE_BR2] = "R Drv Back 2";
-	motorName[LIFT_L]    = "L Lift 1";
+	motorName[DRIVE_FL]  = "L Drv Frnt";
+	motorName[DRIVE_BL1] = "L Drv Bck1";
+	motorName[DRIVE_BL2] = "L Drv Bck2";
+	motorName[DRIVE_FR]  = "R Drv Frnt";
+	motorName[DRIVE_BR1] = "R Drv Bck1";
+	motorName[DRIVE_BR2] = "R Drv Bck2";
+	motorName[LIFT_L]    = "L Lift";
 	motorName[LIFT_R]    = "R Lift";
 	motorName[INTK_L]    = "Intake";
 	motorName[DESCORER]  = "Descorer";
-	menuItemName[M_AUTON] =      "Time:";
+	menuItemName[M_AUTON] =      "";
 	menuItemName[M_CHECKLIST] =  "Checklist:";
 	menuItemName[M_ENABLE_OUT] = "Outputs are:";
 	menuItemName[M_BATTERY] =    "Battery Volts";
 	menuItemName[M_MTR_TEST] =   "Motor Test:";
 	menuItemName[M_ANALOG] =     "Analog Values";
 	menuItemName[M_DIGITAL] =    "Digital Values";
-	menuItemName[M_MOTOR] =      "Motor Values";
+	menuItemName[M_MOTOR] =      "";
 	}
 
 
@@ -149,11 +149,10 @@ void menuView()
 	switch (menuItemIndex) //BOTTOM LINE
 		{
 		case M_AUTON:
-			StringFormat(tString0,"%s %3.1f | %d ",menuItemName[menuItemIndex],((float)timerAuto/100),autoRoutine.curr);
+			StringFormat(tString0,"%2d:%8.1f sec ", autoRoutine.curr, ((float)timerAuto/100));
 			int temp = autoRoutine.curr-1;
 			strcpy(tString1,autoNames[temp]);
 			break; //Autonomous Name
-
 		case M_CHECKLIST:
 			tString1 = menuChecklist[menuChecklistItem];
 			break;
@@ -184,7 +183,8 @@ void menuView()
 			StringFormat(tString1, "dgtl %1d:%1d", potPosition(12)+1, SensorValue[potPosition(12)+8]); //View Digital Value
 			break;
 		case M_MOTOR:
-			StringFormat(tString1, "motor %1d:%1d", potPosition(10)+1,  motor[potPosition(10)]); //View Motor Value
+			StringFormat(tString0,"Motor %-2d Value",potPosition(10)+1);
+			StringFormat(tString1, " %s:%- 3d", motorName[potPosition(10)], motor[potPosition(10)]); //View Motor Value
 			break;
 		}
 
@@ -244,7 +244,7 @@ void processLCD()
 				sysAutoMode = false; //Only works when competition switch is unplugged (see State.c)
 
 			sysLCDBacklight=LCD_ALWAYS_ON;
-			StringFormat(topLCDLine.curr,"%s %3.1f | %d ",menuItemName[(int)M_AUTON],((float)timerAuto/100),autoRoutine.curr);
+			StringFormat(topLCDLine.curr,"%2d:%8.1f sec ", autoRoutine.curr, ((float)timerAuto/100));
 			StringFormat(bottomLCDLine.curr, "Step: %d", autoStep);	//Show step
 			}
 		}
@@ -268,7 +268,13 @@ void outputLCD()
 		clearLCDLine(1);
 		displayLCDCenteredString(1,bottomLCDLine.curr);
 		}
-#ifndef MENU_WRAP //No wrap
+#ifdef MENU_WRAP //Wrap
+	if (sysState.curr != AUTONOMOUS && sysError==ERR_NONE)
+		{
+		displayLCDString(0,0, "<");
+		displayLCDString(0,15,">");
+		}
+#else //No wrap
 	if (sysState.curr != AUTONOMOUS && sysError==ERR_NONE)
 		{
 		if (menuItemIndex>0)                 displayLCDString(0,0, "<"); //If not at the first item, show prev arrow

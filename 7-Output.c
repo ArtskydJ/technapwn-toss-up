@@ -44,6 +44,7 @@ void zeroMotors(void)
 //This function applies the output variables to their respective motors.
 void outputMotion(void)
 	{
+#ifdef PHYSICAL_ROBOT_TARGET
 	if (sysState.curr == DISABLED)     //Disabled
 		{
 		zeroMotors();
@@ -79,4 +80,5 @@ void outputMotion(void)
 		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD);
 		motor[j] = mtrSlewed[j];
 		}
+#endif
 	}

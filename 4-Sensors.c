@@ -126,7 +126,7 @@ void inputSensors(void)
 		senGyro.curr +=     emulateGyro(combinedTime, outDrvL, outDrvR);
 		combinedTime = 0;
 		}
-	senLineFollow = LINE_LOW;
+	senLineFollow.curr = LINE_TARGET;
 #endif
 
 	//--Autonomous Routine--//
