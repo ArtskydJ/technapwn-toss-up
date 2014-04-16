@@ -40,6 +40,15 @@ void zeroMotors(void)
 		mtrTarget[j] = 0;
 	}
 
+int frontTrannyFilter(int speed)
+	{ //Disable front motors if tranny engaged
+	return outTranny? 0 : speed;
+	}
+
+int rearTrannyFilter(int speed)
+	{ //Do not allow rear motors to spin backwards
+	return outTranny? (speed<0? speed : 0) : speed;
+	}
 
 //This function applies the output variables to their respective motors.
 void outputMotion(void)
@@ -56,12 +65,12 @@ void outputMotion(void)
 		}
 	else                               //Enabled, Normal mode
 		{
-		mtrTarget[DRIVE_FL] =  (outDrvL + outDrvS)*(!outTranny); //Disable front motors if tranny engaged
-		mtrTarget[DRIVE_BL1] = outDrvL - outDrvS;
-		mtrTarget[DRIVE_BL2] = outDrvL - outDrvS;
-		mtrTarget[DRIVE_FR] =  (outDrvR - outDrvS)*(!outTranny); //Disable front motors if tranny engaged
-		mtrTarget[DRIVE_BR1] = outDrvR + outDrvS;
-		mtrTarget[DRIVE_BR2] = outDrvR + outDrvS;
+		mtrTarget[DRIVE_FL] = frontTrannyFilter(outDrvL + outDrvS);
+		mtrTarget[DRIVE_BL1] = rearTrannyFilter(outDrvL - outDrvS);
+		mtrTarget[DRIVE_BL2] = rearTrannyFilter(outDrvL - outDrvS);
+		mtrTarget[DRIVE_FR] = frontTrannyFilter(outDrvR - outDrvS);
+		mtrTarget[DRIVE_BR1] = rearTrannyFilter(outDrvR + outDrvS);
+		mtrTarget[DRIVE_BR2] = rearTrannyFilter(outDrvR + outDrvS);
 		mtrTarget[LIFT_L] =  outLift;
 		mtrTarget[LIFT_R] =  outLift;
 		mtrTarget[INTK_L] = outIntk;

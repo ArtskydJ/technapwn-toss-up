@@ -54,6 +54,7 @@ task main()
 	initializeSensors();
 	while (true)
 		{
+		LINE_TARGET = LINE_LO + ((float)LINE_PERCENT * (LINE_HI - LINE_LO));
 		inputProcessState();
 		inputSensors();
 		inputOperator();

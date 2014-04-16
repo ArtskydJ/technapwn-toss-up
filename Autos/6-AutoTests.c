@@ -74,6 +74,6 @@ void autoCurrentTest(void)
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
-	auto(lineFollow(80, LEFT),	0,		 0,			IN,	0,	0,	DRIV_READY,	PID);	//drive
+	auto(lineFollow(HALF, LEFT),0,0,		0,	0,	0,	DRIV_READY,	PID);	//drive
 	autoResetEnd();
 	}
