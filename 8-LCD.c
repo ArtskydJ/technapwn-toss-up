@@ -116,23 +116,25 @@ void menuExecuteActivated()
 		{
 		case M_AUTON:
 			sysAutoMode = true;
-			break;
+			break; //Start autonomous routine
 		case M_CHECKLIST:
 			menuChecklistItem = (menuChecklistItem+1)%NO_CHECKLIST_ITEMS;
-			break;
+			break; //Loop through checklist items
 		case M_ENABLE_OUT:
 			sysDisabledMode = !sysDisabledMode;
-			break; //Enable / Disable motors
+			break; //Enable / Disable motors and pneumatics
 		case M_BATTERY:
 			menuBatteryItem = (menuBatteryItem+1)%2; //2 should be 3 with pow ex
 			break; //View battery Levels
+		case M_ANALOG: break; //View Analog Values
+		case M_DIGITAL:
+			if (SensorType[potPosition(12)] == sensorDigitalOut)
+				SensorValue[potPosition(12)] = !SensorValue[potPosition(12)];
+			break; //View Digital Values
+		case M_MOTOR: break; //View Motor Values
 		case M_MTR_TEST:
 			mtrTestEnabled[potPosition(10)] = (( mtrTestEnabled[potPosition(10)]+2 )%3)-1;
 			break; //Toggle Motors between -1, 0 and 1
-		case M_ANALOG: break; //View Analog Values
-		case M_DIGITAL: break; //View Digital Values
-		case M_MOTOR: break; //View Motor Values
-		default: break; //Execute nothing
 		}
 	}
 
