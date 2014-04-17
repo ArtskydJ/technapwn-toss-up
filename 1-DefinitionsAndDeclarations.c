@@ -37,6 +37,7 @@ float LINE_P = 0.038;
 //Lift - Function-like-definitions
 #define lPos(n)       (n-senLiftPot.curr)*LIFT_P
 #define lPre(n)       (sysLiftPresets[n]-senLiftPot.curr)*LIFT_P
+#define lPreAdd(n,m)  (sysLiftPresets[n]+m-senLiftPot.curr)*LIFT_P
 
 //Autonomous - Presets
 #define UP      127
@@ -170,7 +171,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {2060,3750,2300,2880};
+const int sysLiftPresets[NO_LIFT_PRESETS] = {2050,3750,2300,2880};
 //System Variables
 bool sysDisableLift = true;
 bool sysAutoMode = false;
