@@ -40,3 +40,7 @@ void autoBlueHang2(void) //Working as of 2014-03-31
 	auto(spd(-25,REV),0,		lPre(BMP),	0,	0,	0,	TIME_LIMIT,	800);	//Turn
 	autoResetEnd();
 	}
+
+void autoBlueHang3(void) //Working as of 2014-03-31
+	{
+	}
