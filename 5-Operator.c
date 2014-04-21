@@ -131,7 +131,7 @@ void processOperator()
 		outDrvS = stkDrvStf1;
 
 		//--Lift--//
-		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT] || outDescorer)
+		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT] || outDescorer || outTranny)
 			{
 			sysDisableLift = false;
 			if		(btnLiftU1.curr)	outLift =  UP;		//If lift up is pressed, run lift motors up
@@ -158,8 +158,6 @@ void processOperator()
 			else							tBtnPressed = false;   //If no buttons are pressed, set variable
 			if (tBtnPressed)				sysDisableLift = false;
 
-
-
 			liftPresetIndex = capIntValue(0, liftPresetIndex, NO_LIFT_PRESETS-1);
 			outLift = lPre(liftPresetIndex);
 
@@ -180,11 +178,12 @@ void processOperator()
 		//--Descorer--//
 		if (pressed(btnRhtL1) || pressed(btnRhtL2))	outDescorer = (outDescorer==0)? FWD : 0;
 
+		//--Hanging--//
+		if (pressed(btnRhtU1) || pressed(btnRhtU2)) outTranny = !outTranny; //Up    W
 		//--Pneumatics--//
-		outTranny =   btnRhtU1.curr || btnRhtU2.curr; //Up    W
-		outLoader =   btnRhtL1.curr || btnRhtL2.curr; //Left  A
-		outBrake =    btnRhtD1.curr || btnRhtD2.curr; //Down  S
-		outCatapult = btnRhtR1.curr || btnRhtR2.curr; //Right D
+		outLoader =   btnRhtL1.curr || btnRhtL2.curr;	//Left  A
+		outBrake =    btnRhtD1.curr || btnRhtD2.curr;	//Down  S
+		outCatapult = btnRhtR1.curr || btnRhtR2.curr;	//Right D
 
 		//--Script Takeover Checking and Applying Outputs--//
 		if (autoScriptTakeover[DRIVE] && (outDrvL || outDrvR || outDrvS) )
