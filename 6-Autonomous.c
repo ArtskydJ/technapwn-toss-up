@@ -216,17 +216,19 @@ void processAutonomous(void)
 		switch (autoRoutine.curr) //Routines
 			{
 			case 01: autoRedMid1();			break;
-			case 02: autoBlueMid1();		break;
+			case 02: autoRedMid2();			break;
 			case 03: autoRedHang1();		break;
-			case 04: autoBlueHang1();		break;
-			case 05: autoRedMid2();			break;
-			case 06: autoBlueMid2();		break;
-			case 07: autoRedHang2();		break;
-			case 08: autoBlueHang2();		break;
-			case 09: 						break;
-			case 10: scriptHang();			break;
-			case 11: autoCurrentTest();		break;
-			case 12: autoRedProgSkills();	break;
+			case 04: autoRedHang2();		break;
+			case 05: autoRedHang3();		break;
+			case 06: autoBlueMid1();		break;
+			case 07: autoBlueMid2();		break;
+			case 08: autoBlueHang1();		break;
+			case 09: autoBlueHang2();		break;
+			case 10: autoBlueHang3();		break;
+			case 11: 						break;
+			case 12: scriptHang();			break;
+			case 13: autoCurrentTest();		break;
+			case 14: autoRedProgSkills();	break;
 			}
 #ifdef FULL_DEBUG_STREAM
 		if (autoRoutine.curr==0 && changed(sysState))

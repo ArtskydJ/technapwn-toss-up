@@ -2,7 +2,7 @@
 
 //Constants
 static const int JOYSTICK_DEAD_ZONE = 10;
-static const int LIFT_DISABLE_RANGE = 20;
+static const int LIFT_DISABLE_RANGE = 30;
 
 //Variables
 static bool btnDisablePots1; //Joystick 1
