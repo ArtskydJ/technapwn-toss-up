@@ -38,6 +38,7 @@ void autoRedHang2(void) //Working as of 2014-03-31
 	auto(straight(50),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1800);	//Fwd + lift
 	auto(straight(-90),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
 	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	2000);	//Dump
+	auto(spd(REV,-25),0,		lPre(BMP),	0,	0,	0,	TIME_LIMIT,	800);	//Turn
 	autoResetEnd();
 	}
 

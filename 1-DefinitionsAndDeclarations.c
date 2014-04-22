@@ -14,10 +14,10 @@
 
 //Line Following
 #define LINE_EDGE     2500   //For edge sensors
-float LINE_PERCENT = 0.5; //0.7;   //0=tape 1=floor
+#define LINE_PERCENT  0.5    //0.7;   //0=tape 1=floor
 #define LINE_LO       1000   //TAPE
 #define LINE_HI       2650   //FLOOR
-float LINE_TARGET = LINE_LO + ((float)LINE_PERCENT * (LINE_HI - LINE_LO));
+#define LINE_TARGET   LINE_LO + ((float)LINE_PERCENT * (LINE_HI - LINE_LO))
 
 //State
 #define DISABLED     0
@@ -26,13 +26,14 @@ float LINE_TARGET = LINE_LO + ((float)LINE_PERCENT * (LINE_HI - LINE_LO));
 
 //Proportional Constants
 #define LIFT_P        (float)0.5 //45
-float LINE_P = 0.022;  //0.038;
+#define LINE_P        (float)0.022  //0.038
 #define WALL_P        (float)0.1
 #define ENC_DRV_P     (float)0.3
 #define ENC_STRF_P    (float)2.0
 #define US_STRF_P     (float)8.0 //was 7.0 2014-03-12
 #define US_FLLW_P     (float)2.0 //works ok at 2 at 40 target power
 #define GYRO_P        (float)0.45 //34
+#define GYRO_STRF_P   (float)1.0 //34
 
 //Lift - Function-like-definitions
 #define lPos(n)       (n-senLiftPot.curr)*LIFT_P
@@ -247,7 +248,8 @@ bool screenButtonIsPressed(void);
 void setLastInt(T_LC_INT *INLC);
 void setStepInt(T_LC_INT *INLC);
 static int potReverse(int INpot);
-int joystickFilter(int INraw);
+int joystickExpFilter(int INraw);
+int joystickDeadzoneFilter(int INraw);
 int slew(int INtargetVal, int INlastVal, int INslew);
 int potPosition(int INMaxVal);
 int emulateLiftPot(int INtimer, int INspeed, int INgearing);

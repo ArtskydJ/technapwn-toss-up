@@ -41,7 +41,7 @@
 #include "8-LCD.c"
 //#include "9-Sound.c"
 
-//============= Nora.c =============//
+//============== Nora ==============//
 //    Author: Joseph Dykstra        //
 //      Team: Techna PWN Robotics   //
 //   Created: 2013-05-15            //
@@ -54,7 +54,6 @@ task main()
 	initializeSensors();
 	while (true)
 		{
-		LINE_TARGET = LINE_LO + ((float)LINE_PERCENT * (LINE_HI - LINE_LO));
 		inputProcessState();
 		inputSensors();
 		inputOperator();

@@ -19,6 +19,7 @@ void autoBlueHang1(void) //Working as of the Iowa State Championship
 	autoResetEnd();
 	}
 
+
 void autoBlueHang2(void) //Working as of 2014-03-31
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
@@ -41,6 +42,28 @@ void autoBlueHang2(void) //Working as of 2014-03-31
 	autoResetEnd();
 	}
 
-void autoBlueHang3(void) //Working as of 2014-03-31
+
+void autoBlueHang3(void) //Not working as of the Iowa State Championship
 	{
+	autoResetStart(0, AUTON, 0, 0, 0);
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
+	auto(straight(50),0,		0,			IN,	0,	0,	TIME_LIMIT,	150);	//fwd
+	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Forward, intake
+	auto(enc1(-160),	0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(-55),	0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//turn
+	auto(enc1(-700),	0,		0,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(-130),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	PID);	//Turn
+	auto(enc1(800),		0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
+	auto(enc1(100),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
+	auto(lineFollow(70,RIGHT),0,lPre(GND),	0,	0,	0,	TIME_LIMIT,	1600);	//drive
+	//auto(straight(HALF),0,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	1750);	//drive
+	auto(straight(50),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1900);	//Fwd + lift
+	auto(straight(-90),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
+	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	1700);	//Dump
+	auto(straight(REV),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	100);	//Rev
+	auto(gyro2(90),		0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//Turn
+	auto(enc1(-1900),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//backward
+	if (timerAuto>=1500)
+		zeroMotors();
+	autoResetEnd();
 	}

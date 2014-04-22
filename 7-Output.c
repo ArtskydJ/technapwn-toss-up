@@ -57,6 +57,7 @@ void outputMotion(void)
 	if (sysState.curr == DISABLED)     //Disabled
 		{
 		zeroMotors();
+		outTranny = false;
 		}
 	else if (sysMotorTest)             //Enabled, Motor test mode
 		{
@@ -75,12 +76,6 @@ void outputMotion(void)
 		mtrTarget[LIFT_R] =  outLift;
 		mtrTarget[INTK_L] = outIntk;
 		mtrTarget[DESCORER] = outDescorer;
-
-		//Pneumatics
-		SensorValue[TRANNY] = outTranny;
-		SensorValue[LOADER] = outLoader;
-		SensorValue[BRAKE] = outBrake;
-		SensorValue[CATAPULT] = outCatapult;
 		}
 
 	for (int j=0; j<10; j++) //Assign motors (with slew control)
@@ -89,5 +84,11 @@ void outputMotion(void)
 		mtrSlewed[j] = capIntValue(REV, mtrSlewed[j], FWD);
 		motor[j] = mtrSlewed[j];
 		}
+
+	//Pneumatics
+	SensorValue[TRANNY] = outTranny;
+	SensorValue[LOADER] = outLoader;
+	SensorValue[BRAKE] = outBrake;
+	SensorValue[CATAPULT] = outCatapult;
 #endif
 	}

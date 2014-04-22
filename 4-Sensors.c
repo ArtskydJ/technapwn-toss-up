@@ -10,7 +10,7 @@ void initializeSensors(void)
 	SensorValue[QUAD_LEFT] = 0;
 	SensorValue[QUAD_RIGHT] = 0;
 	SensorValue[GYRO] = 0;
-	
+
 	SensorValue[TRANNY] = 0;
 	SensorValue[LOADER] = 0;
 	SensorValue[BRAKE] = 0;
@@ -96,7 +96,7 @@ void inputSensors(void)
 	//--Robot Sensors--//
 	senGyro.curr =        SensorValue[GYRO];
 	senLeftQSE.curr =     SensorValue[QUAD_LEFT];
-	senRightQSE.curr =   -SensorValue[QUAD_RIGHT];
+	senRightQSE.curr =    SensorValue[QUAD_RIGHT];
 	if (SensorValue[ULTRA_LEFT]>US_DEAD_ZONE)
 		senLeftUS.curr =  SensorValue[ULTRA_LEFT];
 	if (SensorValue[ULTRA_RIGHT]>US_DEAD_ZONE)

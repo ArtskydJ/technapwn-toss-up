@@ -53,10 +53,10 @@ void inputOperator(void)
 
 #ifdef PHYSICAL_ROBOT_TARGET
 	//Sticks
-	stkDrvFwd1 =		joystickFilter(vexRT[Ch3]); //Joystick 1
-	stkDrvStf1 =		joystickFilter(vexRT[Ch4]);
-	stkDrvTrn1 =		joystickFilter(vexRT[Ch1]);
-	stkMtrTest1 =					  (vexRT[Ch2]);
+	stkDrvFwd1 =		joystickDeadzoneFilter(vexRT[Ch3]); //Joystick 1
+	stkDrvStf1 =		joystickDeadzoneFilter(vexRT[Ch4]);
+	stkDrvTrn1 =		joystickDeadzoneFilter(vexRT[Ch1]);
+	stkMtrTest1 =							  (vexRT[Ch2]);
 
 	//Shoulder Buttons
 	btnLiftU1.curr =	(bool)vexRT[Btn5U]; //Joystick 1
@@ -102,11 +102,18 @@ bool joystickIsMoved(bool checkStkTrn)
 
 //This function takes the raw joystick value and returns a scaled down
 //exponetial value. This gives the driver more precise control, when needed.
-int joystickFilter(int INraw)
+int joystickExpFilter(int INraw)
 	{
 	if (abs(INraw) < JOYSTICK_DEAD_ZONE)	//Dead Zone
 		INraw=0;
 	INraw = capIntValue(REV, (float)INraw*abs(INraw)/FWD, FWD);	//Exponential function
+	return (INraw);
+	}
+
+//This function takes the raw joystick value and returns a deadzoned version
+int joystickDeadzoneFilter(int INraw)
+	{
+	if (abs(INraw) < JOYSTICK_DEAD_ZONE) INraw=0; //Dead Zone
 	return (INraw);
 	}
 
