@@ -55,14 +55,13 @@ void autoRedHang3(void) //Not working as of the Iowa State Championship
 	auto(gyro2(130),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	PID);	//Turn
 	auto(enc1(800),		0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
 	auto(enc1(100),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
-	auto(lineFollow(70,LEFT),0,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	1600);	//drive
-	//auto(straight(HALF),0,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	1750);	//drive
+	auto(straight(HALF),0,		lPre(GND),	0,	0,	0,	TIME_LIMIT,	1750);	//drive
 	auto(straight(50),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1900);	//Fwd + lift
 	auto(straight(-90),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
 	auto(stopped(),		0,		lPre(STS),	OUT,0,	0,	TIME_LIMIT,	1700);	//Dump
 	auto(straight(REV),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	100);	//Rev
 	auto(gyro2(-90),	0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//Turn
-	auto(enc1(-1900),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//backward
+	auto(enc1(-1900),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//backward + drop lift
 	/*if (timerAuto>=1500)
 		zeroMotors();*/
 	autoResetEnd();
