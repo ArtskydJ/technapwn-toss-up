@@ -172,7 +172,7 @@ typedef enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 //Constants									GND   STS  BMP  BAR
-const int sysLiftPresets[NO_LIFT_PRESETS] = {2045,3750,2300,2880};
+const int sysLiftPresets[NO_LIFT_PRESETS] = {2052,3750,2300,2880};
 //System Variables
 bool sysDisableLift = true;
 bool sysAutoMode = false;

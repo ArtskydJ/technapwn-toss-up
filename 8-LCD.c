@@ -19,7 +19,6 @@ static const string autoNames[NO_AUTO_ROUTINES] = {
 	"Blu Hng 2 - 17pt",
 	"Blu Hng 3 - 13pt",
 	"None",
-	"None",
 	"Hang script",
 	"Current Test",
 	"Red Hng Prog 1"};

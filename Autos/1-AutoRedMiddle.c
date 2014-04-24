@@ -30,7 +30,8 @@ void autoRedMid2(void) //Tested and working on 2014-03-25
 	auto(straight(HALF),0,		30,			0,	0,	0,	TIME_LIMIT,	1100);	//Forward
 	auto(enc1(-600),	0,		0,			0,	0,	0,	DRIV_READY,	PID);	//Reverse
 	auto(stopped(),usStrfL(68),	lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//strafe + drop
-	auto(lineFollow(70,LEFT),0,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	1300);	//drive
+	//auto(lineFollow(70,LEFT),0,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	1300);	//drive
+	auto(enc1(600),		0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Forward
 	auto(stopped(),		0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	1000);	//Lift up
 	auto(straight(100),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	900);	//Fwd
 	auto(straight(-100),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
@@ -49,7 +50,8 @@ void autoRedMid3(void) //Untested
 	auto(enc1(600),		0,		lPre(BAR),	IN,	0,	0,	DRIV_READY,	NEXT);	//Intake pre, Hit ball 1
 	auto(enc1(-500),	0,		30,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(stopped(),usStrfL(68),	lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//strafe + drop
-	auto(lineFollow(70,LEFT),0,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	1300);	//drive
+	//auto(lineFollow(70,LEFT),0,lPre(GND),	0,	0,	0,	TIME_LIMIT,	1300);	//drive
+	auto(enc1(600),		0,		lPre(GND),	IN,	0,	0,	DRIV_READY,	NEXT);	//Fwd
 	auto(stopped(),		0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	800);	//Lift up
 	auto(straight(100),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	900);	//Fwd
 	auto(straight(-100),0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	200);	//Rev
