@@ -53,7 +53,6 @@ void autoBlueMid3(void) //Tested and working on 2014-03-25
 	auto(enc1(600),		0,		lPre(BAR),	IN,	0,	0,	DRIV_READY,	NEXT);	//Intake pre, Hit ball 1
 	auto(enc1(-500),	0,		30,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
 	auto(stopped(),usStrfR(68),	lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//strafe + drop
-	//auto(lineFollow(70,RIGHT),0,lPre(GND),0,	0,	0,	TIME_LIMIT,	1300);	//drive
 	auto(enc1(600),		0,		lPre(GND),	IN,	0,	0,	DRIV_READY,	NEXT);	//Fwd
 	auto(stopped(),		0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	800);	//Lift up
 	auto(straight(100),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	900);	//Fwd
