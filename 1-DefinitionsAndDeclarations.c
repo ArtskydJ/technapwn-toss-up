@@ -65,7 +65,7 @@
 #define PID_WAIT_MS       350 //2014-02-19 was 350, 2014-02-11 was 400
 #define TIMEOUT_MS        4000
 #define P_DEAD_ZONE       20
-#define NO_AUTO_ROUTINES  14
+#define NO_AUTO_ROUTINES  16
 #define MIN_LOOP_MS       10
 
 //Other

@@ -63,7 +63,7 @@ void autoBlueHang3(void) //Not working as of the Iowa State Championship
 	auto(straight(REV),	0,		lPre(STS),	0,	0,	0,	TIME_LIMIT,	100);	//Rev
 	auto(gyro2(90),		0,		lPre(STS),	0,	0,	0,	DRIV_READY,	NEXT);	//Turn
 	auto(enc1(-1900),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//backward
-	if (timerAuto>=1500)
-		zeroMotors();
+	/*if (timerAuto>=1500)
+		zeroMotors();*/
 	autoResetEnd();
 	}
