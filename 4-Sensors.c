@@ -2,8 +2,8 @@
 
 //Functions
 //This function is run at the beginning of the program only. It is for resetting
-//the robot the it's starting state. All sensors and timers are reset, and a
-//hint is printed into the debug stream.
+//the robot to it's starting state. All sensors and timers are reset, and a hint
+//is printed into the debug stream.
 void initializeSensors(void)
 	{
 	//--Sensors--//

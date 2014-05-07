@@ -1,4 +1,4 @@
-//Sound.c
+//Sound.c (Totally untested; never mounted a speaker)
 
 //Constants
 #define NO_SOUNDS_INTK 2

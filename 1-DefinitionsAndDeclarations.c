@@ -54,7 +54,7 @@
 #define FOLLOW  100
 #define BRAKE   5  //Drive brake power
 
-//Output - Slew
+//Output - Slew, smaller = more gradual
 #define DRV_SLEW   8  //was 5
 #define LIFT_SLEW  8  //was 12
 #define INTK_SLEW  20

@@ -69,7 +69,7 @@ void autoNextStep(void)
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 					bool INscriptDrive, bool INscriptLift, bool INscriptIntake)
 	{
-	if (autoStepCheck==autoStep)
+	if (autoStepCheck==autoStep) //If on correct autonomous step
 		{
 		writeDebugStreamLine("+---------------+");
 		writeDebugStreamLine("|Routine: %2d\t|",autoRoutine.curr);
@@ -107,7 +107,7 @@ void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
 //This function resets autonomous variables for the end of autonomous.
 void autoResetEnd(void)
 	{
-	if (autoStepCheck==autoStep)
+	if (autoStepCheck==autoStep) //If on correct autonomous step
 		{
 		zeroMotors();
 		setToZeroInt(&senGyro);
@@ -131,7 +131,7 @@ void autoResetEnd(void)
 //This function is used in autonomous routines
 void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcata, bool INtranny, T_END INendType, int INextra)
 	{
-	if (autoStepCheck==autoStep)
+	if (autoStepCheck==autoStep) //If on correct autonomous step
 		{
 #ifdef FULL_DEBUG_STREAM
 		writeDebugStreamLine("1 lft=%d rht=%d stf=%d lift=%d intk=%d cata=%d end=%d pid=%d",
@@ -157,9 +157,9 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 			}
 		if (abs(outDrvL) < P_DEAD_ZONE &&
 			abs(outDrvR) < P_DEAD_ZONE &&
-			abs(outDrvS) < P_DEAD_ZONE)	autoDriveReady= true;
-		if (abs(INlift)  < P_DEAD_ZONE)	autoLiftReady = true;
-		if (abs(INintk)  < P_DEAD_ZONE)	autoIntkReady = true;
+			abs(outDrvS) < P_DEAD_ZONE)	autoDriveReady= true; //Works
+		if (abs(INlift)  < P_DEAD_ZONE)	autoLiftReady = true; //Might work
+		if (abs(INintk)  < P_DEAD_ZONE)	autoIntkReady = true; //Might work
 
 
 		if (senLeftEdge > LINE_EDGE)  autoFoundLeft = true;  //Found Left Edge
@@ -177,7 +177,7 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 			ClearTimer(T2); //Timer for PID wait
 			switch(INendType) // This code asks "What type of target condition...
 				{             // ...are we looking for? Have we met it?"
-				case TIME_LIMIT: if (time1(T1)>=INextra) tHitTarget = true; break;
+				case TIME_LIMIT: tHitTarget = (time1(T1)>=INextra); break;
 				case DRIV_READY: tHitTarget = autoDriveReady; break;
 				case LIFT_READY: tHitTarget = autoLiftReady; break;
 				case FULL_READY: tHitTarget = (autoDriveReady && autoLiftReady); break;
@@ -186,7 +186,7 @@ void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk, bool INcat
 				case SCREEN_BTN: tHitTarget = (changedBool(btnScreenCenter)); break;
 				}
 			if (tHitTarget)
-				autoHitTarget = (INextra == (short)PID) ? PID : NEXT;
+				autoHitTarget = (INextra == (short)PID) ? PID : NEXT; //If INextra is PID, then PID, else, NEXT
 			}
 		if (autoHitTarget==PID && time1(T2)>=PID_WAIT_MS) autoHitTarget=NEXT;
 		if (INendType!=TIME_LIMIT && INendType!=SCREEN_BTN && time1(T1)>=TIMEOUT_MS) autoHitTarget=NEXT;
@@ -202,7 +202,7 @@ void processScripts(void)
 	autoStepCheck = 0;
 	switch (autoRoutine.curr) //Scripts
 		{
-		case -1: scriptHang();	break;
+		case -1: scriptHang();	break; //Scripts were not really tested :(
 		}
 	}
 
@@ -215,18 +215,18 @@ void processAutonomous(void)
 		autoStepCheck = 0;
 		switch (autoRoutine.curr) //Routines
 			{
-			case 01: autoRedMid1();			break;
+			case 01: autoRedMid1();			break; //Red...
 			case 02: autoRedMid2();			break;
 			case 03: autoRedHang1();		break;
 			case 04: autoRedHang2();		break;
 			case 05: autoRedHang3();		break;
-			case 06: autoBlueMid1();		break;
+			case 06: autoBlueMid1();		break; //Blue...
 			case 07: autoBlueMid2();		break;
 			case 08: autoBlueHang1();		break;
 			case 09: autoBlueHang2();		break;
 			case 10: autoBlueHang3();		break;
-			case 11: 						break;
-			case 12: scriptHang();			break;
+			case 11: 						break; //None
+			case 12: scriptHang();			break; //Other...
 			case 13: autoCurrentTest();		break;
 			case 14: autoRedProgSkills();	break;
 			}
@@ -242,6 +242,6 @@ void processAutonomous(void)
 	}
 
 
-//This function takes a number of inches and converts it to encoder ticks.
+//This function takes a number of inches and converts it to encoder ticks. (Assumes a 4 inch wheel)
 int InchesToTicks(int n)
 	{ return ((float)n*360/(3.14*4)); }
