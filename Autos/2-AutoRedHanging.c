@@ -43,7 +43,29 @@ void autoRedHang2(void) //Working as of 2014-03-31
 	}
 
 
-void autoRedHang3(void) //Not working as of the Iowa State Championship
+void autoRedHang3(void) //Untested
+	{
+	autoResetStart(0, AUTON, 0, 0, 0);
+		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other
+	auto(straight(80),	0,		0,			IN,	0,	0,	TIME_LIMIT,	150);	//fwd
+	auto(enc1(500),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//Forward, intake
+	auto(enc1(-180),	0,		0,			IN,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(55),		0,		0,			IN,	0,	0,	DRIV_READY,	PID);	//turn
+	auto(enc1(-700),	0,		0,			0,	0,	0,	DRIV_READY,	NEXT);	//Reverse
+	auto(gyro2(130),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	PID);	//Turn
+	auto(enc1(1300),	0,		lPre(BMP),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd over bump
+	auto(gyro2(40),		0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	PID);	//Turn
+	auto(straight(FWD),	0,		lPre(BAR),	0,	0,	0,	TIME_LIMIT,	250);	//Fwd into ball
+	auto(enc1(-250),	0,		lPre(BAR),	0,	0,	0,	DRIV_READY,	NEXT);	//rev
+	auto(stopped(),		RIGHT,	lPre(GND),	0,	0,	0,	TIME_LIMIT,	1200);	//strafe away
+	auto(enc1(1900),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Fwd
+	auto(gyro2(-140),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//Turn
+	auto(enc1(-750),	0,		lPre(GND),	0,	0,	0,	DRIV_READY,	NEXT);	//REV
+	autoResetEnd();
+	}
+
+
+void autoRedHang4(void) //Not working as of the Iowa State Championship
 	{
 	autoResetStart(0, AUTON, 0, 0, 0);
 		//L,	R,		S,		Lift,	Intk,Cata,Tranny,End Type,	Other

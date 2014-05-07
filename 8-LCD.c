@@ -175,11 +175,11 @@ void menuView()
 			break; //Battery Levels
 		case M_MTR_TEST:
 			sysMotorTest = true;
-			StringFormat(tString2,"%3d",abs(stkMtrTest1)); //negative sign will not fit; using abs()
+			StringFormat(tString2,"%3d", abs(stkMtrTest1)); //negative sign will not fit; using abs()
 			strcat(tString0, tString2);
 			int temp1 = potPosition(10);
 			int temp2 = mtrTestEnabled[temp1];
-			strcpy(tString1,motorName[temp1]);
+			strcpy(tString1, motorName[temp1]);
 			tString2 = (temp2==-1)?"|Rev": (temp2==1)?"|Fwd":"|Off"; // -1 Rev    1 Fwd    0 Off
 			break;
 		case M_ANALOG:
@@ -194,9 +194,9 @@ void menuView()
 			break;
 		}
 
-	strcpy(topLCDLine.curr,tString0);
-	strcat(tString1,tString2);
-	strcpy(bottomLCDLine.curr,tString1);
+	strcpy(topLCDLine.curr, tString0); //Assign bottom line string
+	strcat(tString1, tString2);
+	strcpy(bottomLCDLine.curr, tString1); //Assign top line string
 	}
 
 
@@ -223,7 +223,7 @@ void processLCD()
 				bottomLCDLine.curr = " Robotics  Nora ";
 				break;
 			}
-		if (screenButtonIsPressed())
+		if (screenButtonIsPressed()) //Never tested this
 			errorDismissed = true;
 		}
 	else
@@ -234,10 +234,10 @@ void processLCD()
 
 			if (pressed(btnScreenLeft))		menuItemIndex--;
 			if (pressed(btnScreenRight))	menuItemIndex++;
-#ifdef MENU_WRAP
-			menuItemIndex = (menuItemIndex + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //ITEM = (ITEM + NUM) % NUM   |   (Wrap)
+#ifdef MENU_WRAP //ITEM = (ITEM + NUM) % NUM
+			menuItemIndex = (menuItemIndex + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //Wrap (not tested)
 #else
-			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, M_NO_ITEMS-1); //(Don't wrap)
+			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, M_NO_ITEMS-1); //Don't wrap
 #endif
 			if (pressed(btnScreenCenter))	menuItemActivated = !menuItemActivated;
 			if (menuItemActivated)			menuExecuteActivated();

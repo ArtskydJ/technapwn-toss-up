@@ -186,7 +186,7 @@ void processOperator()
 		if (pressed(btnRhtL1) || pressed(btnRhtL2))	outDescorer = (outDescorer==0)? FWD : 0;
 
 		//--Hanging--//
-		if (pressed(btnRhtU1) || pressed(btnRhtU2)) outTranny = !outTranny; //Up    W
+//		if (pressed(btnRhtU1) || pressed(btnRhtU2)) outTranny = !outTranny; //Up    W
 		//--Pneumatics--//
 		outLoader =   btnRhtL1.curr || btnRhtL2.curr;	//Left  A
 		outBrake =    btnRhtD1.curr || btnRhtD2.curr;	//Down  S
