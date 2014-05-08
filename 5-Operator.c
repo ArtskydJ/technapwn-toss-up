@@ -121,10 +121,10 @@ int joystickDeadzoneFilter(int INraw)
 //variables accordingly.
 void processOperator()
 	{
-	if (!sysMotorTest)
+	if (!sysMotorTest) //Because of how OutputMotion() is formatted, I am not sure this check is needed
 		{
 		//--Settings--//
-		if (btnSubroutineModifier1)
+		if (btnSubroutineModifier1) //This is not tested
 			{						//Negative values are for scripts
 			if		(btnRhtU1.curr) autoRoutine.curr = -1;
 			else if	(btnRhtR1.curr) autoRoutine.curr = -2;
@@ -133,9 +133,9 @@ void processOperator()
 			}
 
 		//--Drive--//
-		outDrvL = stkDrvFwd1 + stkDrvTrn1;
-		outDrvR = stkDrvFwd1 - stkDrvTrn1;
-		outDrvS = stkDrvStf1;
+		outDrvL = stkDrvFwd1 + stkDrvTrn1; //Arcade drive
+		outDrvR = stkDrvFwd1 - stkDrvTrn1; //Translation on left stick, Rotation on right stick
+		outDrvS = stkDrvStf1; //With turning
 
 		//--Lift--//
 		if (btnDisablePots1 || btnDisablePots2 || autoScriptTakeover[LIFT] || outDescorer || outTranny)
@@ -166,11 +166,13 @@ void processOperator()
 			if (tBtnPressed)				sysDisableLift = false;
 
 			liftPresetIndex = capIntValue(0, liftPresetIndex, NO_LIFT_PRESETS-1);
-			outLift = lPre(liftPresetIndex);
+			//Previous line is not needed, but if code is changed so lift up button adds to the
+			//liftPresetIndex variable, then that line will be needed to keep it in bounds.
+			outLift = lPre(liftPresetIndex); //Converts target location into motor power value
 
-			if (liftPresetIndex == (short)GND)
+			if (liftPresetIndex == (short)GND) //Cuts the lift power if low enough...
 				if (-outLift < LIFT_DISABLE_RANGE) //outLift was abs(outLift)
-					outLift = 0; //sysDisableLift = true;
+					outLift = 0; //sysDisableLift = true; //I think either way would work
 			}
 		if (sysDisableLift)
 			outLift = 0;

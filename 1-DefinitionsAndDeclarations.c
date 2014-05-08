@@ -2,7 +2,7 @@
 
 #define AUTON_BEEP
 #define SOUND_EFFECTS
-//#define   FULL_DEBUG_STREAM
+//#define FULL_DEBUG_STREAM
 //#define MENU_WRAP
 //#define PHYSICAL_ROBOT_TARGET //Uncomment to fake a physical robot to the emulator
 #if (_TARGET=="Robot")
