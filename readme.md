@@ -1,7 +1,7 @@
 #TechnaPWN Toss Up
 
 ##Intro
-TechnaPWN's 2013-2014 code for their robot, Nora
+TechnaPWN's 2013-2014 code for their robot, Nora  
 Created by Joseph Dykstra of VRC Team #3018 for use during the 2013-2014 Vex Toss Up season
 
 ##Features:
@@ -40,6 +40,7 @@ Created by Joseph Dykstra of VRC Team #3018 for use during the 2013-2014 Vex Tos
 
 + Other
 	+ State friendly, if you lose connection during a match, it will not wait for autonomous selection before driver control is regained
+	+ If the cortex has a flaky connection, and the backup battery is powering it, it will not run any motors during autonomous so that it will stay on the tile so it can be fixed.
 	+ Autonomous and state switching data is logged in the debug stream
 	+ Structures to easily set and compare previous values of a variable
 	+ Ultrasonic deadzone, in case subsystems occasionally get in front of the sensor
