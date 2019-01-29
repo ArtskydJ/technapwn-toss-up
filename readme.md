@@ -1,10 +1,11 @@
-#TechnaPWN Toss Up
+# TechnaPWN Toss Up
 
-##Intro
+## Intro
+
 TechnaPWN's 2013-2014 code for their robot, Nora  
 Created by Joseph Dykstra of VRC Team #3018 for use during the 2013-2014 Vex Toss Up season
 
-##Features:
+## Features:
 
 + Sense-Plan-Act paradigm
 	+ Get and store sensor data in variables
@@ -47,5 +48,6 @@ Created by Joseph Dykstra of VRC Team #3018 for use during the 2013-2014 Vex Tos
 	+ Can set LCD backlight to always off/on, blink fast/slow, or turn on for a few seconds every time an LCD button is pressed
 	+ **Free** to use and modify!
 
-##License
-[MIT](http://opensource.org/licenses/MIT)
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
