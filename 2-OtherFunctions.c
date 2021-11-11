@@ -92,7 +92,7 @@ bool changedInt(T_LC_INT INLC) //Returns true if the integer changed
 	{ return (INLC.last != INLC.curr); }
 
 bool changedString(T_LC_STRING INLC) //Returns true if the string changed
-	{ return strcmp(INLC.last, INLC.curr)==0; }
+	{ return strcmp(INLC.last, INLC.curr)!=0; }
 
 bool pressed(T_LC_BOOL INLC) //Returns true if it was just pressed
 	{ return (!INLC.last && INLC.curr); }
