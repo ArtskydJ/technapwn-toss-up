@@ -10,17 +10,17 @@ void inputProcessState()
 	setLastInt(&sysState);
 
 	//--Decide what state the robot is in--//
-	if (nVexRCReceiveState & vrCompetitionSwitch)	//If the Competition switch is plugged in...
+	if (nVexRCReceiveState & vrCompetitionSwitch)  //If the Competition switch is plugged in...
 		{
-		if (bIfiRobotDisabled)			sysState.curr = DISABLED;	//...base the state on comp switch settings
-		else if (bIfiAutonomousMode)	sysState.curr = AUTONOMOUS;
-		else							sysState.curr = OPERATOR;
+		if (bIfiRobotDisabled)          sysState.curr = DISABLED;   //...base the state on comp switch settings
+		else if (bIfiAutonomousMode)    sysState.curr = AUTONOMOUS;
+		else                            sysState.curr = OPERATOR;
 		}
-	else											//If the Competition switch is not plugged in...
+	else                                           //If the Competition switch is not plugged in...
 		{
-		if (sysDisabledMode)	sysState.curr = DISABLED;	//...base the state on variables
-		else if (sysAutoMode)	sysState.curr = AUTONOMOUS;
-		else					sysState.curr = OPERATOR;
+		if (sysDisabledMode)    sysState.curr = DISABLED;   //...base the state on variables
+		else if (sysAutoMode)   sysState.curr = AUTONOMOUS;
+		else                    sysState.curr = OPERATOR;
 		}
 
 	if (changedInt(sysState))
@@ -36,9 +36,9 @@ void inputProcessState()
 		//--Execute depending on which state changing from--//
 		switch (sysState.last)
 			{
-			case AUTONOMOUS:	sysDisableLift = true;	break;
-			case DISABLED:		break;
-			case OPERATOR:		break;
+			case AUTONOMOUS:    sysDisableLift = true; break;
+			case DISABLED:      break;
+			case OPERATOR:      break;
 			}
 
 		//--Execute depending on which state changing to--//

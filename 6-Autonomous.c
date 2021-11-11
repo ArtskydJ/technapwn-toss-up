@@ -31,9 +31,9 @@ void autoNextStep(void)
 	if (autoStep < NO_TIME_RECORDS)
 		autoTimeRecord[autoStep] = time1(T1);
 	if (autoStep)
-		if (time1(T1)<100)	sprintf(msg1,"|%d\t\t",time1(T1));
-		else				sprintf(msg1,"|%d\t",time1(T1));
-	else					sprintf(msg1,"|Reset\t");
+		if (time1(T1)<100)  sprintf(msg1,"|%d\t\t",time1(T1));
+		else                sprintf(msg1,"|%d\t",time1(T1));
+	else                    sprintf(msg1,"|Reset\t");
 	writeDebugStreamLine("%s\t|%d\t|",msg1,autoStep);
 
 	//--Autonomous Variables--//
@@ -67,7 +67,7 @@ void autoNextStep(void)
 
 //This function resets autonomous variables for the beginning of autonomous.
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
-					bool INscriptDrive, bool INscriptLift, bool INscriptIntake)
+                    bool INscriptDrive, bool INscriptLift, bool INscriptIntake)
 	{
 	if (autoStepCheck==autoStep) //If on correct autonomous step
 		{
@@ -202,7 +202,7 @@ void processScripts(void)
 	autoStepCheck = 0;
 	switch (autoRoutine.curr) //Scripts
 		{
-		case -1: scriptHang();	break; //Scripts were not really tested :(
+		case -1: scriptHang(); break; //Scripts were not really tested :(
 		}
 	}
 
@@ -215,22 +215,22 @@ void processAutonomous(void)
 		autoStepCheck = 0;
 		switch (autoRoutine.curr) //Routines
 			{
-			case 01: autoRedMid1();			break; //Red...
-			case 02: autoRedMid2();			break;
-			case 03: autoRedMid3();			break;
-			case 04: autoRedHang1();		break;
-			case 05: autoRedHang2();		break;
-			case 06: autoRedHang3();		break;
-			case 07: autoBlueMid1();		break; //Blue...
-			case 08: autoBlueMid2();		break;
-			case 09: autoBlueMid3();		break;
-			case 10: autoBlueHang1();		break;
-			case 11: autoBlueHang2();		break;
-			case 12: autoBlueHang3();		break;
-			case 13: 						break; //None
-			case 14: scriptHang();			break; //Other...
-			case 15: autoCurrentTest();		break;
-			case 16: autoRedProgSkills();	break;
+			case 01: autoRedMid1();         break; //Red...
+			case 02: autoRedMid2();         break;
+			case 03: autoRedMid3();         break;
+			case 04: autoRedHang1();        break;
+			case 05: autoRedHang2();        break;
+			case 06: autoRedHang3();        break;
+			case 07: autoBlueMid1();        break; //Blue...
+			case 08: autoBlueMid2();        break;
+			case 09: autoBlueMid3();        break;
+			case 10: autoBlueHang1();       break;
+			case 11: autoBlueHang2();       break;
+			case 12: autoBlueHang3();       break;
+			case 13:                        break; //None
+			case 14: scriptHang();          break; //Other...
+			case 15: autoCurrentTest();     break;
+			case 16: autoRedProgSkills();   break;
 			}
 #ifdef FULL_DEBUG_STREAM
 		if (autoRoutine.curr==0 && changed(sysState))

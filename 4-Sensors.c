@@ -59,7 +59,7 @@ void inputSensors(void)
 	ClearTimer(T3);
 	if (autoClockRunning && sysState.curr==AUTONOMOUS)
 		{
-		timerTemp +=				tTimerMaster;
+		timerTemp +=        tTimerMaster;
 		if (timerTemp>=3000) //every 3 seconds...
 			{
 			timerAutoTimeAdd += timerTemp/10;
@@ -67,18 +67,18 @@ void inputSensors(void)
 			}
 		timerAuto =			timerAutoTimeAdd + (timerTemp/10);
 		}
-	timerLCDScroll +=		tTimerMaster;
-	timerLCDBacklight +=	tTimerMaster;
+	timerLCDScroll +=       tTimerMaster;
+	timerLCDBacklight +=    tTimerMaster;
 	if (sysDriverSkillsRunning)
 		timerDriverSkills +=tTimerMaster;
 	else
 		timerDriverSkills = 0;
-	timerElapsedTime =		tTimerMaster; //Yes, '='
+	timerElapsedTime =      tTimerMaster; //Yes, '='
 
 	//--LCD Buttons--//
-	btnScreenLeft.curr =	(nLCDButtons & 1) > 0;
-	btnScreenCenter.curr =	(nLCDButtons & 2) > 0;
-	btnScreenRight.curr =	(nLCDButtons & 4) > 0;
+	btnScreenLeft.curr =    (nLCDButtons & 1) > 0;
+	btnScreenCenter.curr =  (nLCDButtons & 2) > 0;
+	btnScreenRight.curr =   (nLCDButtons & 4) > 0;
 
 	//--Timers--//
 	if (timerLCDScroll > 62000)    timerLCDScroll =    62000; //Prevent wrapping
@@ -90,8 +90,8 @@ void inputSensors(void)
 	                               timerLCDBacklight = 0;     //Reset
 
 #ifdef PHYSICAL_ROBOT_TARGET
-	timerRobotIdle +=		tTimerMaster;
-	if (joystickIsMoved(true) || screenButtonIsPressed())	timerRobotIdle = 0;
+	timerRobotIdle +=       tTimerMaster;
+	if (joystickIsMoved(true) || screenButtonIsPressed())   timerRobotIdle = 0;
 
 	//--Robot Sensors--//
 	senGyro.curr =        SensorValue[GYRO];
@@ -110,9 +110,9 @@ void inputSensors(void)
 
 	//--Errors--//
 	sysError = ERR_NONE;
-	//if (senPwrExpVoltage<7200)	sysError = ERR_LOW_POW_EX; //power expander voltage is not x1000
-	//if (timerRobotIdle>=60000)	sysError = ERR_ROBOT_IDLE;
-	if (nAvgBatteryLevel<6400)		sysError = ERR_LOW_CORTEX;
+	//if (senPwrExpVoltage<7200)    sysError = ERR_LOW_POW_EX; //power expander voltage is not x1000
+	//if (timerRobotIdle>=60000)    sysError = ERR_ROBOT_IDLE;
+	if (nAvgBatteryLevel<6400)    sysError = ERR_LOW_CORTEX;
 
 #else
 	//--Emulated Sensors--//

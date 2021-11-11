@@ -147,8 +147,8 @@ void menuExecuteActivated()
 //checks which menu item it is on, and creates a string, which will be printed.
 void menuView()
 	{
-	string tString0="";				//Top Line
-	string tString1="",tString2="";	//Bottom Line
+	string tString0="";             //Top Line
+	string tString1="",tString2=""; //Bottom Line
 
 	sysMotorTest=false; //This gets set to true in case M_MTR_TEST
 	strcpy(tString0,menuItemName[menuItemIndex]);
@@ -232,15 +232,15 @@ void processLCD()
 			{
 			sysLCDBacklight=LCD_ALWAYS_ON;
 
-			if (pressed(btnScreenLeft))		menuItemIndex--;
-			if (pressed(btnScreenRight))	menuItemIndex++;
+			if (pressed(btnScreenLeft))     menuItemIndex--;
+			if (pressed(btnScreenRight))    menuItemIndex++;
 #ifdef MENU_WRAP //ITEM = (ITEM + NUM) % NUM
 			menuItemIndex = (menuItemIndex + (NO_MENU_ITEMS)) % (NO_MENU_ITEMS); //Wrap (not tested)
 #else
 			menuItemIndex = (T_MENU_ITEMS)capIntValue(0, menuItemIndex, M_NO_ITEMS-1); //Don't wrap
 #endif
-			if (pressed(btnScreenCenter))	menuItemActivated = !menuItemActivated;
-			if (menuItemActivated)			menuExecuteActivated();
+			if (pressed(btnScreenCenter))   menuItemActivated = !menuItemActivated;
+			if (menuItemActivated)          menuExecuteActivated();
 
 			menuView();
 			}
@@ -251,7 +251,7 @@ void processLCD()
 
 			sysLCDBacklight=LCD_ALWAYS_ON;
 			StringFormat(topLCDLine.curr,"%2d:%8.1f sec ", autoRoutine.curr, ((float)timerAuto/100));
-			StringFormat(bottomLCDLine.curr, "Step: %d", autoStep);	//Show step
+			StringFormat(bottomLCDLine.curr, "Step: %d", autoStep); //Show step
 			}
 		}
 	}

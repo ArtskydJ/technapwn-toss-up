@@ -113,12 +113,12 @@ typedef enum {
 
 typedef enum {
 	TIME_LIMIT = 0,	//Time Limit
-	DRIV_READY,	//Finished using Drive (including strafe)
-	LIFT_READY,	//Finished using Lift
-	FULL_READY,	//Finished using Drive and Lift
-	ONE_EDG_LN,	//Cross Line
-	TWO_EDG_LN,	//Line up on white line
-	SCREEN_BTN	//Screen Button
+	DRIV_READY, //Finished using Drive (including strafe)
+	LIFT_READY, //Finished using Lift
+	FULL_READY, //Finished using Drive and Lift
+	ONE_EDG_LN, //Cross Line
+	TWO_EDG_LN, //Line up on white line
+	SCREEN_BTN  //Screen Button
 	} T_END;
 
 typedef enum {
@@ -161,17 +161,17 @@ typedef enum {
 	} T_AUTO_SCRIPT;
 
 typedef enum {
-	GND = 0,	//Ground
-	STS = 1,	//Stash
-	BMP = 2,	//Bump (Untested)
-	BAR = 3,	//Barrier
+	GND = 0,    //Ground
+	STS = 1,    //Stash
+	BMP = 2,    //Bump (Untested)
+	BAR = 3,    //Barrier
 	NO_LIFT_PRESETS = 4,
 	NO_OPERATOR_LIFT_PRESETS = 2,
 	} T_LIFT_PRESETS;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-//Constants									GND   STS  BMP  BAR
+//Constants                                  GND   STS  BMP  BAR
 const int sysLiftPresets[NO_LIFT_PRESETS] = {2052,3750,2300,2880};
 //System Variables
 bool sysDisableLift = true;
@@ -218,14 +218,14 @@ T_LC_BOOL btnScreenCenter;
 T_LC_BOOL btnScreenRight;
 
 //Timer Variables
-unsigned int timerElapsedTime	= 0;
-unsigned int timerAutoTimeAdd	= 0; //Helps with timerAuto
-unsigned int timerTemp			= 0; //Helps with timerAuto
-unsigned int timerAuto			= 0;
-unsigned int timerLCDScroll		= 0;
-unsigned int timerLCDBacklight	= 0;
-unsigned int timerDriverSkills	= 0;
-unsigned int timerRobotIdle		= 0;
+unsigned int timerElapsedTime    = 0;
+unsigned int timerAutoTimeAdd    = 0; //Helps with timerAuto
+unsigned int timerTemp           = 0; //Helps with timerAuto
+unsigned int timerAuto           = 0;
+unsigned int timerLCDScroll      = 0;
+unsigned int timerLCDBacklight   = 0;
+unsigned int timerDriverSkills   = 0;
+unsigned int timerRobotIdle      = 0;
 
 //Other
 bool autoScriptTakeover[NO_SUBSYSTEMS]={0,0,0};
@@ -235,10 +235,10 @@ short mtrTestEnabled[10]={0,0,0,0,0,0,0,0,0,0};
 
 //Function Prototypes
 void autoResetStart(int INgoToStep, T_AUTO_SCRIPT INasType,
-					bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
+                    bool INscriptDrive, bool INscriptLift, bool INscriptIntake);
 void autoResetEnd(void);
 void auto(unsigned long INspeeds, int INspdS, int INlift, int INintk,
-			bool INcata, bool INtranny, T_END INendType, int INextra);
+          bool INcata, bool INtranny, T_END INendType, int INextra);
 void zeroMotors(void);
 void stateSwitchToAutonomous(void);
 void inputOperator(void);
